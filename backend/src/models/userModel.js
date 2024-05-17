@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
   pass: { type: String, required: true },
   profileImg: { type: String },
   profileCiver: { type: String },
-  dob: { tyoe: Date },
+  dob: { type: Date },
   isAdmin: { type: Boolean, default: false },
   country: { type: String },
   city: { type: String },
