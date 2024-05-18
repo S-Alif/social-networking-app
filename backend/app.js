@@ -4,6 +4,7 @@ const hpp = require('hpp')
 const rateLimit = require('express-rate-limit')
 const helmet = require('helmet')
 const cookieParser = require('cookie-parser')
+const { default: mongoose } = require('mongoose')
 require('dotenv').config()
 
 
@@ -32,6 +33,8 @@ app.use(limiter);
 
 
 // connect to databse
-
+mongoose.connect(process.env.DB_URL+"/"+process.env.DATABASE_NAME)
+  .then(() => console.log("database connected"))
+  .catch((error) => console.log("could not connect \n"+error))
 
 module.exports = app
