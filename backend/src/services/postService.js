@@ -1,31 +1,31 @@
 const postModel = require('../models/postModel')
 
 // create post
-const createPost = async (req) => {
+exports.createPost = async (req) => {
 
 }
 
 // update post
-const updatePost = async (req) => {
+exports.updatePost = async (req) => {
 
 }
 
 // delete post
-const deletePost = async (req) => {
+exports.deletePost = async (req) => {
 
 }
 
 // get a single post
-const getSinglePost = async (req) => {
+exports.getSinglePost = async (req) => {
 
 }
 
 // get a lot of posts
-const getLotOfPosts = async (req) => {
+exports.getLotOfPosts = async (req) => {
 
 }
 
 // report a post
-const reportPost = async (req) => {
+exports.reportPost = async (req) => {
 
 }

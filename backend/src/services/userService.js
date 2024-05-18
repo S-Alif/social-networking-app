@@ -1,51 +1,51 @@
 const userModel = require('../models/userModel')
 
 // register a user
-const registerUser = async (req) => {
+exports.registerUser = async (req) => {
   
 }
 
 // login a user
-const loginUser = async (req) => {
+exports.loginUser = async (req) => {
   
 }
 
 // update a user
-const updateUser = async (req) => {
+exports.updateUser = async (req) => {
 
 }
 
 // delete a user
-const deleteUser = async (req) => {
+exports.deleteUser = async (req) => {
 
 }
 
 // send otp
-const sendOtp = async (req) => {
+exports.sendOtp = async (req) => {
 
 }
 
 // verify otp
-const verifyOtp = async (req) => {
+exports.verifyOtp = async (req) => {
 
 }
 
 // get user profile
-const userProfile = async (req) => {
+exports.userProfile = async (req) => {
 
 }
 
 // get a user profile by id
-const userProfileById = async (req) => {
+exports.userProfileById = async (req) => {
 
 }
 
 // forget pass user profile
-const forgetPassUserProfile = async (req) => {
+exports.forgetPassUserProfile = async (req) => {
 
 }
 
-// forget pass user profile
-const renewPass = async (req) => {
+// renew password
+exports.renewPass = async (req) => {
 
 }
