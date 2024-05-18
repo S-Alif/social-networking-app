@@ -24,7 +24,7 @@ exports.update = asyncHandler(async (req, res) => {
 })
 
 // delete
-exports.deleteUser = asyncHandler(async (req, res) => {
+exports.delete = asyncHandler(async (req, res) => {
   let result = await userService.deleteUser(req)
   res.status(200).json(result)
 })
