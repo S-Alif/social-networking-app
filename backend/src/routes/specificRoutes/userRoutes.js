@@ -19,3 +19,5 @@ router.get('/profile/:id', userControl.profileById)
 
 router.get('/forget-pass-profile/:email', userControl.profileForgetPass)
 router.post('/pss-renew', userControl.passRenew)
+
+module.exports = router

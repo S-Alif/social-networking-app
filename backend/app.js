@@ -7,6 +7,8 @@ const cookieParser = require('cookie-parser')
 const { default: mongoose } = require('mongoose')
 require('dotenv').config()
 
+// import routes
+const mainRoutes = require('./src/routes/routes')
 
 // declare app
 const app = express()
@@ -29,7 +31,8 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10000 });
 app.use(limiter);
 
 
-// import routes
+// add the routes to the app
+app.use('/public', mainRoutes)
 
 
 // connect to databse
