@@ -7,7 +7,7 @@ exports.issueToken = (data, duration) => {
   return token
 }
 
-// issue a token
+// verify a token
 exports.verifyToken = (token) => {
   const verified = jwt.verify(token, process.env.secretKey)
   if(verified) return verified
@@ -24,8 +24,8 @@ exports.hashPass = async (pass) => {
   }
 }
 
-// hash password
-exports.hashPass = async (hashedPass, pass) => {
+// verify hash password
+exports.verifyPass = async (hashedPass, pass) => {
   try {
     const hash = await argon2.verify(hashedPass, pass)
     return hash
