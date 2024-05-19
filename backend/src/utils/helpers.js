@@ -35,7 +35,7 @@ exports.verifyPass = async (hashedPass, pass) => {
 }
 
 // cookie maker
-exports.cookieMaker = (data) => {
+exports.cookieMaker = (data, duration) => {
   let cookieOption = {
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     httpOnly: true,
@@ -43,5 +43,10 @@ exports.cookieMaker = (data) => {
     secure: true
   }
 
-  return { token: issueToken(data, "1d"), cookieOption }
+  return { token: issueToken(data, duration), cookieOption }
+}
+
+// response message
+exports.responseMsg = (status, code, data) => {
+  return {status: status, code: code, data: data}
 }

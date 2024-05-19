@@ -2,7 +2,7 @@ const userModel = require('../models/userModel')
 
 // register a user
 exports.registerUser = async (req) => {
-  
+  let result = userModel.create(req.body)
 }
 
 // login a user
