@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  pass: { type: String, required: true },
+const userSchema = new mongoose.Schema({
+  firstName: { type: String, required: [true, 'First name is required'] },
+  lastName: { type: String, required: [true, 'Last name is required'] },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    match: [/.+@.+\..+/, 'Please enter a valid email address']
+  },
+  pass: { type: String, required: [true, 'Password is required'] },
   profileImg: { type: String },
   profileCiver: { type: String },
   dob: { type: Date },
@@ -12,8 +17,23 @@ const userSchema = mongoose.Schema({
   country: { type: String },
   city: { type: String },
   verified: { type: Boolean, default: false },
-  privacy: { type: String, default: "public", enum: ["public", "private", "friends"] },
-  status: { type: String, enum: ["active", "deactivated"] }
+  privacy: {
+    type: String,
+    default: "public",
+    enum: {
+      values: ["public", "private", "friends"],
+      message: 'Privacy must either be public, private or friends'
+    }
+  },
+  status: {
+    type: String,
+    default: "active",
+    enum: {
+      values: ["active", "deactivated"],
+      message: 'Status must either be active or deactivated'
+    }
+  },
+  tokens: [String]
 }, { timestamps: true, versionKey: false });
 
-module.exports = mongoose.model('users', userSchema)
+module.exports = mongoose.model('users', userSchema);
