@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   },
   pass: { type: String, required: [true, 'Password is required'] },
   profileImg: { type: String },
-  profileCiver: { type: String },
+  profileCover: { type: String },
   dob: { type: Date },
   isAdmin: { type: Boolean, default: false },
   country: { type: String },
@@ -32,8 +32,7 @@ const userSchema = new mongoose.Schema({
       values: ["active", "deactivated"],
       message: 'Status must either be active or deactivated'
     }
-  },
-  tokens: [String]
+  }
 }, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('users', userSchema);
