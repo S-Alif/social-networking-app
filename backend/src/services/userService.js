@@ -57,6 +57,7 @@ exports.verifyOtp = async (req) => {
   let check = await otpModel.findOne({ otp: req.body?.otp, email: req.body?.email, verified: 0 })
   if(!check) return responseMsg(0,200, "Invalid otp")
   await otpModel.updateOne({ otp: req.body?.otp, email: req.body?.email }, {verified: 1})
+  await userModel.updateOne({ email: req.body?.email }, {verified: 1})
   return responseMsg(1, 200, "Account verified")
 }
 
