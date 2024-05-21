@@ -1,5 +1,9 @@
 const userModel = require('../models/userModel')
+const otpModel = require('../models/otpModel')
 const { hashPass, responseMsg, verifyPass } = require('../utils/helpers')
+const crypto = require("crypto")
+const sendEmail = require('../utils/sendMail')
+const { otpMail } = require('../utils/mail-markup')
 
 // register a user
 exports.registerUser = async (req) => {
@@ -35,12 +39,25 @@ exports.deleteUser = async (req) => {
 
 // send otp
 exports.sendOtp = async (req) => {
+  let otpCode = crypto.randomBytes(3).toString('hex').toUpperCase()
 
+  let result = await otpModel.create({otp: otpCode, email: req.body?.email})
+  let user = await userModel.findOne({email: req.body.email}).select("firstName")
+  await sendEmail(
+    req.body.email,
+    otpMail(otpCode,user?.firstName,
+    `${req.body?.type == 1 ? "Please verify your account": "Thank you and welcome to our platform"}`)
+  )
+  
+  return responseMsg(1, 200, "Verification email sent")
 }
 
 // verify otp
 exports.verifyOtp = async (req) => {
-
+  let check = await otpModel.findOne({ otp: req.body?.otp, email: req.body?.email, verified: 0 })
+  if(!check) return responseMsg(0,200, "Invalid otp")
+  await otpModel.updateOne({ otp: req.body?.otp, email: req.body?.email }, {verified: 1})
+  return responseMsg(1, 200, "Account verified")
 }
 
 // get user profile
