@@ -1,9 +1,13 @@
 const userModel = require('../models/userModel')
 const otpModel = require('../models/otpModel')
+const friendshipModel = require('../models/friendshipModel')
+
 const { hashPass, responseMsg, verifyPass } = require('../utils/helpers')
-const crypto = require("crypto")
 const sendEmail = require('../utils/sendMail')
 const { otpMail } = require('../utils/mail-markup')
+
+const crypto = require("crypto")
+const ObjectID = require('mongodb').ObjectID;
 
 // register a user
 exports.registerUser = async (req) => {
@@ -13,6 +17,7 @@ exports.registerUser = async (req) => {
   let passHash = await hashPass(req.body?.pass)
   req.body.pass = passHash
   let result = await userModel.create(req.body)
+
   return responseMsg(1, 200, "Account created")
 }
 
@@ -42,7 +47,7 @@ exports.sendOtp = async (req) => {
   let otpCode = crypto.randomBytes(3).toString('hex').toUpperCase()
 
   let result = await otpModel.create({otp: otpCode, email: req.body?.email})
-  let user = await userModel.findOne({email: req.body.email}).select("firstName")
+  let user = await userModel.findOne({email: req.body.email}).select("lastName")
   await sendEmail(
     req.body.email,
     otpMail(otpCode,user?.firstName,
@@ -56,19 +61,57 @@ exports.sendOtp = async (req) => {
 exports.verifyOtp = async (req) => {
   let check = await otpModel.findOne({ otp: req.body?.otp, email: req.body?.email, verified: 0 })
   if(!check) return responseMsg(0,200, "Invalid otp")
+
   await otpModel.updateOne({ otp: req.body?.otp, email: req.body?.email }, {verified: 1})
   await userModel.updateOne({ email: req.body?.email }, {verified: 1})
+
   return responseMsg(1, 200, "Account verified")
 }
 
 // get user profile
 exports.userProfile = async (req) => {
-
+  let profile = await userModel.findOne({ _id: ObjectID(req.headers.id) }).select("_id firstName lastName email profileImg profileCover dob isAdmin country city verified privacy status")
+  if(!profile) return responseMsg(0, 200, "No user found")
+  
+  return responseMsg(1, 200, profile)
 }
 
 // get a user profile by id
 exports.userProfileById = async (req) => {
 
+  let isAdmin = req.headers.isAdmin
+  let browser = req.headers?.id
+  let profile = req.params.id
+
+  if(isAdmin == true){ // if admin true
+    var user = await userModel.findOne({ _id: ObjectID(req.params.id) }).select("_id firstName lastName email profileImg profileCover dob isAdmin country city verified privacy status")
+
+    return responseMsg(1, 200, user)
+  }
+  
+  user = await userModel.findOne({ _id: ObjectID(profile) }).select("_id firstName lastName profileImg profileCover dob isAdmin country city verified privacy status")
+  if (!user) return responseMsg(0, 200, "No user found")
+    
+  const { privacy } = user;
+
+  if (privacy === 'public') {
+    return responseMsg(1, 200, user)
+  } 
+  else if (privacy === 'friends' && browser) {
+    const friendship = await friendshipModel.findOne({
+      $or: [
+        { user1: ObjectID(browser), user2: ObjectID(profile) },
+        { user1: ObjectID(profile), user2: ObjectID(browser) }
+      ]
+    })
+
+    if (!friendship) return responseMsg(1, 200, {_id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status})
+    return responseMsg(1, 200, user)
+
+  } 
+  else {
+    return responseMsg(1, 200, { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status })
+  }
 }
 
 // forget pass user profile
