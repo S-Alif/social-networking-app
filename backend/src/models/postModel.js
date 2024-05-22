@@ -5,7 +5,8 @@ const postSchema = mongoose.Schema({
   caption: { type: String },
   reactionCount: { type: Number, default: 0 },
   commentCount: { type: Number, default: 0 },
-  postType: { type: String, default: "normal", enum: ["normal", "reels"], required: true }
+  postType: { type: String, default: "normal", enum: ["normal", "reels"], required: true },
+  reports: {type: Number, default: 0}
 }, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('posts', postSchema)
