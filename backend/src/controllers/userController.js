@@ -25,12 +25,14 @@ exports.login = async (req, res) => {
 
   let token = issueToken({
     id: result.data.id,
-    email: result.data.email
+    email: result.data.email,
+    isAdmin: result.data.isAdmin
   },
     "3d")
   res.status(200).json({
     id: result.data.id,
     email: result.data.email,
+    isAdmin: result.data.isAdmin,
     token: token
   })
 }

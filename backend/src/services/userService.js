@@ -7,7 +7,7 @@ const sendEmail = require('../utils/sendMail')
 const { otpMail } = require('../utils/mail-markup')
 
 const crypto = require("crypto")
-const ObjectID = require('mongodb').ObjectID;
+const ObjectID = require('mongoose').Types.ObjectId
 
 // register a user
 exports.registerUser = async (req) => {
@@ -23,13 +23,13 @@ exports.registerUser = async (req) => {
 
 // login a user
 exports.loginUser = async (req) => {
-  const user = await userModel.findOne({ email: req.body?.email }).select("_id email pass")
+  const user = await userModel.findOne({ email: req.body?.email }).select("_id email pass isAdmin")
   if (!user) return responseMsg(0, 200, "No user found")
 
   const checkPass = await verifyPass(user.pass, req.body?.pass)
   if (!checkPass) return responseMsg(0, 200, "Password not matching")
 
-  return responseMsg(1, 200, { id: user?._id, email: user?.email })
+  return responseMsg(1, 200, { id: user?._id, email: user?.email, isAdmin: user?.isAdmin })
 }
 
 // update a user
@@ -70,7 +70,7 @@ exports.verifyOtp = async (req) => {
 
 // get user profile
 exports.userProfile = async (req) => {
-  let profile = await userModel.findOne({ _id: ObjectID(req.headers.id) }).select("_id firstName lastName email profileImg profileCover dob isAdmin country city verified privacy status")
+  let profile = await userModel.findOne({ _id: new ObjectID(req.headers.id) }).select("_id firstName lastName email profileImg profileCover dob isAdmin country city verified privacy status")
   if(!profile) return responseMsg(0, 200, "No user found")
   
   return responseMsg(1, 200, profile)
@@ -84,12 +84,12 @@ exports.userProfileById = async (req) => {
   let profile = req.params.id
 
   if(isAdmin == true){ // if admin true
-    var user = await userModel.findOne({ _id: ObjectID(req.params.id) }).select("_id firstName lastName email profileImg profileCover dob isAdmin country city verified privacy status")
+    var user = await userModel.findOne({ _id: new ObjectID(req.params.id) }).select("_id firstName lastName email profileImg profileCover dob isAdmin country city verified privacy status")
 
     return responseMsg(1, 200, user)
   }
   
-  user = await userModel.findOne({ _id: ObjectID(profile) }).select("_id firstName lastName profileImg profileCover dob isAdmin country city verified privacy status")
+  user = await userModel.findOne({ _id: new ObjectID(profile) }).select("_id firstName lastName profileImg profileCover dob isAdmin country city verified privacy status")
   if (!user) return responseMsg(0, 200, "No user found")
     
   const { privacy } = user;
