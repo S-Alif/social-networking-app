@@ -24,7 +24,7 @@ exports.imageUploader = async (file) => {
         if (error) reject(error);
         else resolve(result);
       });
-      stream.write(file);
+      stream.write(file.data);
       stream.end();
     });
 
