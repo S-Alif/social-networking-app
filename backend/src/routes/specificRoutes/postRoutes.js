@@ -15,7 +15,7 @@ router.get('/posts/:id', postControl.singlePost)
 
 router.post('/create', fileUpload({ createParentPath: true }), fileChecker, postControl.postCreate)
 router.post('/update', postControl.postUpdate)
-router.post('/delete/:id', postControl.postUpdate)
+router.post('/delete/:id', postControl.postDelete)
 router.post('/report/:id', postControl.postReport)
 
 module.exports = router

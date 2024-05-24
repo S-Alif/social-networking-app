@@ -1,7 +1,9 @@
 const postModel = require('../models/postModel');
 const attachmentModel = require('../models/postAttachmentModel');
 const { responseMsg } = require('../utils/helpers');
-const { imageUploader, deleteFiles } = require('../utils/postAttachmentUploader');
+const { deleteFiles, attachmentUploader } = require('../utils/postAttachmentUploader');
+
+const ObjectID = require('mongoose').Types.ObjectId
 
 // create post
 exports.createPost = async (req) => {
@@ -18,7 +20,7 @@ exports.createPost = async (req) => {
         const fileArray = Array.isArray(req.files[key]) ? req.files[key] : [req.files[key]]
 
         fileArray.forEach(file => fileTypeArray.push(file.mimetype))
-        return fileArray.map(file => imageUploader(file))
+        return fileArray.map(file => attachmentUploader(file))
       })
 
       urlArray = await Promise.all(promises);
@@ -67,12 +69,28 @@ exports.createPost = async (req) => {
 
 // update post
 exports.updatePost = async (req) => {
-
+  let result = await postModel.updateOne({ _id: new ObjectID(req.body?.id), author: req.headers?.id }, {caption: req.body?.caption})
+  return responseMsg(1, 200, "post updated")
 }
 
 // delete post
 exports.deletePost = async (req) => {
+  let postAttachments = await attachmentModel.find({ postId: req.params?.id }).select('fileLocation -_id').lean()
+  
+  if(postAttachments){
+    let attachmentArray = postAttachments.map(attachment => attachment.fileLocation)
 
+    // delete the attachments
+    await deleteFiles(attachmentArray)
+    
+    // delete attachments data form database
+    await attachmentModel.deleteMany({ postId: req.params?.id })
+  }
+
+  // finally delete the posts
+  await postModel.deleteOne({ _id: new ObjectID(req.params?.id) })
+
+  return responseMsg(1, 200, "post deleted")
 }
 
 // get a single post
