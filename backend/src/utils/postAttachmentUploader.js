@@ -17,11 +17,11 @@ exports.deleteFiles = async (urlArray) => {
   await Promise.all(deleteFiles)
 }
 
-// upload image
-exports.imageUploader = async (file) => {
+// upload attachments
+exports.attachmentUploader = async (file) => {
   try {
     let result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream({ transformation: { quality: 'auto:low' } }, (error, result) => {
+      const stream = cloudinary.uploader.upload_stream({ resource_type: file.mimetype.startsWith('video') ? 'video' : 'image', transformation: { quality: 'auto:low' } }, (error, result) => {
         if (error) reject(error);
         else resolve(result);
       });
