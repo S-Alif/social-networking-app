@@ -8,12 +8,13 @@ cloudinary.config({
   api_secret: process.env.imageCloudSecret
 });
 
-// public id finder
-exports.extractPublicId = (imageUrl) => {
-  const parts = imageUrl.split('/');
-  const fileName = parts.pop();
-  const publicId = fileName.split('.')[0];
-  return publicId;
+// delete the files
+exports.deleteFiles = async (urlArray) => {
+  const deleteFiles = urlArray.map(url => {
+    const publicId = url.split('/').pop().split('.')[0]
+    return cloudinary.uploader.destroy(publicId)
+  })
+  await Promise.all(deleteFiles)
 }
 
 // upload image
@@ -26,7 +27,7 @@ exports.imageUploader = async (file) => {
       });
       stream.write(file.data);
       stream.end();
-    });
+    })
 
     return result.url
   } catch (error) {
