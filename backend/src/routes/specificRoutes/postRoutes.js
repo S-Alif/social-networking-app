@@ -10,7 +10,7 @@ const postControl = require("../../controllers/postController")
 const fileChecker = require('../../middlewares/fileChecker')
 
 // routes
-router.get("/posts", postControl.lotOfPosts)
+router.get("/posts/:page/:limit", postControl.lotOfPosts)
 router.get('/posts/:id', postControl.singlePost)
 
 router.post('/create', fileUpload({ createParentPath: true }), fileChecker, postControl.postCreate)

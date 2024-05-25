@@ -1,5 +1,6 @@
 const postModel = require('../models/postModel');
 const attachmentModel = require('../models/postAttachmentModel');
+const friendshipModel = require('../models/friendshipModel');
 const { responseMsg } = require('../utils/helpers');
 const { deleteFiles, attachmentUploader } = require('../utils/postAttachmentUploader');
 
@@ -96,11 +97,119 @@ exports.deletePost = async (req) => {
 // get a single post
 exports.getSinglePost = async (req) => {
 
+  // stages of aggregation
+  let matchStage = { $match: { _id: new ObjectID(req.params?.id) } }
+  let lookUpStage = {
+    $lookup: {
+      from: 'postattachments',
+      localField: '_id',
+      foreignField: 'postId',
+      as: 'attachments'
+    }
+  }
+  let unwindStage = { $unwind: { path: '$attachments', preserveNullAndEmptyArrays: true } }
+
+  // get the data
+  let post = await postModel.aggregate([ matchStage, lookUpStage ])
+
+  return responseMsg(1, 200, post[0])
 }
 
 // get a lot of posts
 exports.getLotOfPosts = async (req) => {
 
+  // page, limit and requesting user
+  const page = parseInt(req.params?.page)
+  const limit = parseInt(req.params?.limit)
+  const skip = (page - 1) * limit
+
+  const currentUser = new ObjectID(req.headers?.id)
+
+  // Fetch friends of the current user
+  const friendships = await friendshipModel.find({
+    $or: [{ user1: currentUser }, { user2: currentUser }]
+  }).exec()
+
+  const friendIds = friendships.map(f =>
+    f.user1.equals(currentUser) ? f.user2 : f.user1
+  )
+
+  // aggregation stages
+  let authorDetailStage = {
+    $lookup: {
+      from: 'users',
+      localField: 'author',
+      foreignField: '_id',
+      as: 'authorDetails'
+    }
+  }
+
+  let unwindAuthorDetails = { $unwind: '$authorDetails' }
+
+  let privacyModeFilter = {
+    $match: {
+      $and: [
+        {
+          $or: [
+            { 'authorDetails.privacy': 'public' },
+            { 'authorDetails._id': currentUser },
+            {
+              $and: [
+                { 'authorDetails.privacy': 'friends' },
+                { 'authorDetails._id': { $in: friendIds } }
+              ]
+            }
+          ]
+        },
+        { 'postType': 'normal' }
+      ]
+    }
+  }
+
+  let sortStage = { $sort: { createdAt: -1 } }
+  let skipStage = { $skip: skip }
+  let limitStage = { $limit: limit }
+  let joinAttachments = {
+    $lookup: {
+      from: 'postattachments',
+      localField: '_id',
+      foreignField: 'postId',
+      as: 'attachments'
+    }
+  }
+  
+  let projectStage = {
+    $project: {
+      _id: 1,
+      author: 1,
+      caption: 1,
+      reactionCount: 1,
+      commentCount: 1,
+      postType: 1,
+      reports: 1,
+      createdAt: 1,
+      updatedAt: 1,
+      attachments: 1,
+      'authorDetails.firstName': 1,
+      'authorDetails.lastName': 1,
+      'authorDetails.profileImg': 1
+    }
+  }
+
+
+  // fetch the posts
+  let posts = await postModel.aggregate([
+    authorDetailStage,
+    unwindAuthorDetails,
+    privacyModeFilter,
+    sortStage,
+    skipStage,
+    limitStage,
+    joinAttachments,
+    projectStage
+  ]);
+
+  return responseMsg(1, 200, posts);
 }
 
 // report a post
