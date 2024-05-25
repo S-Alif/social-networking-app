@@ -34,7 +34,9 @@ exports.loginUser = async (req) => {
 
 // update a user
 exports.updateUser = async (req) => {
-
+  if(req.headers?.id !== req.body._id) return responseMsg(0, 200, "user ID dont match")
+  await userModel.updateOne({_id: new ObjectID(req.headers?.id)}, req.body)
+  return responseMsg(1, 200, "Account updated")
 }
 
 // delete a user
