@@ -70,7 +70,7 @@ exports.verifyOtp = async (req) => {
 
 // get user profile
 exports.userProfile = async (req) => {
-  let profile = await userModel.findOne({ _id: new ObjectID(req.headers.id) }).select("_id firstName lastName email profileImg profileCover dob isAdmin country city verified privacy status")
+  let profile = await userModel.findOne({ _id: new ObjectID(req.headers.id) }).select("-pass")
   if(!profile) return responseMsg(0, 200, "No user found")
   
   return responseMsg(1, 200, profile)
@@ -84,12 +84,12 @@ exports.userProfileById = async (req) => {
   let profile = req.params.id
 
   if(isAdmin == true){ // if admin true
-    var user = await userModel.findOne({ _id: new ObjectID(req.params.id) }).select("_id firstName lastName email profileImg profileCover dob isAdmin country city verified privacy status")
+    var user = await userModel.findOne({ _id: new ObjectID(req.params.id) }).select("-pass")
 
     return responseMsg(1, 200, user)
   }
   
-  user = await userModel.findOne({ _id: new ObjectID(profile) }).select("_id firstName lastName profileImg profileCover dob isAdmin country city verified privacy status")
+  user = await userModel.findOne({ _id: new ObjectID(profile) }).select("-pass")
   if (!user) return responseMsg(0, 200, "No user found")
     
   const { privacy } = user;
