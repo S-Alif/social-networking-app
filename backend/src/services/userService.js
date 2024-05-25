@@ -16,6 +16,11 @@ exports.registerUser = async (req) => {
 
   let passHash = await hashPass(req.body?.pass)
   req.body.pass = passHash
+
+  // add default profile image and cover
+  req.body.profileImg = `https://avatar.iran.liara.run/username?username=${req.body?.firstName.split(" ")[0]}+${req.body?.lastName}&size=1024&format=png`
+  req.body.profileCover = `https://dummyimage.com/1920x1080/${Math.floor(Math.random() * 16777215).toString(16)}/ffffff&text=${req.body?.firstName.split(" ")[0]}+${req.body?.lastName}`
+
   let result = await userModel.create(req.body)
 
   return responseMsg(1, 200, "Account created")
