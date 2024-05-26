@@ -1,6 +1,7 @@
 const reactionModel = require("../models/reactionModel")
 const commentModel = require("../models/commentModel")
 const { responseMsg } = require("../utils/helpers")
+const postModel = require("../models/postModel")
 
 const ObjectID = require('mongoose').Types.ObjectId
 
@@ -14,6 +15,9 @@ exports.createReaction = async (req) => {
 
   req.body.author = req.headers?.id
   let react = await reactionModel.create(req.body)
+
+  await postModel.updateOne({ _id: new ObjectID(req.body?.reactedOn) }, { $inc: { reactionCount: +1 } })
+
   return responseMsg(1, 200, "Reaction submitted")
 }
 
@@ -30,6 +34,8 @@ exports.updateReaction = async (req) => {
 // remove reaction
 exports.removeReaction = async (req) => {
   let react = await reactionModel.deleteOne({ _id: new ObjectID(req.params?.id), author: new ObjectID(req.headers?.id), reactedOn: new ObjectID(req.params?.post) })
+
+  await postModel.updateOne({ _id: new ObjectID(req.params?.post) }, { $inc: { reactionCount: -1 } })
 
   return responseMsg(1, 200, "Reaction removed")
 }
@@ -75,6 +81,7 @@ exports.postReactions = async (req) => {
 exports.createComment = async (req) => {
   req.body.author = req.headers?.id
   let comment = await commentModel.create(req.body)
+  await postModel.updateOne({ _id: new ObjectID(req.body?.commentOn)}, {$inc: {commentCount: +1}})
   return responseMsg(1, 200, "comment submitted")
 }
 
@@ -88,6 +95,7 @@ exports.updateComment = async (req) => {
 // delete comment
 exports.deleteComment = async (req) => {
   let comment = await commentModel.deleteOne({ _id: new ObjectID(req.params?.id), author: new ObjectID(req.headers?.id), commentOn: new ObjectID(req.params?.post) })
+  await postModel.updateOne({ _id: new ObjectID(req.params?.post) }, { $inc: { commentCount: -1 } })
 
   return responseMsg(1, 200, "comment removed")
 }
@@ -108,14 +116,15 @@ exports.getCommentsForPost = async (req) => {
   let unwindStage = { $unwind: '$author' }
   let projectStage = {
     $project: {
-      _id: 0,
+      _id: 1,
       reaction: 1,
       authorId: '$author._id',
       authorProfileImg: '$author.profileImg',
       authorFirstName: '$author.firstName',
       authorLastName: '$author.lastName',
       createdAt:1,
-      edited:1
+      edited:1,
+      comment: 1,
     }
   }
 

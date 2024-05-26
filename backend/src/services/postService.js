@@ -175,24 +175,6 @@ exports.getLotOfPosts = async (req) => {
     }
   }
 
-  let countReaction = {
-    $lookup: {
-      from: 'reactions',
-      let: { postId: '$_id' },
-      pipeline: [
-        { $match: { $expr: { $eq: ['$reactedOn', '$$postId'] } } },
-        { $count: 'reactionCount' }
-      ],
-      as: 'reactions'
-    }
-  }
-
-  let addCountReactionField = {
-    $addFields: {
-      reactionCount: { $arrayElemAt: ['$reactions.reactionCount', 0] }
-    }
-  }
-
   let currentUserReaction = {
     $lookup: {
       from: 'reactions',
@@ -210,25 +192,6 @@ exports.getLotOfPosts = async (req) => {
       currentUserReaction: { $arrayElemAt: ['$currentUserReaction.reaction', 0] }
     }
   }
-
-  let countComment = {
-    $lookup: {
-      from: 'comments',
-      let: { commentOn: '$_id' },
-      pipeline: [
-        { $match: { $expr: { $eq: ['$commentOn', '$$commentOn'] } } },
-        { $count: 'commentCount' }
-      ],
-      as: 'comments'
-    }
-  }
-  
-  let addCountCommentField = {
-    $addFields: {
-      commentCount: { $arrayElemAt: ['$comments.commentCount', 0] }
-    }
-  }
-
 
 
   let sortStage = { $sort: { createdAt: -1 } }
@@ -260,16 +223,12 @@ exports.getLotOfPosts = async (req) => {
     authorDetailStage,
     unwindAuthorDetails,
     privacyModeFilter,
-    joinAttachments,
-    countReaction,
-    addCountReactionField,
     currentUserReaction,
     addCurrentUserReactionField,
-    countComment,
-    addCountCommentField,
     sortStage,
     skipStage,
     limitStage,
+    joinAttachments,
     projectStage
   ]);
 
