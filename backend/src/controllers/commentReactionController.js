@@ -5,46 +5,50 @@ const asyncHandler = require('../utils/asyncHandler')
 /*----------- reaction -------------*/
 
 // create reaction
-exports.reactionCreate = asyncHandler(async (req, res) => {
-  let result = await commentReactionService.createReaction(req)
+exports.reactionCreate = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.createReaction(req))
   res.status(200).json(result)
-})
+}
 
 // update reaction
-exports.reactionUpdate = asyncHandler(async (req, res) => {
-  let result = await commentReactionService.updateReaction(req)
+exports.reactionUpdate = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.updateReaction(req))
   res.status(200).json(result)
-})
+}
 
 // remove reaction
-exports.reactionRemove = asyncHandler(async (req, res) => {
-  let result = await commentReactionService.removeReaction(req)
+exports.reactionRemove = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.removeReaction(req))
   res.status(200).json(result)
-})
+}
 
+exports.reactionByPost = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.postReactions(req))
+  res.status(200).json(result)
+}
 
 /*----------- comment -------------*/
 
 // create comment
-exports.commentCreate = asyncHandler(async (req, res) => {
-  let result = await commentReactionService.createComment(req)
+exports.commentCreate = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.createComment(req))
   res.status(200).json(result)
-})
+}
 
 // update comment
-exports.commentUpdate = asyncHandler(async (req, res) => {
-  let result = await commentReactionService.updateComment(req)
+exports.commentUpdate = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.updateComment(req))
   res.status(200).json(result)
-})
+}
 
 // delete comment
-exports.commentDelete = asyncHandler(async (req, res) => {
-  let result = await commentReactionService.deleteComment(req)
+exports.commentDelete = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.deleteComment(req))
   res.status(200).json(result)
-})
+}
 
 // get all comment for a post
-exports.getCommentByPost = asyncHandler(async (req, res) => {
-  let result = await commentReactionService.getCommentsForPost(req)
+exports.getCommentByPost = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.getCommentsForPost(req))
   res.status(200).json(result)
-})
+}
