@@ -214,9 +214,9 @@ exports.getLotOfPosts = async (req) => {
   let countComment = {
     $lookup: {
       from: 'comments',
-      let: { postId: '$_id' },
+      let: { commentOn: '$_id' },
       pipeline: [
-        { $match: { $expr: { $eq: ['$postId', '$$postId'] } } },
+        { $match: { $expr: { $eq: ['$commentOn', '$$commentOn'] } } },
         { $count: 'commentCount' }
       ],
       as: 'comments'
