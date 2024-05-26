@@ -9,9 +9,13 @@ exports.issueToken = (data, duration) => {
 
 // verify a token
 exports.verifyToken = (token) => {
-  const verified = jwt.verify(token, process.env.secretKey)
-  if(verified) return verified
-  return null
+  const verified = jwt.verify(token, process.env.secretKey, 
+    (error, decoded) => {
+      if(error) return null
+      return decoded
+    }
+  )
+  return verified
 }
 
 // hash password
