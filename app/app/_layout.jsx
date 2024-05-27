@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react'
-import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
+import { useFonts } from 'expo-font'
+import { useEffect } from 'react';
+import authStore from '../constants/authStore';
 
 SplashScreen.preventAutoHideAsync()
 
 const RootLayout = () => {
+
+  const {token} = authStore()
 
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -28,11 +31,12 @@ const RootLayout = () => {
 
   if (!fontsLoaded && !error) return null
 
+
   return (
     <Stack>
       <Stack.Screen name='index' options={{ headerShown: false }} />
-      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
       <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
     </Stack>
   )
 }
