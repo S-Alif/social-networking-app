@@ -32,7 +32,7 @@ const FormTextInput = ({ regex, title, placeholder, value, validationMsg }) => {
           placeholder={placeholder}
           placeholderTextColor="#7b7b8b"
           onChangeText={setText}
-          onEndEditing={() => validate(text)}
+          onEndEditing={() => validate(text.trim())}
           secureTextEntry={(title == "Password" || title == "Confirm Password") && !showPass}
         />
 
