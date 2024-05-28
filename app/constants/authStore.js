@@ -2,10 +2,9 @@ import {create} from 'zustand'
 
 
 export default authStore = create((set) => ({
-  token: null,
+  profile: null,
 
-  // set the token
-  setToken: async (token) => {
-    set({token: token})
+  setProfile: async (profileData) => {
+    set({ profile: profileData })
   }
 }))
