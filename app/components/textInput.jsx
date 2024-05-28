@@ -1,18 +1,12 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { customAlert } from '../scripts/alerts';
 
-const FormTextInput = ({ regex, title, placeholder, value, validationMsg }) => {
+const FormTextInput = ({ regex, title, placeholder, value, validationMsg, clear }) => {
 
   const [showPass, setShowPass] = useState(false)
   const [text, setText] = useState("")
-
-  // handle text change
-  const handleChangeText = (input) => {
-    setText(input)
-    validate(input)
-  }
 
   // validate the texts
   const validate = (input) => {
@@ -21,6 +15,13 @@ const FormTextInput = ({ regex, title, placeholder, value, validationMsg }) => {
     if(!isValid) return customAlert("ERROR !!", validationMsg ? validationMsg : "something went wrong")
     value(input)
   }
+
+  // clear fields
+  useEffect(() => {
+    if(clear == true){
+      setText("")
+    }
+  }, [clear])
 
   return (
     <View className="mt-7">
