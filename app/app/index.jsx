@@ -21,11 +21,11 @@ const Index = () => {
         router.replace('/login')
         return
       }
-
+      
       let result = await dataFetcher(userUrl + '/profile')
-
       if (result != null) {
-        return setProfile(result?.data)
+        setProfile(result?.data)
+        return router.replace('/home')
       }
       setProfile(null)
     }, 2000)

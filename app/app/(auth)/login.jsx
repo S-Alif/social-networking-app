@@ -1,11 +1,10 @@
-import { View, Text, SafeAreaView } from 'react-native'
+import { View, Text } from 'react-native'
 import React, { useState } from 'react'
 import AuthTabScreen from './../../components/authTabScreen';
 import FormTextInput from '../../components/textInput';
 import CustomButton from '../../components/CustomButton';
 import { customAlert } from '../../scripts/alerts';
 import { Link } from 'expo-router';
-import api from '../../scripts/api';
 import { userUrl } from '../../scripts/endpoints';
 import * as SecureStore from 'expo-secure-store'
 import { dataSender } from '../../scripts/apiCaller';
@@ -15,6 +14,7 @@ const Login = () => {
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
   const [loading, setLoading] = useState(false)
+  const [clearField, setClearField] = useState(false)
 
   const handleLogin = async () => {
     if (email == "" || pass == "") return customAlert("ERROR !!", "All data is required")
@@ -23,6 +23,10 @@ const Login = () => {
     if(result != null) {
       await SecureStore.setItemAsync('token', result.token)
     }
+
+    setEmail("")
+    setPass("")
+    setClearField(true)
     setLoading(false)
   }
 
@@ -42,6 +46,7 @@ const Login = () => {
           validationMsg={"Enter a valid email"}
           value={setEmail}
           regex={/^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/}
+          clear={clearField}
         />
 
         <FormTextInput
@@ -50,6 +55,7 @@ const Login = () => {
           validationMsg={"password should be of eight characters"}
           value={setPass}
           regex={/^.{8,}$/}
+          clear={clearField}
         />
 
         {/* forgot password */}
