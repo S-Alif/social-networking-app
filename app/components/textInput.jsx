@@ -16,6 +16,7 @@ const FormTextInput = ({ regex, title, placeholder, value, validationMsg }) => {
 
   // validate the texts
   const validate = (input) => {
+    if (input == "") return
     const isValid = regex.test(input)
     if(!isValid) return customAlert("ERROR !!", validationMsg ? validationMsg : "something went wrong")
     value(input)
