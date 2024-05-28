@@ -57,8 +57,12 @@ exports.sendOtp = async (req) => {
   let user = await userModel.findOne({email: req.body.email}).select("lastName")
   await sendEmail(
     req.body.email,
-    otpMail(otpCode,user?.firstName,
-    `${req.body?.type == 1 ? "Please verify your account": "Thank you and welcome to our platform"}`)
+    otpMail(
+      otpCode,
+      user?.lastName,
+      `${req.body?.type == 1 ? "Please verify your account": "Thank you and welcome to our platform"}`
+    ),
+    "Account verification"
   )
   
   return responseMsg(1, 200, "Verification email sent")
