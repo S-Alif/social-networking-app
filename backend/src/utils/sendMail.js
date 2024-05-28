@@ -17,7 +17,7 @@ const sendEmail = async (mailto, mailText, mailSubject) => {
     })
 
     let mailOption = {
-      from: `EduSphere${process.env.mail}`,
+      from: `ConnectVibe${process.env.mail}`,
       to: mailto,
       subject: mailSubject,
       text: mailText
