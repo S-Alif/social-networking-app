@@ -4,12 +4,15 @@ import React from 'react'
 const CustomButton = ({title, handlePress, containerStyles, textStyles, isloading}) => {
   return (
     <TouchableOpacity 
-      className={`rounded-xl justify-center items-center ${containerStyles ? containerStyles : ""}${isloading ? "opacity-50" : ""}`}
+      className={`rounded-xl justify-center items-center ${containerStyles ? containerStyles : ""} ${isloading ? "opacity-70" : ""}`}
       onPress={handlePress}
       activeOpacity={0.7}
       disabled={isloading}
     >
-      <Text className={textStyles? textStyles : ""}>{title ? title : "CustomButton"} {isloading && <ActivityIndicator size="small" color="#ffff" />}</Text>
+      <View className="flex-1 justify-center items-center gap-2 flex-row">
+        <Text className={textStyles ? textStyles : ""}>{title ? title : "CustomButton"} </Text>
+        {isloading && <ActivityIndicator size="small" color="#ffff" />}
+      </View>
     </TouchableOpacity>
   )
 }
