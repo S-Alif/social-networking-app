@@ -20,6 +20,10 @@ export const dataFetcher = async (apiEndpoint) => {
 export const dataSender = async (apiEndpoint, data) => {
   try {
     let result = await api.post(apiEndpoint, data,{ headers: { token: await getToken() } })
+    
+    if(result?.status == 1){
+      customAlert("Success !!", result.data)
+    }
     return result
   } catch (error) {
     customAlert('ERROR!!', error.message)
