@@ -31,6 +31,12 @@ exports.lotOfPosts = async (req, res) => {
   res.status(200).json(result)
 }
 
+// get post by user
+exports.postByUser = async (req, res) => {
+  let result = await asyncHandler(() => postService.getPostByUser(req))
+  res.status(200).json(result)
+}
+
 // report a post
 exports.postReport = async (req, res) => {
   let result = await asyncHandler(() => postService.reportPost(req))

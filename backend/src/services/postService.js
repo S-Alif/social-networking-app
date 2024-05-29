@@ -235,6 +235,66 @@ exports.getLotOfPosts = async (req) => {
   return responseMsg(1, 200, posts);
 }
 
+// get post by user
+exports.getPostByUser = async (req) => {
+
+  let author = req.params?.user
+  if(!author) author = req.headers?.id
+
+  const page = parseInt(req.params?.page)
+  const limit = parseInt(req.params?.limit)
+  const skip = (page - 1) * limit
+
+  // stages of aggregation
+  let matchStage = { $match: { author: new ObjectID(author) } }
+  let sortStage = { $sort: { createdAt: -1 } }
+  let skipStage = { $skip: skip }
+  let limitStage = { $limit: limit }
+  let authorDetailStage = {
+    $lookup: {
+      from: 'users',
+      localField: 'author',
+      foreignField: '_id',
+      as: 'authorDetails'
+    }
+  }
+  let lookUpStage = {
+    $lookup: {
+      from: 'postattachments',
+      localField: '_id',
+      foreignField: 'postId',
+      as: 'attachments'
+    }
+  }
+  let unwindAuthorDetails = { $unwind: '$authorDetails' }
+
+  let projectStage = {
+    $project: {
+      _id: 1,
+      author: 1,
+      caption: 1,
+      reactionCount: { $ifNull: ['$reactionCount', 0] },
+      commentCount: { $ifNull: ['$commentCount', 0] },
+      postType: 1,
+      reports: 1,
+      createdAt: 1,
+      updatedAt: 1,
+      attachments: 1,
+      currentUserReaction: 1,
+      'authorDetails.firstName': 1,
+      'authorDetails.lastName': 1,
+      'authorDetails.profileImg': 1
+    }
+  }
+
+  let unwindStage = { $unwind: { path: '$attachments', preserveNullAndEmptyArrays: true } }
+
+  // get the data
+  let post = await postModel.aggregate([matchStage, sortStage, skipStage, limitStage, authorDetailStage, unwindAuthorDetails, lookUpStage, projectStage])
+
+  return responseMsg(1, 200, post)
+}
+
 // report a post
 exports.reportPost = async (req) => {
 
