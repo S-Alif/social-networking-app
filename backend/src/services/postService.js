@@ -295,6 +295,24 @@ exports.getPostByUser = async (req) => {
   return responseMsg(1, 200, post)
 }
 
+// get friend and post amounts
+exports.getFriendsAndPostAmount = async (req) => {
+  let user = req.params?.user
+  if (!user) user = req.headers?.id
+
+
+  let friends = await await friendshipModel.find({
+    $or: [
+      { user1: new ObjectID(user) },
+      { user2: new ObjectID(user) }
+    ]
+  }).count('total')
+
+  let posts = await postModel.find({ author: new ObjectID(user)}).count('total')
+
+  return responseMsg(1, 200, {friends, posts})
+}
+
 // report a post
 exports.reportPost = async (req) => {
 

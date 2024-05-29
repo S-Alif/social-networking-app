@@ -37,6 +37,12 @@ exports.postByUser = async (req, res) => {
   res.status(200).json(result)
 }
 
+// get user posts and friend count
+exports.userFriendAndPostAmount = async (req, res) => {
+  let result = await asyncHandler(() => postService.getFriendsAndPostAmount(req))
+  res.status(200).json(result)
+}
+
 // report a post
 exports.postReport = async (req, res) => {
   let result = await asyncHandler(() => postService.reportPost(req))

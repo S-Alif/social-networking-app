@@ -13,6 +13,7 @@ const fileChecker = require('../../middlewares/fileChecker')
 router.get("/posts/:page/:limit", postControl.lotOfPosts)
 router.get('/posts/:id', postControl.singlePost)
 router.get('/posts/user/:page/:limit', postControl.postByUser)
+router.get('/amounts/user', postControl.userFriendAndPostAmount)
 
 router.post('/create', fileUpload({ createParentPath: true }), fileChecker, postControl.postCreate)
 router.post('/update', postControl.postUpdate)
