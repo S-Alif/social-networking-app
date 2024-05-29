@@ -4,7 +4,7 @@ import AuthTabScreen from './../../components/authTabScreen';
 import FormTextInput from '../../components/textInput';
 import CustomButton from '../../components/CustomButton';
 import { customAlert } from '../../scripts/alerts';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { userUrl } from '../../scripts/endpoints';
 import * as SecureStore from 'expo-secure-store'
 import { dataSender } from '../../scripts/apiCaller';
@@ -22,6 +22,7 @@ const Login = () => {
     let result = await dataSender(userUrl + "/login", { email, pass })
     if(result != null) {
       await SecureStore.setItemAsync('token', result.token)
+      router.replace('/home')
     }
 
     setEmail("")

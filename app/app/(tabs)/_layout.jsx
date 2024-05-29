@@ -47,7 +47,7 @@ const TabsLayout = () => {
           headerShown: false,
           title: "Search",
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={<Feather name="search" size={24} color={color} />} color={color} focused={focused} name={"Home"} />
+            <TabIcon icon={<Feather name="search" size={24} color={color} />} color={color} focused={focused} name={"Search"} />
           )
         }}
       />
@@ -58,7 +58,7 @@ const TabsLayout = () => {
           headerShown: false,
           title: "Reels",
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={<Entypo name="video" size={24} color={color} />} color={color} focused={focused} name={"Home"} />
+            <TabIcon icon={<Entypo name="video" size={24} color={color} />} color={color} focused={focused} name={"Reels"} />
           )
         }}
       />
@@ -69,7 +69,7 @@ const TabsLayout = () => {
           headerShown: false,
           title: "Chats",
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={<Entypo name="chat" size={24} color={color} />} color={color} focused={focused} name={"Home"} />
+            <TabIcon icon={<Entypo name="chat" size={24} color={color} />} color={color} focused={focused} name={"Chats"} />
           )
         }}
       />
