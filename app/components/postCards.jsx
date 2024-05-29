@@ -1,9 +1,12 @@
-import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, Image, FlatList, Dimensions, ImageBackground } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import authStore from '../constants/authStore'
 import { formatDate } from '../scripts/dateFormatter'
 import { ResizeMode, Video } from 'expo-av'
 import { AntDesign } from '@expo/vector-icons';
+import { generateThumbnail } from '../scripts/getThumbnail'
+
+const screenWidth = Dimensions.get('window').width;
 
 // attachments
 const AttachmentHandler = ({attachment}) => {
@@ -12,17 +15,26 @@ const AttachmentHandler = ({attachment}) => {
 
   if (attachment.fileType == "image"){
     return (
-      <View className="aspect-video min-w-full rounded-md overflow-hidden">
+      <View className="min-h-full rounded-md overflow-hidden" style={{width: screenWidth - 40}} >
         <Image source={{ uri: attachment.fileLocation }} className="w-full h-full" />
       </View>
     )
   }
   else{
+
+    const [thumbnail, setThumbnail] = useState("")
+    useEffect(() => {
+      (async () => {
+        let result = await generateThumbnail(attachment.fileLocation)
+        setThumbnail(result)
+      })()
+    }, [])
+
     return(
-      <View className="aspect-video min-w-full rounded-md overflow-hidden">
+      <View className="min-h-full rounded-md overflow-hidden" style={{ width: screenWidth - 40 }}>
         {play ? (
           <Video source={{ uri: attachment.fileLocation }}
-            className="w-full h-full rouned-xl mt-3"
+            className="w-full h-full rouned-xl mt-3 object-center"
             resizeMode={ResizeMode.CONTAIN}
             useNativeControls
             shouldPlay
@@ -34,7 +46,8 @@ const AttachmentHandler = ({attachment}) => {
           />
         ) : (
           <TouchableOpacity className="w-full h-60 rounded-xl mt-3 relative justify-center items-center" activeOpacity={0.7} onPress={() => setPlay(true)}>
-              <AntDesign name="play" size={24} color="black" />
+              <ImageBackground source={{ uri: thumbnail }} className="w-52 h-72 rounded-[35px] my-5 overflow-hidden" resizeMode='cover' />
+              <View className="w-12 h-12 absolute"><AntDesign name="play" size={30} color="white" /></View>
           </TouchableOpacity>
         )}
       </View>
@@ -66,12 +79,12 @@ const PostCards = ({ post: { _id, author, caption, createdAt, authorDetails: { f
         </View>
       </View>
 
-      <Text className="text-2xl">{caption}</Text>
+      <Text className="text-2xl pt-2">{caption}</Text>
 
       {/* attachments */}
       {
         attachments.length > 0 &&
-        <View className="mt-3 w-full h-[250px] flex-1">
+        <View className="mt-3 h-[300px]">
           <FlatList
             horizontal={true}
             showsHorizontalScrollIndicator={true}
