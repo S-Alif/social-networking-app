@@ -43,6 +43,12 @@ exports.update = async (req, res) => {
   res.status(200).json(result)
 }
 
+// update user profile image
+exports.profileImgUpdate = async (req, res) => {
+  let result = await asyncHandler(() => userService.updateUserProfileImg(req))
+  res.status(200).json(result)
+}
+
 // delete
 exports.delete = async (req, res) => {
   let result = await asyncHandler(() => userService.deleteUser(req))

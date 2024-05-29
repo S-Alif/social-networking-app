@@ -7,6 +7,7 @@ const sendEmail = require('../utils/sendMail')
 const { otpMail } = require('../utils/mail-markup')
 
 const crypto = require("crypto")
+const { deleteFiles, attachmentUploader } = require('../utils/postAttachmentUploader')
 const ObjectID = require('mongoose').Types.ObjectId
 
 // register a user
@@ -37,11 +38,75 @@ exports.loginUser = async (req) => {
   return responseMsg(1, 200, { id: user?._id, email: user?.email, isAdmin: user?.isAdmin })
 }
 
-// update a user
+// update a user information
 exports.updateUser = async (req) => {
   if(req.headers?.id !== req.body._id) return responseMsg(0, 200, "user ID dont match")
   await userModel.updateOne({_id: new ObjectID(req.headers?.id)}, req.body)
   return responseMsg(1, 200, "Account updated")
+}
+
+// update user profile image
+exports.updateUserProfileImg = async (req) => {
+  let files = req.files
+  if(!files) return responseMsg(0, 200, "No image found")
+  let currentImg = await userModel.findOne({_id: new ObjectID(req.headers?.id)}).select('profileImg')
+
+  const parseUrl = new URL(currentImg?.profileImg)
+  if (parseUrl.hostname === 'res.cloudinary.com'){
+    await deleteFiles([currentImg?.profileImg])
+  }
+
+  let urlArray = []
+
+  try {
+    const promises = Object.keys(req.files).flatMap(key => {
+      const fileArray = Array.isArray(req.files[key]) ? req.files[key] : [req.files[key]]
+      return fileArray.map(file => attachmentUploader(file))
+    })
+
+    urlArray = await Promise.all(promises);
+    if (urlArray.includes(null)) {
+      await deleteFiles(urlArray.filter(url => url !== null))
+      return responseMsg(0, 200, "Could not upload profile image")
+    }
+  } catch (error) {
+    return responseMsg(0, 200, "An error occurred while uploading profile image")
+  }
+
+  await userModel.updateOne({_id: req.headers?.id}, {profileImg: urlArray[0]})
+  return responseMsg(1, 200, "profile image uploaded")
+}
+
+// update user profile image
+exports.updateUserProfileImg = async (req) => {
+  let files = req.files
+  if(!files) return responseMsg(0, 200, "No image found")
+  let currentImg = await userModel.findOne({_id: new ObjectID(req.headers?.id)}).select('profileCover')
+
+  const parseUrl = new URL(currentImg?.profileCover)
+  if (parseUrl.hostname === 'res.cloudinary.com'){
+    await deleteFiles([currentImg?.profileCover])
+  }
+
+  let urlArray = []
+
+  try {
+    const promises = Object.keys(req.files).flatMap(key => {
+      const fileArray = Array.isArray(req.files[key]) ? req.files[key] : [req.files[key]]
+      return fileArray.map(file => attachmentUploader(file))
+    })
+
+    urlArray = await Promise.all(promises);
+    if (urlArray.includes(null)) {
+      await deleteFiles(urlArray.filter(url => url !== null))
+      return responseMsg(0, 200, "Could not upload profile cover")
+    }
+  } catch (error) {
+    return responseMsg(0, 200, "An error occurred while uploading profile cover")
+  }
+
+  await userModel.updateOne({ _id: req.headers?.id }, { profileCover: urlArray[0]})
+  return responseMsg(1, 200, "profile cover uploaded")
 }
 
 // delete a user
