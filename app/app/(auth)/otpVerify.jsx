@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Link, router, useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import AuthTabScreen from '../../components/authTabScreen'
 import FormTextInput from '../../components/textInput'
 import CustomButton from '../../components/CustomButton'

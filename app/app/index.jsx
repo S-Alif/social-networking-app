@@ -6,7 +6,6 @@ import { router } from 'expo-router'
 import AuthTabScreen from '../components/authTabScreen'
 import { userUrl } from '../scripts/endpoints'
 import authStore from '../constants/authStore'
-import api from '../scripts/api'
 import { dataFetcher } from '../scripts/apiCaller'
 
 const Index = () => {
