@@ -62,7 +62,7 @@ const ReactionButton = ({ postId, reaction }) => {
           {selectedReaction ?
             <Text className="text-3xl">{selectedReaction}</Text> :
             <>
-              <SimpleLineIcons name="like" size={22} color="black" />
+              <SimpleLineIcons name="like" size={20} color="black" />
               <Text className="text-lg pl-1"> like</Text>
             </>
           }

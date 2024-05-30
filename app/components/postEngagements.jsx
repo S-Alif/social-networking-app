@@ -5,10 +5,10 @@ import { EvilIcons } from '@expo/vector-icons';
 
 const PostEngagements = ({postId, reaction}) => {
   return (
-    <View className="flex-1 flex-row h-[60px] justify-around items-center mb-2 bg-lightGrayColor2 border border-gray-300 p-3 rounded-bl-lg rounded-br-lg">
+    <View className="flex-1 flex-row h-[55px] justify-around items-center mb-2 bg-lightGrayColor2 border border-gray-300 p-3 rounded-bl-lg rounded-br-lg">
       
       {/* reactions */}
-      <View className="flex-1">
+      <View className="flex-1 border-r">
         <ReactionButton postId={postId} reaction={reaction} />
       </View>
 
