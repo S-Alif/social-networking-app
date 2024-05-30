@@ -15,7 +15,7 @@ router.get("/react/:post", commentReactionController.reactionByPost)
 router.post('/comment', commentReactionController.commentCreate)
 router.post('/comment/update', commentReactionController.commentUpdate)
 router.post('/comment/delete/:post/:id', commentReactionController.commentDelete)
-router.get('/comment/:post', commentReactionController.getCommentByPost)
+router.get('/comment/:post/:page/:limit', commentReactionController.getCommentByPost)
 
 
 module.exports = router

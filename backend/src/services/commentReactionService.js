@@ -18,7 +18,7 @@ exports.createReaction = async (req) => {
 
   await postModel.updateOne({ _id: new ObjectID(req.body?.reactedOn) }, { $inc: { reactionCount: +1 } })
 
-  return responseMsg(1, 200, "Reaction submitted")
+  return responseMsg(1, 200, react)
 }
 
 // update reaction
@@ -28,7 +28,7 @@ exports.updateReaction = async (req) => {
   react.reaction = req.body?.reaction
   await react.save()
 
-  return responseMsg(1, 200, "Reaction updated")
+  return responseMsg(1, 200, react)
 }
 
 // remove reaction
@@ -81,13 +81,13 @@ exports.postReactions = async (req) => {
 exports.createComment = async (req) => {
   req.body.author = req.headers?.id
   let comment = await commentModel.create(req.body)
-  await postModel.updateOne({ _id: new ObjectID(req.body?.commentOn)}, {$inc: {commentCount: +1}})
+  await postModel.updateOne({ _id: new ObjectID(req.body?.commentOn) }, { $inc: { commentCount: +1 } })
   return responseMsg(1, 200, "comment submitted")
 }
 
 // update comment
 exports.updateComment = async (req) => {
-  let comment = await commentModel.updateOne({ _id: new ObjectID(req.body?.id),author: new ObjectID(req.headers?.id), commentOn: new ObjectID(req.body?.commentOn) }, {comment: req.body?.comment, edited: 1})
+  let comment = await commentModel.updateOne({ _id: new ObjectID(req.body?.id), author: new ObjectID(req.headers?.id), commentOn: new ObjectID(req.body?.commentOn) }, { comment: req.body?.comment, edited: 1 })
 
   return responseMsg(1, 200, "comment updated")
 }
@@ -103,7 +103,14 @@ exports.deleteComment = async (req) => {
 // get all comment for a post
 exports.getCommentsForPost = async (req) => {
 
+  const page = parseInt(req.params?.page)
+  const limit = parseInt(req.params?.limit)
+  const skip = (page - 1) * limit
+
   let matchStage = { $match: { commentOn: new ObjectID(req.params?.post) } }
+  let sortStage = { $sort: { createdAt: -1 } }
+  let skipStage = { $skip: skip }
+  let limitStage = { $limit: limit }
   let lookUpStage = {
     $lookup: {
       from: 'users',
@@ -122,14 +129,17 @@ exports.getCommentsForPost = async (req) => {
       authorProfileImg: '$author.profileImg',
       authorFirstName: '$author.firstName',
       authorLastName: '$author.lastName',
-      createdAt:1,
-      edited:1,
+      createdAt: 1,
+      edited: 1,
       comment: 1,
     }
   }
 
   let comment = await commentModel.aggregate([
     matchStage,
+    sortStage,
+    skipStage,
+    limitStage,
     lookUpStage,
     unwindStage,
     projectStage
