@@ -5,6 +5,7 @@ import { formatDate } from '../scripts/dateFormatter'
 import { ResizeMode, Video } from 'expo-av'
 import { AntDesign } from '@expo/vector-icons';
 import { generateThumbnail } from '../scripts/getThumbnail'
+import PostEngagements from './postEngagements'
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -58,45 +59,50 @@ const AttachmentHandler = ({attachment}) => {
 
 
 // cards
-const PostCards = ({ post: { _id, author, caption, createdAt, authorDetails: { firstName, lastName, profileImg }, attachments }}) => {
+const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReaction, authorDetails: { firstName, lastName, profileImg }, attachments }}) => {
 
   const {pofile} = authStore()
 
   return (
-    <View className="border border-gray-300 rounded-lg my-2 bg-lightGrayColor2 p-3">
+    <>
+      <View className="border border-gray-300 rounded-tl-lg rounded-tr-lg  mt-2 bg-lightGrayColor2 p-3">
 
-      {/* author details, post date and options */}
-      <View className="h-[60px] w-full flex-1 flex-row">
-        <View className="flex-1 h-full flex-row gap-3 items-center">
-          <TouchableOpacity>
-            <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
-          </TouchableOpacity>
-          
-          <View>
-            <Text className="text-xl font-pbold">{firstName} {lastName}</Text>
-            <Text className="text-[12px] font-pbold text-gray-300">{formatDate(createdAt)}</Text>
+        {/* author details, post date and options */}
+        <View className="h-[60px] w-full flex-1 flex-row">
+          <View className="flex-1 h-full flex-row gap-3 items-center">
+            <TouchableOpacity>
+              <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
+            </TouchableOpacity>
+
+            <View>
+              <Text className="text-xl font-pbold">{firstName} {lastName}</Text>
+              <Text className="text-[12px] font-pbold text-gray-300">{formatDate(createdAt)}</Text>
+            </View>
           </View>
         </View>
+
+        <Text className="text-2xl pt-2">{caption}</Text>
+
+        {/* attachments */}
+        {
+          attachments.length > 0 &&
+          <View className="mt-3 h-[300px]">
+            <FlatList
+              horizontal={true}
+              showsHorizontalScrollIndicator={true}
+              data={attachments}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+                <AttachmentHandler attachment={item} />
+              )}
+            />
+          </View>
+        }
       </View>
 
-      <Text className="text-2xl pt-2">{caption}</Text>
+      <PostEngagements postId={_id} reaction={currentUserReaction ? currentUserReaction : null} />
 
-      {/* attachments */}
-      {
-        attachments.length > 0 &&
-        <View className="mt-3 h-[300px]">
-          <FlatList
-            horizontal={true}
-            showsHorizontalScrollIndicator={true}
-            data={attachments}
-            keyExtractor={(item) => item._id}
-            renderItem={({item}) => (
-              <AttachmentHandler attachment={item} />
-            )}
-          />
-        </View>
-      }
-    </View>
+    </>
   )
 }
 

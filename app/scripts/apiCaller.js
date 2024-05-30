@@ -30,3 +30,13 @@ export const dataSender = async (apiEndpoint, data) => {
     return null
   }
 }
+
+export const reactionSender = async (apiEndpoint, data) => {
+  try {
+    let result = await api.post(apiEndpoint, data, { headers: { token: await getToken() } })
+    return result
+  } catch (error) {
+    customAlert('ERROR!!', error.message)
+    return null
+  }
+}
