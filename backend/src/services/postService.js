@@ -97,6 +97,8 @@ exports.deletePost = async (req) => {
 // get a single post
 exports.getSinglePost = async (req) => {
 
+  const currentUser = new ObjectID(req.headers?.id)
+
   // stages of aggregation
   let matchStage = { $match: { _id: new ObjectID(req.params?.id) } }
   let lookUpStage = {
@@ -107,10 +109,55 @@ exports.getSinglePost = async (req) => {
       as: 'attachments'
     }
   }
+  let authorDetailStage = {
+    $lookup: {
+      from: 'users',
+      localField: 'author',
+      foreignField: '_id',
+      as: 'authorDetails'
+    }
+  }
+
+  let unwindAuthorDetails = { $unwind: '$authorDetails' }
+  let currentUserReaction = {
+    $lookup: {
+      from: 'reactions',
+      let: { postId: '$_id', userId: currentUser },
+      pipeline: [
+        { $match: { $expr: { $and: [{ $eq: ['$reactedOn', '$$postId'] }, { $eq: ['$author', '$$userId'] }] } } },
+        { $project: { _id: 0, reaction: 1 } }
+      ],
+      as: 'currentUserReaction'
+    }
+  }
+
+  let addCurrentUserReactionField = {
+    $addFields: {
+      currentUserReaction: { $arrayElemAt: ['$currentUserReaction.reaction', 0] }
+    }
+  }
   let unwindStage = { $unwind: { path: '$attachments', preserveNullAndEmptyArrays: true } }
+  let projectStage = {
+    $project: {
+      _id: 1,
+      author: 1,
+      caption: 1,
+      reactionCount: { $ifNull: ['$reactionCount', 0] },
+      commentCount: { $ifNull: ['$commentCount', 0] },
+      postType: 1,
+      reports: 1,
+      createdAt: 1,
+      updatedAt: 1,
+      attachments: 1,
+      currentUserReaction: 1,
+      'authorDetails.firstName': 1,
+      'authorDetails.lastName': 1,
+      'authorDetails.profileImg': 1
+    }
+  }
 
   // get the data
-  let post = await postModel.aggregate([ matchStage, lookUpStage ])
+  let post = await postModel.aggregate([matchStage, lookUpStage, authorDetailStage, unwindAuthorDetails, currentUserReaction, addCurrentUserReactionField, projectStage ])
 
   return responseMsg(1, 200, post[0])
 }
@@ -267,6 +314,23 @@ exports.getPostByUser = async (req) => {
     }
   }
   let unwindAuthorDetails = { $unwind: '$authorDetails' }
+  let currentUserReaction = {
+    $lookup: {
+      from: 'reactions',
+      let: { postId: '$_id', userId: new ObjectID(author) },
+      pipeline: [
+        { $match: { $expr: { $and: [{ $eq: ['$reactedOn', '$$postId'] }, { $eq: ['$author', '$$userId'] }] } } },
+        { $project: { _id: 0, reaction: 1 } }
+      ],
+      as: 'currentUserReaction'
+    }
+  }
+
+  let addCurrentUserReactionField = {
+    $addFields: {
+      currentUserReaction: { $arrayElemAt: ['$currentUserReaction.reaction', 0] }
+    }
+  }
 
   let projectStage = {
     $project: {
@@ -290,7 +354,7 @@ exports.getPostByUser = async (req) => {
   let unwindStage = { $unwind: { path: '$attachments', preserveNullAndEmptyArrays: true } }
 
   // get the data
-  let post = await postModel.aggregate([matchStage, sortStage, skipStage, limitStage, authorDetailStage, unwindAuthorDetails, lookUpStage, projectStage])
+  let post = await postModel.aggregate([matchStage, sortStage, skipStage, limitStage, authorDetailStage, unwindAuthorDetails, lookUpStage, currentUserReaction, addCurrentUserReactionField, projectStage])
 
   return responseMsg(1, 200, post)
 }
