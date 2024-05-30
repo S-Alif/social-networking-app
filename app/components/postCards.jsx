@@ -22,7 +22,7 @@ const AttachmentHandler = ({attachment}) => {
   }
   else{
 
-    const [thumbnail, setThumbnail] = useState("")
+    const [thumbnail, setThumbnail] = useState("https://fakeimg.pl/600x400?text=+")
     useEffect(() => {
       (async () => {
         let result = await generateThumbnail(attachment.fileLocation)
