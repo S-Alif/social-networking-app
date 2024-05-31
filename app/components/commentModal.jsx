@@ -1,26 +1,34 @@
 // CommentModal.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Modal, FlatList } from 'react-native';
 import FormTextInput from './textInput';
 import CustomButton from './CustomButton';
 import { FontAwesome } from '@expo/vector-icons';
 import { reactionFetcher, reactionSender } from './../scripts/apiCaller';
 import { commentUrl } from '../scripts/endpoints';
+import CommentCard from './commentCard';
+import authStore from '../constants/authStore';
 
 const CommentModal = ({ visible, onClose, postId }) => {
+
+  const {profile} = authStore()
+
   const [newComment, setNewComment] = useState('');
   const [clearField, setClearField] = useState(false);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1)
   const [comments, setComments] = useState([])
+  const [refresh, setRefresh] = useState(false)
 
   // fetch comments
   useEffect(() => {
     if(visible){
       (async () => {
+        setRefresh(true)
         let comment = await reactionFetcher(`${commentUrl}/${postId}/${page}/20`)
         if(comment?.status == 0 || comment == null) return
         setComments(prev => [...prev, ...comment?.data])
+        setRefresh(false)
       })()
     }
   }, [page, visible])
@@ -56,7 +64,22 @@ const CommentModal = ({ visible, onClose, postId }) => {
             <View className="flex-1 absolute w-full h-[80%]">
               <Text className="text-center text-xl font-pmedium py-3 border-b border-b-gray-300">comments</Text>
 
-
+              {/* comment list */}
+              <View className="flex-1">
+                <FlatList 
+                  data={comments}
+                  keyExtractor={(item) => item?._id}
+                  renderItem={({item}) => (
+                    <CommentCard postId={postId} comment={item} />
+                  )}
+                  ListEmptyComponent={() => (
+                    <View className="flex-1 items-center">
+                      <Text className="pt-10 font-psemibold text-2xl text-gray-400">Be the first one to comment</Text>
+                    </View>
+                  )}
+                  refreshing={refresh}
+                />
+              </View>
             </View>
 
             {/* show comment forms */}
