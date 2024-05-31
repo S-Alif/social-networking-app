@@ -1,6 +1,6 @@
 // CommentModal.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, Modal, FlatList } from 'react-native';
+import { View, Text, Modal, FlatList, ActivityIndicator } from 'react-native';
 import FormTextInput from './textInput';
 import CustomButton from './CustomButton';
 import { FontAwesome } from '@expo/vector-icons';
@@ -8,25 +8,28 @@ import { reactionFetcher, reactionSender } from './../scripts/apiCaller';
 import { commentUrl } from '../scripts/endpoints';
 import CommentCard from './commentCard';
 import authStore from '../constants/authStore';
+import { customAlert } from '../scripts/alerts';
 
 const CommentModal = ({ visible, onClose, postId }) => {
 
-  const {profile} = authStore()
+  const { profile } = authStore()
 
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState({
+    commentOn: postId,
+    comment: ""
+  });
   const [clearField, setClearField] = useState(false);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1)
   const [comments, setComments] = useState([])
-  const [refresh, setRefresh] = useState(false)
+  const [refresh, setRefresh] = useState(true)
 
   // fetch comments
   useEffect(() => {
-    if(visible){
+    if (visible) {
       (async () => {
-        setRefresh(true)
         let comment = await reactionFetcher(`${commentUrl}/${postId}/${page}/20`)
-        if(comment?.status == 0 || comment == null) return
+        if (comment?.status == 0 || comment == null) return
         setComments(prev => [...prev, ...comment?.data])
         setRefresh(false)
       })()
@@ -35,19 +38,17 @@ const CommentModal = ({ visible, onClose, postId }) => {
 
   // remove comments when not visisble
   useEffect(() => {
-    if(!visible){
+    if (!visible) {
       setComments([])
     }
   }, [visible])
 
-  console.log(comments)
-
-  const handlePostComment = () => {
-    if (newComment.trim()) {
-      postComment(newComment);
-      setNewComment('');
-    }
-  };
+  // post the comment
+  const handlePostComment = async () => {
+    let comment = await reactionSender(commentUrl, newComment)
+    if (comment?.status == 0 || comment == null) return customAlert('ERROR !!', "Could not post your comment")
+    setComments(prev => [...prev, ...[comment?.data]])
+  }
 
   return (
     <Modal
@@ -66,14 +67,19 @@ const CommentModal = ({ visible, onClose, postId }) => {
 
               {/* comment list */}
               <View className="flex-1">
-                <FlatList 
+                <FlatList
                   data={comments}
                   keyExtractor={(item) => item?._id}
-                  renderItem={({item}) => (
+                  renderItem={({ item }) => (
                     <CommentCard postId={postId} comment={item} />
                   )}
                   ListEmptyComponent={() => (
                     <View className="flex-1 items-center">
+                      {refresh &&
+                        <View className="flex-1 justify-center items-center w-full h-[60px]">
+                          <ActivityIndicator size={"large"} color={"black"} />
+                        </View>
+                      }
                       <Text className="pt-10 font-psemibold text-2xl text-gray-400">Be the first one to comment</Text>
                     </View>
                   )}
@@ -90,8 +96,7 @@ const CommentModal = ({ visible, onClose, postId }) => {
                   containerStyle={"py-0"}
                   placeholder={"Write a comment"}
                   validationMsg={"comment should be at least 2 characters"}
-                  value={newComment}
-                  onChangeText={setNewComment}
+                  value={(e) => setNewComment({ ...newComment, comment: e })}
                   regex={/^.{2,}$/}
                   clear={clearField}
                 />
