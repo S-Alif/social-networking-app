@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { customAlert } from '../scripts/alerts';
 
-const FormTextInput = ({ regex, title, placeholder, value, validationMsg, clear }) => {
+const FormTextInput = ({ regex, title, placeholder, value, validationMsg, clear, containerStyle }) => {
 
   const [showPass, setShowPass] = useState(false)
   const [text, setText] = useState("")
@@ -24,8 +24,8 @@ const FormTextInput = ({ regex, title, placeholder, value, validationMsg, clear 
   }, [clear])
 
   return (
-    <View className="mt-7">
-      <Text className="text-[18px] font-pmedium">{title}</Text>
+    <View className={containerStyle ? containerStyle : "mt-7"}>
+      <Text className="text-[18px] font-pmedium">{title && title}</Text>
       <View className="w-full h-14 border-b-2 border-b-grayColor items-center flex-row focus:border-b-purpleColor">
         <TextInput
           className="flex-1 text-left font-psemibold text-xl"

@@ -40,3 +40,13 @@ export const reactionSender = async (apiEndpoint, data) => {
     return null
   }
 }
+
+export const reactionFetcher = async (apiEndpoint) => {
+  try {
+    let result = await api.get(apiEndpoint, { headers: { token: await getToken() } })
+    return result
+  } catch (error) {
+    customAlert('ERROR!!', error.message)
+    return null
+  }
+}
