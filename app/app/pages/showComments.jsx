@@ -83,7 +83,7 @@ const ShowComments = () => {
         <ScrollView key={loading} contentContainerStyle={{ paddingBottom: 12 }}>
           {
             comments.map((e, index) => (
-              <CommentCard postId={params?.postId} comment={e} key={index} deleted={handleDeletedComment} />
+              <CommentCard postId={params?.postId} postAuthor={params?.author}  comment={e} key={index} deleted={handleDeletedComment} />
             ))
           }
         </ScrollView>

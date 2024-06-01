@@ -7,7 +7,7 @@ import { dataSender } from '../scripts/apiCaller';
 import { commentUrl } from '../scripts/endpoints';
 import { router } from 'expo-router';
 
-const CommentCard = ({ postId, comment: { _id, authorFirstName, authorId, authorLastName, authorProfileImg, comment, createdAt, edited }, deleted}) => {
+const CommentCard = ({ postId, postAuthor, comment: { _id, authorFirstName, authorId, authorLastName, authorProfileImg, comment, createdAt, edited }, deleted}) => {
 
   const {profile} = authStore()
   const [modal, setModal] = useState(false);
@@ -30,9 +30,16 @@ const CommentCard = ({ postId, comment: { _id, authorFirstName, authorId, author
             <Image source={{ uri: authorProfileImg }} className="w-[50px] h-[50px] rounded-full" />
           </TouchableOpacity>
 
-          <View>
-            <Text className="text-xl font-pbold">{authorFirstName} {authorLastName}</Text>
-            <Text className="text-[12px] font-pbold text-gray-300">{formatDate(createdAt)}</Text>
+          <View className="flex-1 flex-row">
+            <View className="">
+              <Text className="text-xl font-pbold">{authorFirstName} {authorLastName}</Text>
+              <Text className="text-[12px] font-pbold text-gray-300">{formatDate(createdAt)}</Text>
+            </View>
+
+            <View className="flex-row ml-4 h-1/2">
+              {(postAuthor == authorId) && <Text className="px-2 py-1 bg-purpleColor text-white text-sm font-psemibold rounded-lg">Author</Text>}
+              {edited && <Text className="ml-2 px-2 py-1 bg-lightGrayColor text-sm font-psemibold rounded-lg">Edited</Text>}
+            </View>
           </View>
         </View>
 

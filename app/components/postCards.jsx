@@ -100,7 +100,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         }
       </View>
 
-      <PostEngagements postId={_id} reaction={currentUserReaction ? currentUserReaction : null} />
+      <PostEngagements postId={{_id, author}} reaction={currentUserReaction ? currentUserReaction : null} />
 
     </>
   )

@@ -12,13 +12,13 @@ const PostEngagements = ({postId, reaction}) => {
       
       {/* reactions */}
       <View className="flex-1 border-r">
-        <ReactionButton postId={postId} reaction={reaction} />
+        <ReactionButton postId={postId?._id} reaction={reaction} />
       </View>
 
       <View className="flex-1">
         <TouchableOpacity
           className="flex-1 justify-center items-center flex-row"
-          onPress={() => router.push({pathname: "pages/showComments", params:{postId: postId}})}
+          onPress={() => router.push({pathname: "pages/showComments", params:{postId: postId?._id, author: postId?.author}})}
         >
           <EvilIcons name="comment" size={29} color="black" />
           <Text className="text-lg"> comment</Text>
