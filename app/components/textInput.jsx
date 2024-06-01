@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { customAlert } from '../scripts/alerts';
 
-const FormTextInput = ({ regex, title, placeholder, value, validationMsg, clear, containerStyle }) => {
+const FormTextInput = ({ regex, initialValue, title, placeholder, value, validationMsg, clear, containerStyle }) => {
 
   const [showPass, setShowPass] = useState(false)
-  const [text, setText] = useState("")
+  const [text, setText] = useState(initialValue ? initialValue : "")
 
   // validate the texts
   const validate = (input) => {

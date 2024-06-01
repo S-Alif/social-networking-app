@@ -1,20 +1,11 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React from 'react'
 import ReactionButton from './reactionButton'
 import { EvilIcons } from '@expo/vector-icons';
-import CommentModal from './commentModal';
+import { router } from 'expo-router';
+
 
 const PostEngagements = ({postId, reaction}) => {
-
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const handleShowModal = () => {
-    setModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalVisible(false);
-  };
 
   return (
     <View className="flex-1 flex-row h-[55px] justify-around items-center mb-2 bg-lightGrayColor2 border border-gray-300 p-3 rounded-bl-lg rounded-br-lg">
@@ -25,17 +16,14 @@ const PostEngagements = ({postId, reaction}) => {
       </View>
 
       <View className="flex-1">
-        <TouchableOpacity className="flex-1 justify-center items-center flex-row" onPress={handleShowModal}>
+        <TouchableOpacity
+          className="flex-1 justify-center items-center flex-row"
+          onPress={() => router.push({pathname: "pages/showComments", params:{postId: postId}})}
+        >
           <EvilIcons name="comment" size={29} color="black" />
           <Text className="text-lg"> comment</Text>
         </TouchableOpacity>
       </View>
-
-      <CommentModal
-        visible={modalVisible}
-        onClose={handleCloseModal}
-        postId={postId}
-      />
 
     </View>
   )

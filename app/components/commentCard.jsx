@@ -5,6 +5,7 @@ import authStore from '../constants/authStore'
 import { Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { dataSender } from '../scripts/apiCaller';
 import { commentUrl } from '../scripts/endpoints';
+import { router } from 'expo-router';
 
 const CommentCard = ({ postId, comment: { _id, authorFirstName, authorId, authorLastName, authorProfileImg, comment, createdAt, edited }, deleted}) => {
 
@@ -20,7 +21,7 @@ const CommentCard = ({ postId, comment: { _id, authorFirstName, authorId, author
   }
 
   return (
-    <View className="bg-lightGrayColor2 mx-2 mt-2 p-3 rounded-lg border border-gray-300 min-h-[80px]">
+    <View className="bg-lightGrayColor2 mx-2 mt-2 p-3 rounded-lg border border-gray-300 flex-grow" style={{height: 'auto'}}>
 
       {/* author details, post date and options */}
       <View className="h-[60px] w-full flex-1 flex-row items-center">
@@ -55,7 +56,14 @@ const CommentCard = ({ postId, comment: { _id, authorFirstName, authorId, author
         <View className="flex-1 justify-center items-center bg-[#1a1b1c1e] px-4">
           <View className="bg-lightGrayColor2 w-full rounded-lg border border-gray-400" style={{shadowColor: "#000", elevation: 5, shadowOpacity: 0.3}}>
 
-            <TouchableOpacity className="flex-row justify-center items-center py-3 border-b border-b-gray-400">
+            {/* update comment */}
+            <TouchableOpacity 
+              className="flex-row justify-center items-center py-3 border-b border-b-gray-400"
+              onPress={() => {
+                setModal(false)
+                router.push({ pathname: 'pages/updateComment', params: {_id: _id, commentOn: postId, comment: comment}})
+              }}
+            >
               <FontAwesome name="cog" size={26} color="black" />
               <Text className="text-xl font-pmedium pl-2">Update comment</Text>
             </TouchableOpacity>
