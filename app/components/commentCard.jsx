@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, Modal } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Modal, TouchableWithoutFeedback } from 'react-native'
 import React, { useState } from 'react'
 import { formatDate } from '../scripts/dateFormatter'
 import authStore from '../constants/authStore'
@@ -53,29 +53,31 @@ const CommentCard = ({ postId, comment: { _id, authorFirstName, authorId, author
         onRequestClose={() => setModal(false)}
         transparent={true}
       >
-        <View className="flex-1 justify-center items-center bg-[#1a1b1c1e] px-4">
-          <View className="bg-lightGrayColor2 w-full rounded-lg border border-gray-400" style={{shadowColor: "#000", elevation: 5, shadowOpacity: 0.3}}>
+        <TouchableWithoutFeedback onPress={() => setModal(false)}>
+          <View className="flex-1 justify-center items-center bg-[#1a1b1c1e] px-4">
+            <View className="bg-lightGrayColor2 w-full rounded-lg border border-gray-400" style={{ shadowColor: "#000", elevation: 5, shadowOpacity: 0.3 }}>
 
-            {/* update comment */}
-            <TouchableOpacity 
-              className="flex-row justify-center items-center py-3 border-b border-b-gray-400"
-              onPress={() => {
-                setModal(false)
-                router.push({ pathname: 'pages/updateComment', params: {_id: _id, commentOn: postId, comment: comment}})
-              }}
-            >
-              <FontAwesome name="cog" size={26} color="black" />
-              <Text className="text-xl font-pmedium pl-2">Update comment</Text>
-            </TouchableOpacity>
+              {/* update comment */}
+              <TouchableOpacity
+                className="flex-row justify-center items-center py-3 border-b border-b-gray-400"
+                onPress={() => {
+                  setModal(false)
+                  router.push({ pathname: 'pages/updateComment', params: { _id: _id, commentOn: postId, comment: comment } })
+                }}
+              >
+                <FontAwesome name="cog" size={26} color="black" />
+                <Text className="text-xl font-pmedium pl-2">Update comment</Text>
+              </TouchableOpacity>
 
-            {/* delete comment */}
-            <TouchableOpacity className="flex-row justify-center items-center py-3" onPress={deleteComment}>
-              <MaterialIcons name="delete-forever" size={26} color="black" />
-              <Text className="text-xl font-pmedium pl-2">Delete comment</Text>
-            </TouchableOpacity>
+              {/* delete comment */}
+              <TouchableOpacity className="flex-row justify-center items-center py-3" onPress={deleteComment}>
+                <MaterialIcons name="delete-forever" size={26} color="black" />
+                <Text className="text-xl font-pmedium pl-2">Delete comment</Text>
+              </TouchableOpacity>
 
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
 
 
