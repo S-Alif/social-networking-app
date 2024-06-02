@@ -5,9 +5,20 @@ import { Alert } from 'react-native';
 import * as SecureStore from 'expo-secure-store'
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.103:10010', 
+  baseURL: 'http://192.168.0.103:10010',
   timeout: 10000,
 })
+
+// Add a request interceptor
+api.interceptors.request.use(
+  config => {
+    console.log(`Request: ${config.method} ${config.url}`);
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 
 // Add a response interceptor
 api.interceptors.response.use(
@@ -20,7 +31,7 @@ api.interceptors.response.use(
   },
   error => {
     if (error.response && error.response.status === 401) {
-      
+
       Alert.alert('Session Expired', 'Your session has expired. Please log in again.', [
         {
           text: 'OK',

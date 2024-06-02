@@ -83,11 +83,14 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         </View>
 
         {/* <Text className="text-2xl pt-2">{caption}</Text> */}
-        <RenderHTML
-          contentWidth={Dimensions.get('window').width}
-          source={{ html: `<div>${caption}</div>` }}
-          tagsStyles={htmlStyles}
-        />
+        {
+          caption &&
+          <RenderHTML
+            contentWidth={Dimensions.get('window').width}
+            source={{ html: `<div>${caption}</div>` }}
+            tagsStyles={htmlStyles}
+          />
+        }
 
         {/* attachments */}
         {
