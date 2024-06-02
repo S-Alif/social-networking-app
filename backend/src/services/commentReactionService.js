@@ -82,7 +82,7 @@ exports.createComment = async (req) => {
   req.body.author = req.headers?.id
   let comment = await commentModel.create(req.body)
   await postModel.updateOne({ _id: new ObjectID(req.body?.commentOn) }, { $inc: { commentCount: +1 } })
-  return responseMsg(1, 200, "comment submitted")
+  return responseMsg(1, 200, comment)
 }
 
 // update comment

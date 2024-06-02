@@ -40,7 +40,7 @@ exports.createPost = async (req) => {
   try {
     createPost = await postModel.create({ author: req.headers.id, caption: req.body?.caption || "", postType: req.body?.postType })
     if (!createPost) throw new Error("Post creation failed")
-    
+
   } catch (error) {
     await deleteFiles(urlArray)
     return responseMsg(0, 200, "Could not post")
@@ -70,20 +70,20 @@ exports.createPost = async (req) => {
 
 // update post
 exports.updatePost = async (req) => {
-  let result = await postModel.updateOne({ _id: new ObjectID(req.body?.id), author: req.headers?.id }, {caption: req.body?.caption})
+  let result = await postModel.updateOne({ _id: new ObjectID(req.body?.id), author: req.headers?.id }, { caption: req.body?.caption })
   return responseMsg(1, 200, "post updated")
 }
 
 // delete post
 exports.deletePost = async (req) => {
   let postAttachments = await attachmentModel.find({ postId: req.params?.id }).select('fileLocation -_id').lean()
-  
-  if(postAttachments){
+
+  if (postAttachments) {
     let attachmentArray = postAttachments.map(attachment => attachment.fileLocation)
 
     // delete the attachments
     await deleteFiles(attachmentArray)
-    
+
     // delete attachments data form database
     await attachmentModel.deleteMany({ postId: req.params?.id })
   }
@@ -153,7 +153,7 @@ exports.getSinglePost = async (req) => {
   }
 
   // get the data
-  let post = await postModel.aggregate([matchStage, lookUpStage, authorDetailStage, unwindAuthorDetails, currentUserReaction, uwindCurrentUserReaction, projectStage ])
+  let post = await postModel.aggregate([matchStage, lookUpStage, authorDetailStage, unwindAuthorDetails, currentUserReaction, uwindCurrentUserReaction, projectStage])
 
   return responseMsg(1, 200, post[0])
 }
@@ -278,7 +278,7 @@ exports.getLotOfPosts = async (req) => {
 exports.getPostByUser = async (req) => {
 
   let author = req.params?.user
-  if(!author) author = req.headers?.id
+  if (!author) author = req.headers?.id
 
   const page = parseInt(req.params?.page)
   const limit = parseInt(req.params?.limit)
@@ -360,9 +360,9 @@ exports.getFriendsAndPostAmount = async (req) => {
     ]
   }).count('total')
 
-  let posts = await postModel.find({ author: new ObjectID(user)}).count('total')
+  let posts = await postModel.find({ author: new ObjectID(user) }).count('total')
 
-  return responseMsg(1, 200, {friends, posts})
+  return responseMsg(1, 200, { friends, posts })
 }
 
 // report a post
