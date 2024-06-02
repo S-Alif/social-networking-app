@@ -19,9 +19,9 @@ export const dataFetcher = async (apiEndpoint) => {
 
 export const dataSender = async (apiEndpoint, data) => {
   try {
-    let result = await api.post(apiEndpoint, data,{ headers: { token: await getToken() } })
-    
-    if(result?.status == 1){
+    let result = await api.post(apiEndpoint, data, { headers: { token: await getToken() } })
+
+    if (result?.status == 1) {
       customAlert("Success !!", result.data)
     }
     return result
@@ -44,6 +44,26 @@ export const reactionSender = async (apiEndpoint, data) => {
 export const reactionFetcher = async (apiEndpoint) => {
   try {
     let result = await api.get(apiEndpoint, { headers: { token: await getToken() } })
+    return result
+  } catch (error) {
+    customAlert('ERROR!!', error.message)
+    return null
+  }
+}
+
+
+export const formDataSender = async (apiEndpoint, data) => {
+  try {
+    let result = await api.post(apiEndpoint, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        token: await getToken()
+      }
+    })
+
+    if (result?.status == 1) {
+      customAlert("Success !!", result.data)
+    }
     return result
   } catch (error) {
     customAlert('ERROR!!', error.message)
