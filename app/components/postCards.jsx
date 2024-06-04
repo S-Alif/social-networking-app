@@ -60,7 +60,7 @@ const AttachmentHandler = ({ attachment }) => {
 
 
 // cards
-const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReaction, authorDetails: { firstName, lastName, profileImg }, attachments } }) => {
+const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments } }) => {
 
   const { pofile } = authStore()
 
@@ -84,7 +84,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         {/* <Text className="text-2xl pt-2">{caption}</Text> */}
         {
           caption &&
-          <View className="flex-1 mx-3 pb-3">
+          <View className="flex-1 mx-3 py-3">
             <RenderHTML
               contentWidth={Dimensions.get('window').width}
               source={{ html: `<div>${caption}</div>` }}
@@ -108,6 +108,11 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
             />
           </View>
         }
+
+        <View className="flex-1 flex-row justify-between items-center h-[20] px-3 mt-3">
+          <Text className="font-pbold text-gray-400"> Reactions: {reactionCount}</Text>
+          <Text className="font-pbold text-gray-400"> Comments: {commentCount}</Text>
+        </View>
 
         <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} />
 

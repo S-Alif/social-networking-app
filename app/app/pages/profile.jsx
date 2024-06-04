@@ -1,4 +1,4 @@
-import { View, Text, Image, ScrollView, FlatList } from 'react-native'
+import { View, Text, Image, ScrollView, FlatList, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import authStore from '../../constants/authStore';
@@ -12,37 +12,50 @@ const Profile = () => {
   const { profile } = authStore()
   const [posts, setPosts] = useState([])
   const [amount, setAmount] = useState({})
+  const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
 
   useEffect(() => {
     (async () => {
+      setLoading(true)
       let result = await dataFetcher(`${postUrl}/posts/user/${page}/10`)
       let result2 = await dataFetcher(`${postUrl}/amounts/user`)
+
+      console.log(result2.data?.posts)
+
       if (result2 != null) {
-        setPosts(prev => [...prev, ...result?.data])
+        setPosts(prev => [...prev, ...result?.data?.posts])
         setAmount(result2?.data)
       }
+      setLoading(false)
     })()
-  }, [])
+  }, [page])
 
+  // on reach screen end
+  const refectchPost = () => {
+    if ((page * 10) > amount?.posts) return
+    setPage(prev => prev + 1)
+  }
 
   return (
     <View className="flex-1 bg-lightGrayColor">
 
-      <FlatList 
+      <FlatList
         data={posts}
         keyExtractor={(item) => item._id}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View className="mx-2">
             <PostCards post={item} />
           </View>
         )}
+        extraData={posts}
+        onEndReached={refectchPost}
         ListHeaderComponent={() => (
           <View className="flex-1">
             <View className="flex-1 w-full h-[250px]">
-              <Image source={{uri: profile?.profileCover}} className="w-full h-full object-cover" />
+              <Image source={{ uri: profile?.profileCover }} className="w-full h-full object-cover" />
             </View>
-            
+
             {/* profile data */}
             <View className="flex-1 w-full min-h-[300px] bg-lightGrayColor2 relative">
               {/* profile image */}
@@ -66,16 +79,20 @@ const Profile = () => {
                   <Text className="text-5xl font-psemibold pt-2">{amount?.posts}</Text>
                   <Text className="text-[15px] font-pmedium">Posts</Text>
                 </View>
-
               </View>
 
             </View>
-
           </View>
         )}
-        
         ListEmptyComponent={() => (
           <Text>No posts found</Text>
+        )}
+
+        ListFooterComponent={() => (
+          <View className="flex-1 py-3">
+            {loading && <ActivityIndicator size={'large'} color={"#6835F0"} />}
+            {!loading && <Text className="font-psemibold text-xl text-center">No more posts</Text>}
+          </View>
         )}
 
       />
