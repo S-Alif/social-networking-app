@@ -7,6 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { generateThumbnail } from '../scripts/getThumbnail'
 import PostEngagements from './postEngagements'
 import RenderHTML from 'react-native-render-html'
+import ImagePopupModal from './imagePopupModal'
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -14,11 +15,15 @@ const screenWidth = Dimensions.get('window').width;
 const AttachmentHandler = ({ attachment }) => {
 
   const [play, setPlay] = useState(false)
+  const [modal, setModal] = useState(false)
 
   if (attachment.fileType == "image") {
     return (
       <View className="min-h-full rounded-md overflow-hidden" style={{ width: screenWidth - 40 }} >
-        <Image source={{ uri: attachment.fileLocation }} className="w-full h-full" />
+        <TouchableOpacity activeOpacity={0.5} onPress={() => setModal(true)}>
+          <Image source={{ uri: attachment.fileLocation }} className="w-full h-full" />
+          <ImagePopupModal imgUrl={attachment.fileLocation} visible={modal} onClose={setModal}  />
+        </TouchableOpacity>
       </View>
     )
   }
