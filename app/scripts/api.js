@@ -12,7 +12,6 @@ const api = axios.create({
 // Add a request interceptor
 api.interceptors.request.use(
   config => {
-    console.log(`Request: ${config.method} ${config.url}`);
     return config;
   },
   error => {
@@ -23,6 +22,18 @@ api.interceptors.request.use(
 // Add a response interceptor
 api.interceptors.response.use(
   response => {
+    if (response.data.code === 401 || response.data.code === 500) {
+      Alert.alert('Session Expired', 'Your session has expired. Please log in again.', [
+        {
+          text: 'OK',
+          onPress: async () => {
+            await SecureStore.deleteItemAsync('token')
+            router.replace('/login')
+          },
+        },
+      ])
+      return null
+    }
     if (response.data.status === 0) {
       Alert.alert('ERROR!!', response.data.data)
       return null

@@ -1,11 +1,11 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import CustomButton from './../../components/CustomButton';
 import { formDataSender } from '../../scripts/apiCaller';
 import { postUrl } from '../../scripts/endpoints';
 import * as DocumentPicker from 'expo-document-picker';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6, Entypo } from '@expo/vector-icons';
 import { customAlert } from '../../scripts/alerts';
 
 const Create = () => {
@@ -47,9 +47,13 @@ const Create = () => {
     if (files == null) return
     if (files['assets'].length > 3) return customAlert("ERROR !!", "File limit exceded")
 
-    setFile(files['assets'])
+    setFile(prev => [...prev, ...files['assets']])
   }
 
+  // handle remove files
+  const removeFiles = (uri) => {
+    setFile(prev => prev.filter(e => e.uri !== uri))
+  }
 
 
   return (
@@ -60,39 +64,62 @@ const Create = () => {
           <Text className="pt-4 text-xl font-psemibold">Write post caption</Text>
         </View>
 
-        <View className="flex-1 min-h-[400px] p-3 bg-lightGrayColor2 mt-3 rounded-lg border border-gray-300">
-          <RichEditor
-            ref={richText}
-            className="flex-1 border border-gray-300"
-            placeholder="Write your post caption ...."
-            editorStyle={{
-              contentCSSText: 'font-size: 24px;',
-            }}
-            onChange={setPostCaption}
-          />
+        <View className="flex-1 min-h-[400px] bg-lightGrayColor2 mt-3 rounded-t-lg">
+          <View className="flex-1 overflow-hidden rounded-t-lg border border-gray-400">
+            <RichEditor
+              ref={richText}
+              className="flex-1"
+              placeholder="Write your post caption ...."
+              editorStyle={{
+                contentCSSText: 'font-size: 24px;',
+              }}
+              onChange={setPostCaption}
+            />
+          </View>
 
           <RichToolbar
             editor={richText}
             actions={[actions.undo, actions.redo, actions.setBold, actions.setItalic, actions.insertBulletsList, actions.insertOrderedList, actions.blockquote, actions.insertLink, actions.code, actions.indent, actions.fontSize, actions.heading1, actions.heading2, actions.heading3, actions.heading4, actions.heading5, actions.heading6]}
-            className="border border-gray-300 border-t-0"
+            className="border border-gray-400 border-t-0 rounded-b-lg"
             iconMap={icons}
           />
 
         </View>
 
         {/* show picked files */}
+        {
+          file.length > 0 &&
+          <View className="flex-1">
+            <Text className="pt-4 text-xl font-psemibold">Picked attachments</Text>
+            {
+              file.map((e, index) => (
+                <View className="flex-1 w-full h-[300px] mt-3 relative" style={{ shadowColor: "rgba(0,0,0,0.2)", elevation: 4 }}>
+
+                  <TouchableOpacity 
+                    className="absolute w-[30] h-[30] z-[10] right-[10] top-[15] rounded-md bg-lightGrayColor2 justify-center items-center"
+                    onPress={() => removeFiles(e.uri)}
+                  >
+                    <Entypo name="cross" size={24} color="black" />
+                  </TouchableOpacity>
+
+                  <Image source={{ uri: e.uri }} className="w-full h-full rounded-md" />
+                </View>
+              ))
+            }
+          </View>
+        }
 
         {/* file picker */}
         {
           file.length < 3 &&
           <>
             <View className="flex-1 mt-4">
-              <Text className="pt-4 text-xl font-psemibold">Choose file <Text className="text-gray-400">(maximum of three files)</Text> </Text>
+              <Text className="pt-4 text-xl font-psemibold">Choose attachments <Text className="text-gray-400">(maximum of three)</Text> </Text>
             </View>
 
             {/* for file upload */}
             <View
-              className="flex-1 mt-4 h-[100] bg-lightGrayColor2 rounded-lg justify-center items-center"
+              className="flex-1 mt-4 h-[100] bg-lightGrayColor2 rounded-lg justify-center items-center border border-gray-400"
               style={{ shadowColor: "rgba(0,0,0,0.3)", elevation: 5 }}
             >
               <CustomButton
