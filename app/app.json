@@ -4,7 +4,7 @@
     "slug": "ConnectVibe",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/connect_vive_logo_3",
+    "icon": "./assets/images/connect_vive_logo_3.png",
     "scheme": "social-networking-app",
     "userInterfaceStyle": "automatic",
     "splash": {

@@ -8,7 +8,7 @@ import { router } from 'expo-router';
 const PostEngagements = ({postId, reaction}) => {
 
   return (
-    <View className="flex-1 flex-row h-[55px] justify-around items-center mb-2 bg-lightGrayColor2 border border-gray-300 p-3 rounded-bl-lg rounded-br-lg">
+    <View className="flex-1 flex-row h-[55px] justify-around items-center bg-lightGrayColor2 border-y border-gray-300 p-3 rounded-bl-lg rounded-br-lg">
       
       {/* reactions */}
       <View className="flex-1 border-r">

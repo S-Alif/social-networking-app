@@ -65,11 +65,10 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
   const { pofile } = authStore()
 
   return (
-    <>
-      <View className="border border-gray-300 rounded-tl-lg rounded-tr-lg  mt-2 bg-lightGrayColor2 p-3">
+    <View className="border border-gray-300 rounded-lg mt-2 bg-lightGrayColor2">
 
         {/* author details, post date and options */}
-        <View className="h-[60px] w-full flex-1 flex-row">
+        <View className="h-[60px] w-full flex-1 flex-row mt-3 mx-3">
           <View className="flex-1 h-full flex-row gap-3 items-center">
             <TouchableOpacity>
               <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
@@ -85,17 +84,19 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         {/* <Text className="text-2xl pt-2">{caption}</Text> */}
         {
           caption &&
-          <RenderHTML
-            contentWidth={Dimensions.get('window').width}
-            source={{ html: `<div>${caption}</div>` }}
-            tagsStyles={htmlStyles}
-          />
+          <View className="flex-1 mx-3 pb-3">
+            <RenderHTML
+              contentWidth={Dimensions.get('window').width}
+              source={{ html: `<div>${caption}</div>` }}
+              tagsStyles={htmlStyles}
+            />
+          </View>
         }
 
         {/* attachments */}
         {
           attachments.length > 0 &&
-          <View className="mt-3 h-[300px]">
+          <View className="my-3 h-[300px] px-3">
             <FlatList
               horizontal={true}
               showsHorizontalScrollIndicator={true}
@@ -107,11 +108,10 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
             />
           </View>
         }
-      </View>
 
-      <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} />
+        <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} />
 
-    </>
+    </View>
   )
 }
 
