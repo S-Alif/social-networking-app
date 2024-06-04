@@ -171,7 +171,7 @@ exports.userProfileById = async (req) => {
   const { privacy } = user;
 
   if (privacy === 'public') {
-    return responseMsg(1, 200, user)
+    return responseMsg(1, 200, {user: user})
   } 
   else if (privacy === 'friends' && browser) {
     const friendship = await friendshipModel.findOne({
@@ -181,12 +181,12 @@ exports.userProfileById = async (req) => {
       ]
     })
 
-    if (!friendship) return responseMsg(1, 200, {_id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status})
-    return responseMsg(1, 200, user)
+    if (!friendship) return responseMsg(1, 200, { user: { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status }, isFriends: false})
+    return responseMsg(1, 200, {user: user, isFriends: true})
 
   } 
   else {
-    return responseMsg(1, 200, { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status })
+    return responseMsg(1, 200, { user: { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status }})
   }
 }
 

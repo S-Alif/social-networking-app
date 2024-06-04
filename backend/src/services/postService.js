@@ -257,21 +257,29 @@ exports.getLotOfPosts = async (req) => {
   }
 
 
-  // fetch the posts
   let posts = await postModel.aggregate([
     authorDetailStage,
     unwindAuthorDetails,
     privacyModeFilter,
-    sortStage,
-    skipStage,
-    limitStage,
-    currentUserReaction,
-    uwindCurrentUserReaction,
-    joinAttachments,
-    projectStage
-  ]);
+    {
+      $facet: {
+        posts: [
+          sortStage,
+          skipStage,
+          limitStage,
+          currentUserReaction,
+          uwindCurrentUserReaction,
+          joinAttachments,
+          projectStage
+        ],
+        totalCount: [{ $count: 'totalCount' }, { $unwind: '$totalCount' }]
+      }
+    }
+  ])
 
-  return responseMsg(1, 200, posts);
+  const { posts: paginatedPosts, totalCount } = posts[0]
+
+  return responseMsg(1, 200, { totalCount: totalCount[0].totalCount, posts: paginatedPosts })
 }
 
 // get post by user
@@ -342,9 +350,29 @@ exports.getPostByUser = async (req) => {
   let unwindStage = { $unwind: { path: '$attachments', preserveNullAndEmptyArrays: true } }
 
   // get the data
-  let post = await postModel.aggregate([matchStage, sortStage, skipStage, limitStage, authorDetailStage, unwindAuthorDetails, lookUpStage, currentUserReaction, uwindCurrentUserReaction, projectStage])
+  let posts = await postModel.aggregate([
+    matchStage,
+    sortStage,
+    skipStage,
+    limitStage,
+    {
+      $facet: {
+        posts: [
+          authorDetailStage,
+          unwindAuthorDetails,
+          currentUserReaction,
+          uwindCurrentUserReaction,
+          lookUpStage,
+          projectStage
+        ],
+        totalCount: [{ $count: 'totalCount' }, { $unwind: '$totalCount' }]
+      }
+    }
+  ])
 
-  return responseMsg(1, 200, post)
+  const { posts: paginatedPosts, totalCount } = posts[0]
+
+  return responseMsg(1, 200, { totalCount: totalCount[0]?.totalCount, posts: paginatedPosts })
 }
 
 // get friend and post amounts
