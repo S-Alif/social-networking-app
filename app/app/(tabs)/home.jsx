@@ -40,6 +40,8 @@ const Home = () => {
         renderItem={({item}) => (
           <PostCards post={item} />
         )}
+        initialNumToRender={5}
+        maxToRenderPerBatch={10}
         extraData={posts}
         onEndReachedThreshold={1}
         onEndReached={refectchPost}

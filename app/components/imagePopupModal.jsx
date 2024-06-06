@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableWithoutFeedback, Image, Dimensions } from 'react-native'
+import { View, Modal, TouchableWithoutFeedback, Image, Dimensions } from 'react-native'
 import React from 'react'
 
 const ImagePopupModal = ({ imgUrl, visible, onClose }) => {
