@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, FlatList, Dimensions, ImageBackground, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import authStore from '../constants/authStore'
 import { formatDate } from '../scripts/dateFormatter'
@@ -9,6 +9,7 @@ import PostEngagements from './postEngagements'
 import RenderHTML from 'react-native-render-html'
 import ImagePopupModal from './imagePopupModal'
 import Carousel from "pinar";
+import { router } from 'expo-router'
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -40,7 +41,7 @@ const AttachmentHandler = ({ attachment }) => {
     }, [])
 
     return (
-      <View className="flex-1 h-full" style={{ width: screenWidth - 40 }}>
+      <View className="flex-1 h-full px-1" style={{ width: screenWidth - 40 }}>
         {play ? (
           <Video source={{ uri: attachment.fileLocation }}
             className="w-full h-full"
@@ -54,8 +55,8 @@ const AttachmentHandler = ({ attachment }) => {
             }}
           />
         ) : (
-          <TouchableOpacity className="w-full h-full rounded-xl mt-3 relative justify-center items-center" activeOpacity={0.7} onPress={() => setPlay(true)}>
-            <Image source={{ uri: thumbnail }} className="w-full h-full my-5 overflow-hidden" />
+          <TouchableOpacity className="w-full h-full rounded-xl relative justify-center items-center" activeOpacity={0.7} onPress={() => setPlay(true)}>
+            <Image source={{ uri: thumbnail }} className="w-full h-full rounded-lg" />
             <View className="w-12 h-12 absolute"><AntDesign name="play" size={30} color="white" /></View>
           </TouchableOpacity>
         )}
@@ -69,7 +70,7 @@ const AttachmentHandler = ({ attachment }) => {
 // cards
 const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments } }) => {
 
-  const { pofile } = authStore()
+  const { profile } = authStore()
 
   return (
     <View className="border border-gray-300 rounded-lg mt-2 bg-lightGrayColor2">
@@ -77,7 +78,11 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
       {/* author details, post date and options */}
       <View className="h-[60px] w-full flex-1 flex-row mt-3 mx-3">
         <View className="flex-1 h-full flex-row gap-3 items-center">
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => router.push({
+              pathname: profile?._id == author ? "pages/profile" : "pages/"+author
+            })}
+          >
             <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
           </TouchableOpacity>
 
@@ -105,7 +110,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         attachments.length > 0 &&
         <View className="flex-1 justify-center items-center my-3 px-3">
           <Carousel
-            className="flex-1 w-full rounded-md relative mb-5"
+            className={`flex-1 w-full rounded-md relative ${attachments.length > 1 && "mb-4"}`}
             style={{ height: 400 }}
             showsControls={false}
             showsDots={attachments.length > 1 ? true : false}
@@ -121,8 +126,8 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         </View>
       }
 
-      <View className="flex-1 flex-row justify-between items-center h-[20] px-3 mt-3">
-        <Text className="font-pbold text-gray-400"> Reactions: {reactionCount}</Text>
+      <View className="flex-1 flex-row justify-between items-center h-[20] px-3 mt-2 mb-3">
+        <Text className="font-pbold text-gray-400"> <AntDesign name="like2" size={24} color="black" /> {reactionCount}</Text>
         <Text className="font-pbold text-gray-400"> Comments: {commentCount}</Text>
       </View>
 
