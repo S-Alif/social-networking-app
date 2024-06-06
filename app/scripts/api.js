@@ -6,7 +6,7 @@ import * as SecureStore from 'expo-secure-store'
 
 const api = axios.create({
   baseURL: 'http://192.168.0.103:10010',
-  timeout: 10000,
+  timeout: 120000,
 })
 
 // Add a request interceptor
