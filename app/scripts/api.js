@@ -31,11 +31,11 @@ api.interceptors.response.use(
             router.replace('/login')
           },
         },
-      ])
-      return null
+      ]);
+      return Promise.reject(new Error('Session expired'))
     }
     if (response.data.status === 0) {
-      Alert.alert('ERROR!!', response.data.data)
+      Alert.alert('ERROR!!', response.data.data);
       return null
     }
     return response.data
@@ -53,7 +53,7 @@ api.interceptors.response.use(
         },
       ])
     }
-    return Promise.reject(error)
+    return Promise.reject(new Error('Session expired'))
   }
 )
 

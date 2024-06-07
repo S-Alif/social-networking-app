@@ -7,16 +7,20 @@ const getToken = async () => {
   return token
 }
 
+// normal get requests
 export const dataFetcher = async (apiEndpoint) => {
   try {
     let result = await api.get(apiEndpoint, { headers: { token: await getToken() } })
     return result
   } catch (error) {
-    customAlert('ERROR!!', error.message)
+    if (error.message !== 'Session expired') {
+      customAlert('ERROR!!', error.message);
+    }
     return null
   }
 }
 
+// normal post request
 export const dataSender = async (apiEndpoint, data) => {
   try {
     let result = await api.post(apiEndpoint, data, { headers: { token: await getToken() } })
@@ -26,32 +30,40 @@ export const dataSender = async (apiEndpoint, data) => {
     }
     return result
   } catch (error) {
-    customAlert('ERROR!!', error.message)
+    if (error.message !== 'Session expired') {
+      customAlert('ERROR!!', error.message);
+    }
     return null
   }
 }
 
+// post request for requests without any success alerts
 export const reactionSender = async (apiEndpoint, data) => {
   try {
     let result = await api.post(apiEndpoint, data, { headers: { token: await getToken() } })
     return result
   } catch (error) {
-    customAlert('ERROR!!', error.message)
+    if (error.message !== 'Session expired') {
+      customAlert('ERROR!!', error.message);
+    }
     return null
   }
 }
 
+// get request for requests without any success alerts
 export const reactionFetcher = async (apiEndpoint) => {
   try {
     let result = await api.get(apiEndpoint, { headers: { token: await getToken() } })
     return result
   } catch (error) {
-    customAlert('ERROR!!', error.message)
+    if (error.message !== 'Session expired') {
+      customAlert('ERROR!!', error.message);
+    }
     return null
   }
 }
 
-
+// for sending images and videos as form data
 export const formDataSender = async (apiEndpoint, data) => {
   try {
     let result = await api.post(apiEndpoint, data, {
@@ -66,7 +78,9 @@ export const formDataSender = async (apiEndpoint, data) => {
     }
     return result
   } catch (error) {
-    customAlert('ERROR!!', error.message)
+    if (error.message !== 'Session expired') {
+      customAlert('ERROR!!', error.message);
+    }
     return null
   }
 }
