@@ -287,13 +287,15 @@ exports.getPostByUser = async (req) => {
 
   let author = req.params?.user
   if (!author) author = req.headers?.id
+  let postType = req.params?.type
+  if (!postType) return responseMsg(0, 200, "No post type found")
 
   const page = parseInt(req.params?.page)
   const limit = parseInt(req.params?.limit)
   const skip = (page - 1) * limit
 
   // stages of aggregation
-  let matchStage = { $match: { author: new ObjectID(author) } }
+  let matchStage = { $match: { author: new ObjectID(author), postType: postType } }
   let sortStage = { $sort: { createdAt: -1 } }
   let skipStage = { $skip: skip }
   let limitStage = { $limit: limit }
@@ -317,7 +319,7 @@ exports.getPostByUser = async (req) => {
   let currentUserReaction = {
     $lookup: {
       from: 'reactions',
-      let: { postId: '$_id', userId: new ObjectID(author) },
+      let: { postId: '$_id', userId: new ObjectID(req.headers?.id) },
       pipeline: [
         { $match: { $expr: { $and: [{ $eq: ['$reactedOn', '$$postId'] }, { $eq: ['$author', '$$userId'] }] } } },
         { $project: { _id: 1, reaction: 1 } }
