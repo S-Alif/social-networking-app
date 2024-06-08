@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import authStore from '../constants/authStore'
 import { formatDate } from '../scripts/dateFormatter'
 import { ResizeMode, Video } from 'expo-av'
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { generateThumbnail } from '../scripts/getThumbnail'
 import PostEngagements from './postEngagements'
 import RenderHTML from 'react-native-render-html'
@@ -29,7 +29,7 @@ const AttachmentHandler = ({ attachment }) => {
     )
   }
   else {
-    
+
     const [play, setPlay] = useState(false)
     const [thumbnail, setThumbnail] = useState("https://fakeimg.pl/600x400?text=+")
 
@@ -80,7 +80,8 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         <View className="flex-1 h-full flex-row gap-3 items-center">
           <TouchableOpacity
             onPress={() => router.push({
-              pathname: profile?._id == author ? "pages/profile" : "pages/"+author
+              pathname: profile?._id == author ? "pages/profile" : "pages/[userProfileId]",
+              params: { userId: author, userFirstName: firstName, userLastName: lastName, userProfileImg: profileImg }
             })}
           >
             <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
@@ -126,9 +127,9 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         </View>
       }
 
-      <View className="flex-1 flex-row justify-between items-center h-[20] px-3 mt-2 mb-3">
-        <Text className="font-pbold text-gray-400"> <AntDesign name="like2" size={24} color="black" /> {reactionCount}</Text>
-        <Text className="font-pbold text-gray-400"> Comments: {commentCount}</Text>
+      <View className="flex-1 flex-row gap-x-3 items-center h-[20] px-3 mt-2 mb-3">
+        <Text className="font-pbold text-gray-400 text-[16px]"> <AntDesign name="like2" size={20} color="rgba(156, 163, 175, 0.7)" /> {reactionCount}</Text>
+        <Text className="font-pbold text-gray-400 text-[16px]"> <FontAwesome5 name="comment-dots" size={20} color="rgba(156, 163, 175, 0.7)" /> {commentCount}</Text>
       </View>
 
       <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} />
@@ -140,19 +141,19 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
 export default PostCards
 
 const styles = StyleSheet.create({
-  dotsStyle:{
+  dotsStyle: {
     width: 30,
     height: 8,
     backgroundColor: "#fff",
     borderRadius: 5,
-    marginHorizontal:4,
+    marginHorizontal: 4,
     display: 'flex',
     flexDirection: 'row',
     bottom: -50,
     borderWidth: 1.6,
     borderColor: "#6835F0"
   },
-  dotsActive:{
+  dotsActive: {
     backgroundColor: "#6835F0",
   }
 })

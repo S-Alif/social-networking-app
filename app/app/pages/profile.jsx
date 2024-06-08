@@ -18,10 +18,8 @@ const Profile = () => {
   useEffect(() => {
     (async () => {
       setLoading(true)
-      let result = await dataFetcher(`${postUrl}/posts/user/${page}/10`)
+      let result = await dataFetcher(`${postUrl}/posts/user/normal/${page}/10/${profile?._id}`)
       let result2 = await dataFetcher(`${postUrl}/amounts/user`)
-
-      console.log(result2.data?.posts)
 
       if (result2 != null) {
         setPosts(prev => [...prev, ...result?.data?.posts])

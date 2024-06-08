@@ -28,6 +28,14 @@ const PageLayout = () => {
           fontSize: 25,
         }
       }} />
+
+      <Stack.Screen name='[userProfileId]' options={{
+        headerTitle: "",
+        headerTitleStyle: {
+          fontFamily: "Poppins-SemiBold",
+          fontSize: 25,
+        }
+      }} />
       
     </Stack>
   )
