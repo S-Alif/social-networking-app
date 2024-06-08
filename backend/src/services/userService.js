@@ -40,19 +40,19 @@ exports.loginUser = async (req) => {
 
 // update a user information
 exports.updateUser = async (req) => {
-  if(req.headers?.id !== req.body._id) return responseMsg(0, 200, "user ID dont match")
-  await userModel.updateOne({_id: new ObjectID(req.headers?.id)}, req.body)
+  if (req.headers?.id !== req.body._id) return responseMsg(0, 200, "user ID dont match")
+  await userModel.updateOne({ _id: new ObjectID(req.headers?.id) }, req.body)
   return responseMsg(1, 200, "Account updated")
 }
 
 // update user profile image
 exports.updateUserProfileImg = async (req) => {
   let files = req.files
-  if(!files) return responseMsg(0, 200, "No image found")
-  let currentImg = await userModel.findOne({_id: new ObjectID(req.headers?.id)}).select('profileImg')
+  if (!files) return responseMsg(0, 200, "No image found")
+  let currentImg = await userModel.findOne({ _id: new ObjectID(req.headers?.id) }).select('profileImg')
 
   const parseUrl = new URL(currentImg?.profileImg)
-  if (parseUrl.hostname === 'res.cloudinary.com'){
+  if (parseUrl.hostname === 'res.cloudinary.com') {
     await deleteFiles([currentImg?.profileImg])
   }
 
@@ -73,18 +73,18 @@ exports.updateUserProfileImg = async (req) => {
     return responseMsg(0, 200, "An error occurred while uploading profile image")
   }
 
-  await userModel.updateOne({_id: req.headers?.id}, {profileImg: urlArray[0]})
+  await userModel.updateOne({ _id: req.headers?.id }, { profileImg: urlArray[0] })
   return responseMsg(1, 200, "profile image uploaded")
 }
 
 // update user profile image
 exports.updateUserProfileImg = async (req) => {
   let files = req.files
-  if(!files) return responseMsg(0, 200, "No image found")
-  let currentImg = await userModel.findOne({_id: new ObjectID(req.headers?.id)}).select('profileCover')
+  if (!files) return responseMsg(0, 200, "No image found")
+  let currentImg = await userModel.findOne({ _id: new ObjectID(req.headers?.id) }).select('profileCover')
 
   const parseUrl = new URL(currentImg?.profileCover)
-  if (parseUrl.hostname === 'res.cloudinary.com'){
+  if (parseUrl.hostname === 'res.cloudinary.com') {
     await deleteFiles([currentImg?.profileCover])
   }
 
@@ -105,7 +105,7 @@ exports.updateUserProfileImg = async (req) => {
     return responseMsg(0, 200, "An error occurred while uploading profile cover")
   }
 
-  await userModel.updateOne({ _id: req.headers?.id }, { profileCover: urlArray[0]})
+  await userModel.updateOne({ _id: req.headers?.id }, { profileCover: urlArray[0] })
   return responseMsg(1, 200, "profile cover uploaded")
 }
 
@@ -118,28 +118,28 @@ exports.deleteUser = async (req) => {
 exports.sendOtp = async (req) => {
   let otpCode = crypto.randomBytes(3).toString('hex').toUpperCase()
 
-  let result = await otpModel.create({otp: otpCode, email: req.body?.email})
-  let user = await userModel.findOne({email: req.body.email}).select("lastName")
+  let result = await otpModel.create({ otp: otpCode, email: req.body?.email })
+  let user = await userModel.findOne({ email: req.body.email }).select("lastName")
   await sendEmail(
     req.body.email,
     otpMail(
       otpCode,
       user?.lastName,
-      `${req.body?.type == 1 ? "Please verify your account": "Thank you and welcome to our platform"}`
+      `${req.body?.type == 1 ? "Please verify your account" : "Thank you and welcome to our platform"}`
     ),
     "Account verification"
   )
-  
+
   return responseMsg(1, 200, "Verification email sent")
 }
 
 // verify otp
 exports.verifyOtp = async (req) => {
   let check = await otpModel.findOne({ otp: req.body?.otp, email: req.body?.email, verified: 0 })
-  if(!check) return responseMsg(0,200, "Invalid otp")
+  if (!check) return responseMsg(0, 200, "Invalid otp")
 
-  await otpModel.updateOne({ otp: req.body?.otp, email: req.body?.email }, {verified: 1})
-  await userModel.updateOne({ email: req.body?.email }, {verified: 1})
+  await otpModel.updateOne({ otp: req.body?.otp, email: req.body?.email }, { verified: 1 })
+  await userModel.updateOne({ email: req.body?.email }, { verified: 1 })
 
   return responseMsg(1, 200, "Account verified")
 }
@@ -147,8 +147,8 @@ exports.verifyOtp = async (req) => {
 // get user profile
 exports.userProfile = async (req) => {
   let profile = await userModel.findOne({ _id: new ObjectID(req.headers.id) }).select("-pass")
-  if(!profile) return responseMsg(0, 200, "No user found")
-  
+  if (!profile) return responseMsg(0, 200, "No user found")
+
   return responseMsg(1, 200, profile)
 }
 
@@ -159,20 +159,20 @@ exports.userProfileById = async (req) => {
   let browser = req.headers?.id
   let profile = req.params.id
 
-  if(isAdmin == true){ // if admin true
+  if (isAdmin == true) { // if admin true
     var user = await userModel.findOne({ _id: new ObjectID(req.params.id) }).select("-pass")
 
     return responseMsg(1, 200, user)
   }
-  
+
   user = await userModel.findOne({ _id: new ObjectID(profile) }).select("-pass")
   if (!user) return responseMsg(0, 200, "No user found")
-    
+
   const { privacy } = user;
 
   if (privacy === 'public') {
-    return responseMsg(1, 200, {user: user})
-  } 
+    return responseMsg(1, 200, user)
+  }
   else if (privacy === 'friends' && browser) {
     const friendship = await friendshipModel.findOne({
       $or: [
@@ -181,12 +181,14 @@ exports.userProfileById = async (req) => {
       ]
     })
 
-    if (!friendship) return responseMsg(1, 200, { user: { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status }, isFriends: false})
-    return responseMsg(1, 200, {user: user, isFriends: true})
+    if (!friendship) return responseMsg(1, 200, { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status, createdAt: user?.createdAt, isFriends: false })
 
-  } 
+    user.isFriends = true
+    return responseMsg(1, 200, user)
+
+  }
   else {
-    return responseMsg(1, 200, { user: { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status }})
+    return responseMsg(1, 200, { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status, createdAt: user?.createdAt })
   }
 }
 
