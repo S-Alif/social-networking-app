@@ -7,6 +7,7 @@ import { postUrl } from '../../scripts/endpoints';
 import * as DocumentPicker from 'expo-document-picker';
 import { FontAwesome6, Entypo } from '@expo/vector-icons';
 import { customAlert } from '../../scripts/alerts';
+import { fileChecker } from '../../scripts/fileChecker';
 
 const Create = () => {
 
@@ -44,10 +45,12 @@ const Create = () => {
       multiple: true,
     })
 
-    if (files == null) return
+    if (!files) return
     if (files['assets'].length > 3) return customAlert("ERROR !!", "File limit exceded")
 
-    setFile(prev => [...prev, ...files['assets']])
+    let checker = fileChecker(files['assets'])
+
+    setFile(prev => [...prev, ...checker])
   }
 
   // handle remove files
@@ -93,16 +96,16 @@ const Create = () => {
             <Text className="pt-4 text-xl font-psemibold">Picked attachments</Text>
             {
               file.map((e, index) => (
-                <View className="flex-1 w-full h-[300px] mt-3 relative" style={{ shadowColor: "rgba(0,0,0,0.2)", elevation: 4 }}>
+                <View className="flex-1 w-full h-[300px] mt-3 relative rounded-md overflow-hidden" style={{ shadowColor: "rgba(0,0,0,0.2)", elevation: 4 }} key={index} >
 
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     className="absolute w-[30] h-[30] z-[10] right-[10] top-[15] rounded-md bg-lightGrayColor2 justify-center items-center"
                     onPress={() => removeFiles(e.uri)}
                   >
                     <Entypo name="cross" size={24} color="black" />
                   </TouchableOpacity>
 
-                  <Image source={{ uri: e.uri }} className="w-full h-full rounded-md" />
+                  <Image source={{ uri: e.uri }} className="w-full h-full" />
                 </View>
               ))
             }
