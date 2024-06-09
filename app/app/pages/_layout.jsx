@@ -7,16 +7,16 @@ const PageLayout = () => {
     <Stack>
       <Stack.Screen name='profile' options={{
         headerTitle: "Profile",
-        headerTitleStyle:{
-          fontFamily:"Poppins-SemiBold",
+        headerTitleStyle: {
+          fontFamily: "Poppins-SemiBold",
           fontSize: 25,
         }
       }} />
 
       <Stack.Screen name='showComments' options={{
         headerTitle: "Comments",
-        headerTitleStyle:{
-          fontFamily:"Poppins-SemiBold",
+        headerTitleStyle: {
+          fontFamily: "Poppins-SemiBold",
           fontSize: 25,
         }
       }} />
@@ -29,14 +29,14 @@ const PageLayout = () => {
         }
       }} />
 
-      <Stack.Screen name='[userProfileId]' options={{
+      <Stack.Screen name='userProfileById' options={{
         headerTitle: "",
         headerTitleStyle: {
           fontFamily: "Poppins-SemiBold",
           fontSize: 25,
         }
       }} />
-      
+
     </Stack>
   )
 }

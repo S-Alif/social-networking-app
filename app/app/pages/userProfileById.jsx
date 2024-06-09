@@ -1,11 +1,10 @@
 import React from 'react'
 import UserProfile from '../../components/userProfile'
 
-const Profile = () => {
-
+const UserProfileById = () => {
   return (
     <UserProfile />
   )
 }
 
-export default Profile
+export default UserProfileById

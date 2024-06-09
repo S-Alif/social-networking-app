@@ -80,7 +80,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         <View className="flex-1 h-full flex-row gap-3 items-center">
           <TouchableOpacity
             onPress={() => router.push({
-              pathname: profile?._id == author ? "pages/profile" : "pages/[userProfileId]",
+              pathname: profile?._id == author ? "pages/profile" : "pages/userProfileById",
               params: { userId: author, userFirstName: firstName, userLastName: lastName, userProfileImg: profileImg }
             })}
           >

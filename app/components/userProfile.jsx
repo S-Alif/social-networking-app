@@ -1,15 +1,19 @@
-import { View, Text, ScrollView, Image, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, Text, Image, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Stack, useLocalSearchParams } from 'expo-router'
-import { dataFetcher } from '../../scripts/apiCaller'
-import { postUrl, userUrl } from '../../scripts/endpoints'
-import { formatDate } from './../../scripts/dateFormatter';
-import PostCards from '../../components/postCards'
+import { Stack, useLocalSearchParams, usePathname } from 'expo-router'
 import { Feather, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+import { dataFetcher } from './../scripts/apiCaller';
+import PostCards from './postCards';
+import { postUrl, userUrl } from '../scripts/endpoints';
+import { formatDate } from '../scripts/dateFormatter';
+import authStore from '../constants/authStore';
 
 const UserProfile = () => {
 
-  const { userFirstName, userLastName, userId, userProfileImg } = useLocalSearchParams()
+  const { userId } = useLocalSearchParams()
+  const pathname = usePathname()
+
+  const { profile } = authStore()
 
   const [userData, setUserData] = useState(null)
   const [amount, setAmount] = useState(null)
@@ -22,18 +26,21 @@ const UserProfile = () => {
   const [reelsPostsCount, setReelsPostsCount] = useState(null)
   const [reelsPage, setReelsPage] = useState(1)
 
+
   // fetch data
   useEffect(() => {
     (async () => {
-      let user = await dataFetcher(userUrl + '/profile/' + userId)
-
-      if (user != null && user?.status != 0) {
-        setUserData(user?.data)
+      if (pathname != '/pages/profile') {
+        var user = await dataFetcher(userUrl + '/profile/' + userId)
+        if (user != null && user?.status != 0) setUserData(user?.data)
+      } else {
+        user = profile
+        setUserData(user)
       }
 
       // fetch post and profile amount datas based on privacy
-      if (user?.data?.privacy == "public" || user?.data.isFriends == true) {
-        let userAmounts = await dataFetcher(`${postUrl}/amounts/user/${userId}`)
+      if (pathname == "/pages/profile" || (user?.data?.privacy == "public" || user?.data.isFriends == true)) {
+        let userAmounts = await dataFetcher(`${postUrl}/amounts/user/${pathname !== "/pages/profile" ? user?.data?._id : profile?._id}`)
         if (userAmounts != null && userAmounts?.status != 0) {
           setAmount(userAmounts?.data)
         }
@@ -48,7 +55,7 @@ const UserProfile = () => {
       (async () => {
         setLoading(true)
         if (tab == 1) {
-          let posts = await dataFetcher(`${postUrl}/posts/user/normal/${postPage}/10/${userId}`)
+          let posts = await dataFetcher(`${postUrl}/posts/user/normal/${postPage}/10/${userData?._id}`)
           if (posts != null && posts?.status != 0) {
             setNormalPosts(posts?.data?.posts)
             setNormalPostsCount(posts?.data?.totalCount)
@@ -66,7 +73,11 @@ const UserProfile = () => {
     <View className="flex-1 bg-lightGrayColor">
 
       {/* rename the header title */}
-      <Stack.Screen options={{ headerTitle: (userFirstName && userLastName) ? `${userFirstName} ${userLastName}` : "User Profile" }} />
+      {
+        pathname == "/pages/profile" ?
+          <Stack.Screen options={{ headerTitle: "Profile" }} />
+          : <Stack.Screen options={{ headerTitle: (userData?.firstName && userData?.lastName) ? `${userData?.firstName} ${userData?.lastName}` : "User Profile" }} />
+      }
 
 
       {/* main profile */}
@@ -90,22 +101,22 @@ const UserProfile = () => {
                 className="w-[150px] h-[150px] z-10 absolute border-4 border-lightGrayColor2 rounded-full left-1/2 bottom-[-75px] overflow-hidden"
                 style={{ transform: [{ translateX: -75 }] }}
               >
-                <Image source={{ uri: userProfileImg }} className="w-full h-full" />
+                <Image source={{ uri: userData?.profileImg }} className="w-full h-full" />
               </View>
             </View>
 
             {/* profile data */}
             <View className="flex-1 w-full px-4 pt-[60] pb-5">
-              <Text className="text-3xl font-pbold pt-2 mt-6 text-center">{userFirstName} {userLastName}</Text>
+              <Text className="text-3xl font-pbold pt-2 mt-6 text-center">{userData?.firstName} {userData?.lastName}</Text>
 
               {
-                userData?.city || userData?.country &&
-                <Text className="text-xl font-pmedium text-grayColor text-center pt-3">
-                  {`${userData?.city ? userData?.city : ""}${userData?.city && userData?.country ? "," : ""}  ${userData?.country ? userData?.country : ""}`}
+                (userData?.city || userData?.country) &&
+                <Text className="text-xl font-pmedium text-grayColor text-center pt-2">
+                  {userData?.city ? userData?.city : ""}{userData?.city && userData?.country ? "," : ""} {userData?.country ? userData?.country : ""}
                 </Text>
               }
 
-              <Text className="text-center pt-2 text-xl font-pmedium text-gray-400"> Joined on {formatDate(userData?.createdAt)}</Text>
+              <Text className="text-center pt-2 text-[16] font-pmedium text-gray-400"> Joined on {formatDate(userData?.createdAt)}</Text>
             </View>
 
             {/* show amounts */}
@@ -124,17 +135,13 @@ const UserProfile = () => {
             {/* tabs */}
             <View className="flex-1 flex-row justify-between items-center w-full px-2 py-6 bg-lightGrayColor">
 
-              <View className={`w-1/2 items-center border border-purpleColor py-2 ${tab == 1 ? "bg-purpleColor" : "bg-lightGrayColor2"} rounded-l-md`}>
-                <TouchableOpacity onPress={() => setTab(1)} className="w-full items-center">
-                  <Feather name="grid" size={24} color={`${tab == 1 ? "#F3F6F6" : "#000000"}`} />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity onPress={() => setTab(1)} className={`w-1/2 items-center border border-purpleColor py-2 ${tab == 1 ? "bg-purpleColor" : "bg-lightGrayColor2"} rounded-l-md`}>
+                <Feather name="grid" size={24} color={`${tab == 1 ? "#F3F6F6" : "#000000"}`} />
+              </TouchableOpacity>
 
-              <View className={`w-1/2 items-center border border-purpleColor py-2 ${tab == 2 ? "bg-purpleColor" : "bg-lightGrayColor2"} rounded-r-md`}>
-                <TouchableOpacity onPress={() => setTab(2)} className="w-full items-center">
-                  <Entypo name="folder-video" size={24} color={`${tab == 2 ? "#F3F6F6" : "#000000"}`} />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity onPress={() => setTab(2)} className={`w-1/2 items-center border border-purpleColor py-2 ${tab == 2 ? "bg-purpleColor" : "bg-lightGrayColor2"} rounded-r-md`}>
+                <Entypo name="folder-video" size={24} color={`${tab == 2 ? "#F3F6F6" : "#000000"}`} />
+              </TouchableOpacity>
 
             </View>
           </View>
