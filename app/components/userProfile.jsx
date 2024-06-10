@@ -7,6 +7,7 @@ import PostCards from './postCards';
 import { postUrl, userUrl } from '../scripts/endpoints';
 import { formatDate } from '../scripts/dateFormatter';
 import authStore from '../constants/authStore';
+import ReelsCard from './reelsCard';
 
 const UserProfile = () => {
 
@@ -61,11 +62,18 @@ const UserProfile = () => {
             setNormalPostsCount(posts?.data?.totalCount)
           }
         }
+        else {
+          let reels = await dataFetcher(`${postUrl}/posts/user/reels/${reelsPage}/10/${userData?._id}`)
+          if (reels != null && reels?.status != 0) {
+            setReelsPosts(reels?.data?.posts)
+            setReelsPostsCount(reels?.data?.totalCount)
+          }
+        }
 
         setLoading(false)
       })()
     }
-  }, [userData])
+  }, [userData, tab])
 
 
 
@@ -85,8 +93,10 @@ const UserProfile = () => {
         data={tab === 1 ? normalPosts : reelsPosts}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <View className="mx-2">
-            <PostCards post={item} />
+          <View className={`${tab == 1 ? "mx-2" : "flex-1 flex-row justify-between"}`}>
+            {
+              tab == 1 ? <PostCards post={item} /> : <ReelsCard reels={item} />
+            }
           </View>
         )}
         extraData={tab === 1 ? normalPosts : reelsPosts}
@@ -152,9 +162,8 @@ const UserProfile = () => {
         )}
 
         ListFooterComponent={() => (
-          <View className="flex-1 py-3">
+          <View className="py-3">
             {loading && <ActivityIndicator size={'large'} color={"#6835F0"} />}
-            {!loading && <Text className="font-psemibold text-xl text-center py-2"><MaterialCommunityIcons name="dots-horizontal" size={24} color="black" /></Text>}
           </View>
         )}
       />
