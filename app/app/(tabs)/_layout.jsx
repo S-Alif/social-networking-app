@@ -125,7 +125,7 @@ const TabsLayout = () => {
             headerShown: false,
             title: "Reels",
             tabBarIcon: ({ color, focused }) => (
-              <TabIcon icon={<Entypo name="video" size={24} color={color} />} color={color} focused={focused} name={"Reels"} />
+              <TabIcon icon={<Entypo name="video" size={24} color={color} />} color={color} focused={focused} name={"Threels"} />
             ),
           }}
         />
@@ -145,7 +145,7 @@ const TabsLayout = () => {
           name="createReels"
           options={{
             href: null,
-            title: "Create reels",
+            title: "Create threels",
             headerTitleStyle: {
               fontFamily: "Poppins-SemiBold",
               fontSize: 25,

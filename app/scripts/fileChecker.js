@@ -11,11 +11,10 @@ export const fileChecker = (files) => {
   let checkFileArray = []
 
   files.map((e) => {
-    console.log(e)
     if (allowedFileType.includes(e.mimeType)) {
 
       if (e.mimeType == 'video/mp4') {
-        if (e.size > videoSizeLimit) return overSize++
+        if (e.size > videoSizeLimit || e.fileSize > videoSizeLimit) return overSize++
         checkFileArray.push(e)
       }
       else {
