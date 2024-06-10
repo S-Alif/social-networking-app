@@ -8,25 +8,33 @@ import { Feather, Entypo, AntDesign, MaterialIcons, FontAwesome5, FontAwesome } 
 const ModalContent = ({ onClose }) => {
   return (
     <TouchableWithoutFeedback onPress={onClose}>
-      <View className="flex-1 relative">
-        <View className="absolute bottom-[80] w-full flex-1 flex-row justify-evenly">
-          <TouchableOpacity
-            onPress={() => {
-              onClose()
-              router.push('/create')
-            }}
-            className="w-16 h-16 rounded-full bg-lightGrayColor2 justify-center items-center border-2 border-gray-300"
-            style={{elevation:5, shadowColor:"#000", shadowOpacity:0.3}}
-          >
-            <FontAwesome5 name="photo-video" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onClose}
-            className="w-16 h-16 rounded-full bg-lightGrayColor2 justify-center items-center border-2 border-gray-300"
-            style={{ elevation: 5, shadowColor: "#000", shadowOpacity: 0.3 }}
-          >
-            <FontAwesome name="video-camera" size={24} color="black" />
-          </TouchableOpacity>
+      <View className="flex-1 relative" >
+        <View
+          className="flex-1 w-full h-1/3 bg-lightGrayColor2 absolute bottom-[80] rounded-t-xl border-2 border-gray-300"
+          style={{ shadowColor: "rgba(0,0,0,0.3)", elevation: 4, shadowOffset: -20 }}
+        >
+          <View className="w-full flex-1 flex-row justify-between p-2">
+            <TouchableOpacity
+              onPress={() => {
+                onClose()
+                router.push('/create')
+              }}
+              className="w-1/2 rounded-lg justify-center items-center bg-purple-600 border-2 border-lightGrayColor2"
+            >
+              <FontAwesome5 name="photo-video" size={28} color="white" />
+              <Text className="text-2xl font-psemibold mt-3 text-white">Posts</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                onClose()
+                router.push('/createReels')
+              }}
+              className="w-1/2 rounded-lg justify-center items-center bg-greenColor border-2 border-lightGrayColor2"
+            >
+              <FontAwesome name="video-camera" size={28} color="white" />
+              <Text className="text-2xl font-psemibold mt-3 text-white">Threels</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -102,7 +110,7 @@ const TabsLayout = () => {
               fontSize: 25,
             },
             headerLeft: () => (
-              <TouchableOpacity onPress={() => navigation.goBack()} className="ml-3">
+              <TouchableOpacity onPress={() => navigation.goBack()} className="ml-2">
                 <View className="flex items-center justify-center w-12 h-12">
                   <AntDesign name="arrowleft" size={24} color="#000" />
                 </View>
@@ -132,11 +140,35 @@ const TabsLayout = () => {
             ),
           }}
         />
+
+        <Tabs.Screen
+          name="createReels"
+          options={{
+            href: null,
+            title: "Create reels",
+            headerTitleStyle: {
+              fontFamily: "Poppins-SemiBold",
+              fontSize: 25,
+            },
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()} className="ml-2">
+                <View className="flex items-center justify-center w-12 h-12">
+                  <AntDesign name="arrowleft" size={24} color="#000" />
+                </View>
+              </TouchableOpacity>
+            )
+          }}
+        />
       </Tabs>
 
       {/* Modal for 'Create' tab */}
       {modalVisible && (
-        <Modal transparent={true} visible={modalVisible} animationType="fade" className="absolute top-0 left-0 right-0 bottom-0 bg-red-300">
+        <Modal
+          transparent={true}
+          visible={modalVisible}
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}
+        >
           <ModalContent onClose={() => setModalVisible(false)} />
         </Modal>
       )}
