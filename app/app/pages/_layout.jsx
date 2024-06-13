@@ -31,6 +31,16 @@ const PageLayout = () => {
         headerTitleStyle: headerStyles
       }} />
 
+      <Stack.Screen name='editProfile' options={{
+        headerTitle: "Edit your profile",
+        headerTitleStyle: headerStyles
+      }} />
+
+      <Stack.Screen name='profileSettings' options={{
+        headerTitle: "Settings",
+        headerTitleStyle: headerStyles
+      }} />
+
     </Stack>
   )
 }
