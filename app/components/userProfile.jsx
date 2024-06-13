@@ -1,6 +1,6 @@
 import { View, Text, Image, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Stack, useLocalSearchParams, usePathname } from 'expo-router'
+import { Stack, router, useLocalSearchParams, usePathname } from 'expo-router'
 import { Feather, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { dataFetcher } from './../scripts/apiCaller';
 import PostCards from './postCards';
@@ -8,6 +8,7 @@ import { postUrl, userUrl } from '../scripts/endpoints';
 import { formatDate } from '../scripts/dateFormatter';
 import authStore from '../constants/authStore';
 import ReelsCard from './reelsCard';
+import CustomButton from './CustomButton';
 
 const UserProfile = () => {
 
@@ -116,7 +117,7 @@ const UserProfile = () => {
             </View>
 
             {/* profile data */}
-            <View className="flex-1 w-full px-4 pt-[60] pb-5">
+            <View className="flex-1 w-full px-4 pt-[60] pb-3">
               <Text className="text-3xl font-pbold pt-2 mt-6 text-center">{userData?.firstName} {userData?.lastName}</Text>
 
               {
@@ -128,6 +129,31 @@ const UserProfile = () => {
 
               <Text className="text-center pt-2 text-[16] font-pmedium text-gray-400"> Joined on {formatDate(userData?.createdAt)}</Text>
             </View>
+
+            {/* buttons to redirect to profile setting and edit */}
+            {
+              pathname == "/pages/profile" &&
+              <View className="py-4 justify-between items-center flex-row">
+                <View className="w-1/2 pl-2 pr-1">
+                  <CustomButton
+                    title={"Edit profile"}
+                    containerStyles={"bg-grayColor rounded-md py-2 w-full h-[40]"}
+                    textStyles={"text-xl font-pmedium text-lightGrayColor2"}
+                    handlePress={() => router.push('pages/editProfile')}
+                  />
+                </View>
+
+                <View className="w-1/2 pr-2 pl-1">
+                  <CustomButton
+                    title={"Settings"}
+                    containerStyles={"bg-grayColor rounded-md py-2 w-full h-[40]"}
+                    textStyles={"text-xl font-pmedium text-lightGrayColor2"}
+                    handlePress={() => router.push('pages/profileSettings')}
+                  />
+                </View>
+
+              </View>
+            }
 
             {/* show amounts */}
             <View className="flex-1 flex-row justify-around items-center border-y-2 border-y-gray-300 py-4">
