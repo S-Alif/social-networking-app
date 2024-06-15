@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { customAlert } from '../scripts/alerts';
 
-const FormTextInput = ({ regex, initialValue, title, placeholder, value, validationMsg, clear, containerStyle }) => {
+const FormTextInput = ({ regex, initialValue, title, placeholder, value, validationMsg, clear, containerStyle, isDisabled }) => {
 
   const [showPass, setShowPass] = useState(false)
   const [text, setText] = useState(initialValue ? initialValue : "")
@@ -12,13 +12,13 @@ const FormTextInput = ({ regex, initialValue, title, placeholder, value, validat
   const validate = (input) => {
     if (input == "") return
     const isValid = regex.test(input)
-    if(!isValid) return customAlert("ERROR !!", validationMsg ? validationMsg : "something went wrong")
+    if (!isValid) return customAlert("ERROR !!", validationMsg ? validationMsg : "something went wrong")
     value(input)
   }
 
   // clear fields
   useEffect(() => {
-    if(clear == true){
+    if (clear == true) {
       setText("")
     }
   }, [clear])
@@ -33,6 +33,7 @@ const FormTextInput = ({ regex, initialValue, title, placeholder, value, validat
           placeholder={placeholder}
           placeholderTextColor="#7b7b8b"
           onChangeText={setText}
+          editable={isDisabled}
           onEndEditing={() => validate(text.trim())}
           secureTextEntry={(title == "Password" || title == "Confirm Password") && !showPass}
         />
@@ -40,7 +41,7 @@ const FormTextInput = ({ regex, initialValue, title, placeholder, value, validat
         {
           (title == "Password" || title == "Confirm Password") &&
           <TouchableOpacity onPress={() => setShowPass(!showPass)} className={`p-3 bg-lightGrayColor2 rounded-lg ${showPass && "bg-purpleColor"}`}>
-              {showPass && <Feather name="eye-off" size={20} color={`${showPass ? "white" : "black"}`} />}
+            {showPass && <Feather name="eye-off" size={20} color={`${showPass ? "white" : "black"}`} />}
             {!showPass && <Feather name="eye" size={20} color="black" />}
           </TouchableOpacity>
         }
