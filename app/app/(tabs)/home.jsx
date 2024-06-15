@@ -1,9 +1,10 @@
 import { View, Text, FlatList, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import TabScreenLayout from '../../components/tabScreenLayout'
 import { dataFetcher } from './../../scripts/apiCaller';
 import { postUrl } from '../../scripts/endpoints';
 import PostCards from '../../components/postCards';
+import { useFocusEffect } from 'expo-router';
 
 const Home = () => {
 
@@ -11,33 +12,66 @@ const Home = () => {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
   const [postAmount, setPostAmount] = useState(0)
+  const [refresh, setRefresh] = useState(false)
+
+
+  const fetchPost = async (pageNum) => {
+    setLoading(true)
+    let result = await dataFetcher(`${postUrl}/posts/${pageNum}/10`)
+    if (result != null) {
+      setPosts(prevPosts => [...prevPosts, ...result.data?.posts])
+      setPostAmount(result?.data?.totalCount)
+    }
+    setLoading(false)
+    setRefresh(false)
+  }
 
   // get the posts
   useEffect(() => {
-    (async () => {
-      setLoading(true)
-      let result = await dataFetcher(`${postUrl}/posts/${page}/10`)
-      if(result != null){
-        setPosts(prevPosts => [...prevPosts, ...result.data?.posts])
-        setPostAmount(result?.data?.totalCount)
-      }
-      setLoading(false)
-    })()
+    if (refresh == false) {
+      (async () => {
+        fetchPost(page)
+      })()
+    }
   }, [page])
+
+  // get the posts on refresh
+  useEffect(() => {
+    if (refresh == true) {
+      (async () => {
+        fetchPost(1)
+      })()
+    }
+  }, [refresh])
 
   // on reach screen end
   const refectchPost = () => {
-    if((page * 10) > postAmount) return
+    if ((page * 10) > postAmount) return
     setPage(prev => prev + 1)
   }
+
+  // on refresh
+  const onRefresh = () => {
+    setPage(1)
+    setPostAmount(0)
+    setPosts([])
+    setRefresh(true)
+  }
+
+  // auto refresh when returning to home
+  useFocusEffect(
+    useCallback(() => {
+      onRefresh()
+    }, [])
+  )
 
 
   return (
     <TabScreenLayout>
-      <FlatList 
+      <FlatList
         data={posts}
         keyExtractor={(item) => item._id}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <PostCards post={item} />
         )}
         initialNumToRender={5}
@@ -51,6 +85,9 @@ const Home = () => {
             {!loading && <Text className="font-psemibold text-xl text-center">No more posts</Text>}
           </View>
         )}
+
+        refreshing={refresh}
+        onRefresh={onRefresh}
       />
 
     </TabScreenLayout>
