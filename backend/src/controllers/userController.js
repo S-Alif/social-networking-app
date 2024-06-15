@@ -49,6 +49,12 @@ exports.profileImgUpdate = async (req, res) => {
   res.status(200).json(result)
 }
 
+// update user profile cover
+exports.profileCoverUpdate = async (req, res) => {
+  let result = await asyncHandler(() => userService.updateUserProfileCover(req))
+  res.status(200).json(result)
+}
+
 // delete
 exports.delete = async (req, res) => {
   let result = await asyncHandler(() => userService.deleteUser(req))

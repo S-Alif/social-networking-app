@@ -14,10 +14,10 @@ const fileChecker = require('../../middlewares/fileChecker')
 router.post("/register", userControl.register)
 router.post("/login", userControl.login)
 router.post('/update', authVerification, userControl.update)
-router.post('/delete',authVerification, userControl.delete)
+router.post('/delete', authVerification, userControl.delete)
 
 router.post('/update/profile-image', authVerification, fileUpload({ createParentPath: true }), fileChecker, userControl.profileImgUpdate)
-router.post('/update/profile-cover', authVerification, fileUpload({ createParentPath: true }), fileChecker, userControl.profileImgUpdate)
+router.post('/update/profile-cover', authVerification, fileUpload({ createParentPath: true }), fileChecker, userControl.profileCoverUpdate)
 
 router.post('/send-otp', userControl.otpSend)
 router.post('/verify-otp', userControl.otpVerify)

@@ -64,7 +64,7 @@ exports.updateUserProfileImg = async (req) => {
       return fileArray.map(file => attachmentUploader(file))
     })
 
-    urlArray = await Promise.all(promises);
+    urlArray = await Promise.all(promises)
     if (urlArray.includes(null)) {
       await deleteFiles(urlArray.filter(url => url !== null))
       return responseMsg(0, 200, "Could not upload profile image")
@@ -77,8 +77,8 @@ exports.updateUserProfileImg = async (req) => {
   return responseMsg(1, 200, "profile image uploaded")
 }
 
-// update user profile image
-exports.updateUserProfileImg = async (req) => {
+// update user profile cover
+exports.updateUserProfileCover = async (req) => {
   let files = req.files
   if (!files) return responseMsg(0, 200, "No image found")
   let currentImg = await userModel.findOne({ _id: new ObjectID(req.headers?.id) }).select('profileCover')
@@ -96,7 +96,7 @@ exports.updateUserProfileImg = async (req) => {
       return fileArray.map(file => attachmentUploader(file))
     })
 
-    urlArray = await Promise.all(promises);
+    urlArray = await Promise.all(promises)
     if (urlArray.includes(null)) {
       await deleteFiles(urlArray.filter(url => url !== null))
       return responseMsg(0, 200, "Could not upload profile cover")
