@@ -5,7 +5,8 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/connect_vive_logo_3.png",
-    "scheme": "social-networking-app",
+    "scheme": "ConnectVibe",
+    "platforms": [ "android"],
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/connect_vive_logo_3.png",
@@ -16,6 +17,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.vibe.connectVibe",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/connect_vive_logo_3.png",
         "backgroundColor": "#ffffff"
