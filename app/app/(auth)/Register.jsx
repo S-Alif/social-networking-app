@@ -21,19 +21,19 @@ const Register = () => {
 
   // registration
   const handleRegistration = async () => {
-    if(data.email == "" || data.firstName == "" || data.lastName == "" || data.pass == ""){
+    if (data.email == "" || data.firstName == "" || data.lastName == "" || data.pass == "") {
       return customAlert("ERROR !!", "Please fill all the data")
     }
 
     setLoading(true)
 
-    let registerAccount = await dataSender(userUrl + "/register", data)    
-    if(registerAccount == null) return
+    let registerAccount = await dataSender(userUrl + "/register", data)
+    if (registerAccount == null) return
 
     setLoading(false)
 
 
-    let sendOtp = await dataSender(userUrl + "/send-otp", {email: data?.email, type: 0})
+    let sendOtp = await dataSender(userUrl + "/send-otp", { email: data?.email, type: 0 })
     if (sendOtp == null) {
       customAlert("ERROR !!", "There was an error sending verification email. Please log in to your account and verify from there")
     }
@@ -91,7 +91,7 @@ const Register = () => {
             clear={clearField}
           />
 
-          {/* last name */}
+          {/* email */}
           <FormTextInput
             title={"Email"}
             placeholder={"Enter your email"}
