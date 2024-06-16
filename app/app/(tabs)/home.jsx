@@ -13,8 +13,6 @@ const Home = () => {
   const [loading, setLoading] = useState(false)
   const [postAmount, setPostAmount] = useState(0)
   const [refresh, setRefresh] = useState(false)
-  const [isInitialLoad, setIsInitialLoad] = useState(true)
-
 
   const fetchPost = async (pageNum) => {
     setLoading(true)

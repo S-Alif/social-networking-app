@@ -86,6 +86,7 @@ const TabsLayout = () => {
           name="search"
           options={{
             headerShown: false,
+            href: null,
             title: "Search",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon icon={<Feather name="search" size={24} color={color} />} color={color} focused={focused} name={"Search"} />
@@ -123,6 +124,7 @@ const TabsLayout = () => {
           name="reels"
           options={{
             headerShown: false,
+            href: null,
             title: "Reels",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon icon={<Entypo name="video" size={24} color={color} />} color={color} focused={focused} name={"Threels"} />
