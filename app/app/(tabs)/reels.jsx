@@ -1,8 +1,9 @@
 import { View, Text, ActivityIndicator, FlatList, Dimensions } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReelsVideoCard from '../../components/reelsVideoCard'
 import { dataFetcher } from '../../scripts/apiCaller'
 import { postUrl } from '../../scripts/endpoints'
+import { useFocusEffect } from '@react-navigation/native'
 
 const { height: windowHeight } = Dimensions.get('window')
 
@@ -14,6 +15,7 @@ const ReelsScreen = () => {
   const [postAmount, setPostAmount] = useState(0)
   const [refresh, setRefresh] = useState(false)
   const [currentPlaying, setCurrentPlaying] = useState(null)
+  const [isFocused, setIsFocused] = useState(true)
 
   const fetchPost = async (pageNum) => {
     setLoading(true)
@@ -64,6 +66,16 @@ const ReelsScreen = () => {
     }
   }).current
 
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true)
+      return () => {
+        setIsFocused(false)
+        setCurrentPlaying(null)
+      };
+    }, [])
+  )
+
 
   return (
     <View className="flex-1">
@@ -72,7 +84,7 @@ const ReelsScreen = () => {
         data={posts}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <ReelsVideoCard reels={item} isPlaying={currentPlaying === item._id} />
+          <ReelsVideoCard reels={item} isPlaying={isFocused && currentPlaying === item._id} />
         )}
         initialNumToRender={5}
         maxToRenderPerBatch={10}
