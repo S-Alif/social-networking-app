@@ -1,10 +1,9 @@
 import { View, Text, FlatList, ActivityIndicator } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TabScreenLayout from '../../components/tabScreenLayout'
 import { dataFetcher } from './../../scripts/apiCaller';
 import { postUrl } from '../../scripts/endpoints';
 import PostCards from '../../components/postCards';
-import { useFocusEffect } from 'expo-router';
 
 const Home = () => {
 
@@ -16,7 +15,7 @@ const Home = () => {
 
   const fetchPost = async (pageNum) => {
     setLoading(true)
-    let result = await dataFetcher(`${postUrl}/posts/${pageNum}/10`)
+    let result = await dataFetcher(`${postUrl}/posts/normal/${pageNum}/10`)
     if (result != null) {
       setPosts(prevPosts => [...prevPosts, ...result.data?.posts])
       setPostAmount(result?.data?.totalCount)

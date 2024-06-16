@@ -124,7 +124,6 @@ const TabsLayout = () => {
           name="reels"
           options={{
             headerShown: false,
-            href: null,
             title: "Reels",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon icon={<Entypo name="video" size={24} color={color} />} color={color} focused={focused} name={"Threels"} />
@@ -136,6 +135,7 @@ const TabsLayout = () => {
           name="chats"
           options={{
             headerShown: false,
+            href: null,
             title: "Chats",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon icon={<Entypo name="chat" size={24} color={color} />} color={color} focused={focused} name={"Chats"} />
