@@ -161,6 +161,9 @@ exports.getSinglePost = async (req) => {
 // get a lot of posts
 exports.getLotOfPosts = async (req) => {
 
+  let postType = req.params?.type
+  if (!postType) return responseMsg(0, 200, "Post type not found")
+
   // page, limit and requesting user
   const page = parseInt(req.params?.page)
   const limit = parseInt(req.params?.limit)
@@ -204,7 +207,7 @@ exports.getLotOfPosts = async (req) => {
             }
           ]
         },
-        { 'postType': 'normal' }
+        { 'postType': postType }
       ]
     }
   }

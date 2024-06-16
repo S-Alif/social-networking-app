@@ -10,7 +10,7 @@ const postControl = require("../../controllers/postController")
 const fileChecker = require('../../middlewares/fileChecker')
 
 // routes
-router.get("/posts/:page/:limit", postControl.lotOfPosts)
+router.get("/posts/:type/:page/:limit", postControl.lotOfPosts)
 router.get('/posts/:id', postControl.singlePost)
 router.get('/posts/user/:type/:page/:limit/:user', postControl.postByUser)
 router.get('/amounts/user', postControl.userFriendAndPostAmount)
