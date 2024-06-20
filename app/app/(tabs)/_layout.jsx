@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import React, { useState } from 'react';
-import { Tabs, router, useNavigation } from 'expo-router';
+import { Tabs, router, useNavigation, usePathname } from 'expo-router';
 import { Feather, Entypo, AntDesign, MaterialIcons, FontAwesome5, FontAwesome } from '@expo/vector-icons';
 
 
@@ -54,19 +54,21 @@ const TabIcon = ({ icon, color, name, focused }) => {
 const TabsLayout = () => {
 
   const navigation = useNavigation()
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false)
+  const pathname = usePathname()
+  const isReelsScreen = pathname == '/reels'
 
   return (
-    <View style={{ flex: 1 }}>
+    <>
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor: "#000",
+          tabBarActiveTintColor: isReelsScreen ? "#fff" : "#000",
           tabBarInactiveTintColor: "#717477",
           tabBarStyle: {
-            backgroundColor: "#F3F6F6",
+            backgroundColor: isReelsScreen ? "#000" : "#F3F6F6",
             borderTopWidth: 1,
-            borderTopColor: "#E7E7E7",
+            borderTopColor: isReelsScreen ? "#000" : "#E7E7E7",
             height: 70,
           },
         }}
@@ -174,7 +176,7 @@ const TabsLayout = () => {
           <ModalContent onClose={() => setModalVisible(false)} />
         </Modal>
       )}
-    </View>
+    </>
   );
 };
 

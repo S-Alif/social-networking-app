@@ -20,14 +20,13 @@ const Login = () => {
     if (email == "" || pass == "") return customAlert("ERROR !!", "All data is required")
     setLoading(true)
     let result = await dataSender(userUrl + "/login", { email, pass })
-    if(result != null) {
+    if (result != null) {
       await SecureStore.setItemAsync('token', result.token)
+      setEmail("")
+      setPass("")
+      setClearField(true)
       router.replace('/home')
     }
-
-    setEmail("")
-    setPass("")
-    setClearField(true)
     setLoading(false)
   }
 

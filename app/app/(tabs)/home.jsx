@@ -79,6 +79,7 @@ const Home = () => {
 
         refreshing={refresh}
         onRefresh={onRefresh}
+        contentContainerStyle={{ paddingBottom: 80 }}
       />
 
     </TabScreenLayout>

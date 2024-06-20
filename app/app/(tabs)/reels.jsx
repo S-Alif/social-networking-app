@@ -4,6 +4,8 @@ import ReelsVideoCard from '../../components/reelsVideoCard'
 import { dataFetcher } from '../../scripts/apiCaller'
 import { postUrl } from '../../scripts/endpoints'
 import { useFocusEffect } from '@react-navigation/native'
+import { StatusBar } from 'expo-status-bar'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { height: windowHeight } = Dimensions.get('window')
 
@@ -78,7 +80,7 @@ const ReelsScreen = () => {
 
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-black">
 
       <FlatList
         data={posts}
@@ -92,9 +94,9 @@ const ReelsScreen = () => {
         onEndReachedThreshold={1}
         onEndReached={refectchPost}
         ListFooterComponent={() => (
-          <View className="flex-1 py-3">
+          <View className="flex-1">
             {loading && <ActivityIndicator size={'large'} color={"#6835F0"} />}
-            {!loading && <Text className="font-psemibold text-xl text-center">No more threels</Text>}
+            {/* {!loading && <Text className="font-psemibold text-xl text-center">No more threels</Text>} */}
           </View>
         )}
 
@@ -110,6 +112,8 @@ const ReelsScreen = () => {
         }}
         onViewableItemsChanged={onViewableItemsChanged}
       />
+
+      <StatusBar />
 
     </View>
   )
