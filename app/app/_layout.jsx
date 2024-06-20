@@ -1,10 +1,14 @@
-import { SplashScreen, Stack } from 'expo-router'
+import { SplashScreen, Stack, usePathname } from 'expo-router'
 import { useFonts } from 'expo-font'
 import { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
 
 SplashScreen.preventAutoHideAsync()
 
 const RootLayout = () => {
+
+  const pathname = usePathname()
+  console.log(pathname)
 
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -30,12 +34,15 @@ const RootLayout = () => {
 
 
   return (
-    <Stack>
-      <Stack.Screen name='index' options={{ headerShown: false }} />
-      <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-      <Stack.Screen name='pages' options={{ headerShown: false }} />
-    </Stack>
+    <>
+      <Stack>
+        <Stack.Screen name='index' options={{ headerShown: false }} />
+        <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+        <Stack.Screen name='pages' options={{ headerShown: false }} />
+      </Stack>
+      <StatusBar style={pathname == "/reels" ? "light" : "dark"} />
+    </>
   )
 }
 

@@ -113,8 +113,6 @@ const ReelsScreen = () => {
         onViewableItemsChanged={onViewableItemsChanged}
       />
 
-      <StatusBar style='light' />
-
     </SafeAreaView>
   )
 }
