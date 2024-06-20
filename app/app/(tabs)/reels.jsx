@@ -80,7 +80,7 @@ const ReelsScreen = () => {
 
 
   return (
-    <View className="flex-1 bg-black">
+    <SafeAreaView className="flex-1 bg-black">
 
       <FlatList
         data={posts}
@@ -113,9 +113,9 @@ const ReelsScreen = () => {
         onViewableItemsChanged={onViewableItemsChanged}
       />
 
-      <StatusBar />
+      <StatusBar style='light' />
 
-    </View>
+    </SafeAreaView>
   )
 }
 

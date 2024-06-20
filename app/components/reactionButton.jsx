@@ -66,15 +66,15 @@ const ReactionButton = ({ postId, reaction }) => {
         <View className="flex-1 justify-center items-center flex-row">
           {selectedReaction ?
             <Text className="text-3xl">{selectedReaction}</Text> :
-            <>
+            <Text style={{ shadowColor: "rgba(0,0,0,0.5)", elevation: 4, shadowRadius: 10 }}>
               {
                 !reelsPath ?
                   <>
                     <SimpleLineIcons name="like" size={20} color="black" />
                     <Text className="text-lg pl-1"> like</Text>
-                  </> : <AntDesign name="like2" size={30} color="white" />
+                  </> : <AntDesign name="like1" size={35} color="white" />
               }
-            </>
+            </Text>
           }
         </View>
       </TouchableOpacity>
