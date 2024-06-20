@@ -1,6 +1,7 @@
 import { View, Text, Dimensions, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { ResizeMode, Video } from 'expo-av'
+import ReelsEngagement from './reelsEngagement'
 
 const height = Dimensions.get('window').height
 
@@ -57,7 +58,8 @@ const ReelsVideoCard = ({ reels: { _id, author, caption, createdAt, currentUserR
           </TouchableOpacity>
         </View>
 
-
+        {/* reels engagement */}
+        <ReelsEngagement reelsId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} />
 
 
       </View>

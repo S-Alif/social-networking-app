@@ -68,7 +68,7 @@ const TabsLayout = () => {
           tabBarStyle: {
             backgroundColor: isReelsScreen ? "#000" : "#F3F6F6",
             borderTopWidth: 1,
-            borderTopColor: isReelsScreen ? "#000" : "#E7E7E7",
+            borderTopColor: isReelsScreen ? "#717477" : "#E7E7E7",
             height: 70,
           },
         }}

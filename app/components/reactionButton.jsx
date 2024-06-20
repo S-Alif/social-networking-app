@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { View, TouchableOpacity, Text } from 'react-native'
 import Reactions from './reactions'
-import { SimpleLineIcons } from '@expo/vector-icons'
+import { SimpleLineIcons, AntDesign } from '@expo/vector-icons'
 import { reactionSender } from '../scripts/apiCaller'
 import { reactionUrl } from '../scripts/endpoints'
+import { usePathname } from 'expo-router'
 
 
 const ReactionButton = ({ postId, reaction }) => {
+
+  const pathname = usePathname()
+  const reelsPath = pathname == "/reels"
+
   const [showReactions, setShowReactions] = useState(false)
   const [selectedReaction, setSelectedReaction] = useState(null)
   const [reactionData, setReactionData] = useState(null)
@@ -62,14 +67,19 @@ const ReactionButton = ({ postId, reaction }) => {
           {selectedReaction ?
             <Text className="text-3xl">{selectedReaction}</Text> :
             <>
-              <SimpleLineIcons name="like" size={20} color="black" />
-              <Text className="text-lg pl-1"> like</Text>
+              {
+                !reelsPath ?
+                  <>
+                    <SimpleLineIcons name="like" size={20} color="black" />
+                    <Text className="text-lg pl-1"> like</Text>
+                  </> : <AntDesign name="like2" size={30} color="white" />
+              }
             </>
           }
         </View>
       </TouchableOpacity>
       {showReactions && (
-        <Reactions onSelectReaction={handleSelectReaction} />
+        <Reactions onSelectReaction={handleSelectReaction} reelsPath={reelsPath} />
       )}
     </View>
   )
