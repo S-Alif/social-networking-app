@@ -76,35 +76,43 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
     <View className="border border-gray-300 rounded-lg mt-2 bg-lightGrayColor2">
 
       {/* author details, post date and options */}
-      <View className="h-[60px] w-full flex-1 flex-row mt-3 mx-3">
-        <View className="flex-1 h-full flex-row gap-3 items-center">
-          <TouchableOpacity
-            onPress={() => router.push({
-              pathname: profile?._id == author ? "pages/profile" : "pages/userProfileById",
-              params: { userId: author, userFirstName: firstName, userLastName: lastName, userProfileImg: profileImg }
-            })}
-          >
-            <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
-          </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => router.push({ pathname: "pages/SinglePost", params: { postId: _id } })}
+        activeOpacity={0.8}
+        className="flex-1"
+      >
 
-          <View>
-            <Text className="text-xl font-pbold">{firstName} {lastName}</Text>
-            <Text className="text-[12px] font-pbold text-gray-300">{formatDate(createdAt)}</Text>
+        <View className="h-[60px] w-full flex-1 flex-row mt-3 mx-3">
+          <View className="flex-1 h-full flex-row gap-3 items-center">
+            <TouchableOpacity
+              onPress={() => router.push({
+                pathname: profile?._id == author ? "pages/profile" : "pages/userProfileById",
+                params: { userId: author, userFirstName: firstName, userLastName: lastName, userProfileImg: profileImg }
+              })}
+            >
+              <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
+            </TouchableOpacity>
+
+            <View>
+              <Text className="text-xl font-pbold">{firstName} {lastName}</Text>
+              <Text className="text-[12px] font-pbold text-gray-300">{formatDate(createdAt)}</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      {/* <Text className="text-2xl pt-2">{caption}</Text> */}
-      {
-        caption &&
-        <View className="flex-1 mx-3 py-3">
-          <RenderHTML
-            contentWidth={Dimensions.get('window').width}
-            source={{ html: `<div>${caption}</div>` }}
-            tagsStyles={htmlStyles}
-          />
-        </View>
-      }
+        {/* <Text className="text-2xl pt-2">{caption}</Text> */}
+        {
+          caption &&
+          <View className="flex-1 mx-3 py-3">
+            <RenderHTML
+              contentWidth={Dimensions.get('window').width}
+              source={{ html: `<div>${caption}</div>` }}
+              tagsStyles={htmlStyles}
+            />
+          </View>
+        }
+
+      </TouchableOpacity>
 
       {/* attachments */}
       {

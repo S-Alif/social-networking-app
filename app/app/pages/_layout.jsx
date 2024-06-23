@@ -41,6 +41,11 @@ const PageLayout = () => {
         headerTitleStyle: headerStyles
       }} />
 
+      <Stack.Screen name='SinglePost' options={{
+        headerTitle: "",
+        headerTitleStyle: headerStyles
+      }} />
+
     </Stack>
   )
 }
