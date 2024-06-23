@@ -52,19 +52,19 @@ const UserProfile = () => {
 
   // fetch posts based on privacy
   useEffect(() => {
-    if (userData != null && (userData?.privacy == 'public' || userData?.isFriends == true)) {
+    if (pathname == "/pages/profile" || (userData != null && (userData?.privacy == 'public' || userData?.isFriends == true))) {
 
       (async () => {
         setLoading(true)
         if (tab == 1) {
-          let posts = await dataFetcher(`${postUrl}/posts/user/normal/${postPage}/10/${userData?._id}`)
+          let posts = await dataFetcher(`${postUrl}/posts/user/normal/${postPage}/10/${pathname !== "/pages/profile" ? user?.data?._id : profile?._id}`)
           if (posts != null && posts?.status != 0) {
             setNormalPosts(posts?.data?.posts)
             setNormalPostsCount(posts?.data?.totalCount)
           }
         }
         else {
-          let reels = await dataFetcher(`${postUrl}/posts/user/reels/${reelsPage}/10/${userData?._id}`)
+          let reels = await dataFetcher(`${postUrl}/posts/user/reels/${reelsPage}/10/${pathname !== "/pages/profile" ? user?.data?._id : profile?._id}`)
           if (reels != null && reels?.status != 0) {
             setReelsPosts(reels?.data?.posts)
             setReelsPostsCount(reels?.data?.totalCount)
