@@ -8,7 +8,6 @@ SplashScreen.preventAutoHideAsync()
 const RootLayout = () => {
 
   const pathname = usePathname()
-  console.log(pathname)
 
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
