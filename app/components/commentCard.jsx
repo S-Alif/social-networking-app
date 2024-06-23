@@ -7,21 +7,21 @@ import { dataSender } from '../scripts/apiCaller';
 import { commentUrl } from '../scripts/endpoints';
 import { router } from 'expo-router';
 
-const CommentCard = ({ postId, postAuthor, comment: { _id, authorFirstName, authorId, authorLastName, authorProfileImg, comment, createdAt, edited }, deleted}) => {
+const CommentCard = ({ postId, postAuthor, comment: { _id, authorFirstName, authorId, authorLastName, authorProfileImg, comment, createdAt, edited }, deleted }) => {
 
-  const {profile} = authStore()
+  const { profile } = authStore()
   const [modal, setModal] = useState(false);
 
   // delete comment
   const deleteComment = async () => {
     let result = await dataSender(`${commentUrl}/delete/${postId}/${_id}`)
-    if(result?.status == 0 || result == null) return
+    if (result?.status == 0 || result == null) return
     setModal(false)
     deleted(_id)
   }
 
   return (
-    <View className="bg-lightGrayColor2 mx-2 mt-2 p-3 rounded-lg border border-gray-300 flex-grow" style={{height: 'auto'}}>
+    <View className="bg-lightGrayColor2 mx-2 mt-2 p-3 rounded-lg border border-gray-300 flex-grow" style={{ minHeight: 84 }}>
 
       {/* author details, post date and options */}
       <View className="h-[60px] w-full flex-1 flex-row items-center">
@@ -45,7 +45,7 @@ const CommentCard = ({ postId, postAuthor, comment: { _id, authorFirstName, auth
 
         {/* button */}
         {
-          profile?._id == authorId && 
+          profile?._id == authorId &&
           <View>
             <TouchableOpacity onPress={() => setModal(prev => !prev)}>
               <Entypo name="dots-three-vertical" size={18} color="black" />
