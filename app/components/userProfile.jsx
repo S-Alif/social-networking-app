@@ -14,6 +14,7 @@ const UserProfile = () => {
 
   const { userId } = useLocalSearchParams()
   const pathname = usePathname()
+  const isProfilePath = pathname == '/pages/profile'
 
   const { profile } = authStore()
 
@@ -32,8 +33,9 @@ const UserProfile = () => {
   // fetch data
   useEffect(() => {
     (async () => {
-      if (pathname != '/pages/profile') {
-        var user = await dataFetcher(userUrl + '/profile/' + userId)
+      var user
+      if (!isProfilePath) {
+        user = await dataFetcher(userUrl + '/profile/' + userId)
         if (user != null && user?.status != 0) setUserData(user?.data)
       } else {
         user = profile
@@ -41,30 +43,28 @@ const UserProfile = () => {
       }
 
       // fetch post and profile amount datas based on privacy
-      if (pathname == "/pages/profile" || (user?.data?.privacy == "public" || user?.data.isFriends == true)) {
-        let userAmounts = await dataFetcher(`${postUrl}/amounts/user/${pathname !== "/pages/profile" ? user?.data?._id : profile?._id}`)
-        if (userAmounts != null && userAmounts?.status != 0) {
-          setAmount(userAmounts?.data)
-        }
+      if (isProfilePath || (user?.data?.privacy == "public" || user?.data.isFriends == true)) {
+        let userAmounts = await dataFetcher(`${postUrl}/amounts/user/${!isProfilePath ? user?.data?._id : profile?._id}`)
+        if (userAmounts != null && userAmounts?.status != 0) setAmount(userAmounts?.data)
       }
     })()
   }, [])
 
   // fetch posts based on privacy
   useEffect(() => {
-    if (pathname == "/pages/profile" || (userData != null && (userData?.privacy == 'public' || userData?.isFriends == true))) {
+    if (isProfilePath || (userData != null && (userData?.privacy == 'public' || userData?.isFriends == true))) {
 
       (async () => {
         setLoading(true)
         if (tab == 1) {
-          let posts = await dataFetcher(`${postUrl}/posts/user/normal/${postPage}/10/${pathname !== "/pages/profile" ? user?.data?._id : profile?._id}`)
+          let posts = await dataFetcher(`${postUrl}/posts/user/normal/${postPage}/10/${!isProfilePath ? userData?._id : profile?._id}`)
           if (posts != null && posts?.status != 0) {
             setNormalPosts(posts?.data?.posts)
             setNormalPostsCount(posts?.data?.totalCount)
           }
         }
         else {
-          let reels = await dataFetcher(`${postUrl}/posts/user/reels/${reelsPage}/10/${pathname !== "/pages/profile" ? user?.data?._id : profile?._id}`)
+          let reels = await dataFetcher(`${postUrl}/posts/user/reels/${reelsPage}/10/${!isProfilePath ? userData?._id : profile?._id}`)
           if (reels != null && reels?.status != 0) {
             setReelsPosts(reels?.data?.posts)
             setReelsPostsCount(reels?.data?.totalCount)
@@ -85,7 +85,7 @@ const UserProfile = () => {
       {
         pathname == "/pages/profile" ?
           <Stack.Screen options={{ headerTitle: "Profile" }} />
-          : <Stack.Screen options={{ headerTitle: (userData?.firstName && userData?.lastName) ? `${userData?.firstName} ${userData?.lastName}` : "User Profile" }} />
+          : <Stack.Screen options={{ headerTitle: (userData?.firstName && userData?.lastName) ? `${userData?.firstName} ${userData?.lastName}` : "" }} />
       }
 
 
