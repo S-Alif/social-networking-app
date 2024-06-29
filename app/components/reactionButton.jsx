@@ -7,7 +7,7 @@ import { reactionUrl } from '../scripts/endpoints'
 import { usePathname } from 'expo-router'
 
 
-const ReactionButton = ({ postId, reaction }) => {
+const ReactionButton = ({ postId, reaction, currentUserAction }) => {
 
   const pathname = usePathname()
   const reelsPath = pathname == "/reels"
@@ -34,6 +34,7 @@ const ReactionButton = ({ postId, reaction }) => {
       if (addReaction?.status == 0) return
       setReactionData(addReaction.data)
       setSelectedReaction(reactionSelected)
+      currentUserAction(+1)
       return setShowReactions(false)
     }
 
@@ -41,6 +42,7 @@ const ReactionButton = ({ postId, reaction }) => {
       let removeReaction = await reactionSender(reactionUrl + `/delete/${postId}/${reactionData?._id}`, { reactedOn: postId, reaction: reactionSelected })
       if (removeReaction?.status == 0) return
       setSelectedReaction(null)
+      currentUserAction(-1)
       return setShowReactions(false)
     }
 

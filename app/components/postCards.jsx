@@ -149,12 +149,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         </View>
       }
 
-      <View className="flex-1 flex-row gap-x-3 items-center h-[20] px-3 mt-2 mb-3">
-        <Text className="font-pbold text-gray-400 text-[16px]"> <AntDesign name="like2" size={20} color="rgba(156, 163, 175, 0.7)" /> {reactionCount}</Text>
-        <Text className="font-pbold text-gray-400 text-[16px]"> <FontAwesome5 name="comment-dots" size={20} color="rgba(156, 163, 175, 0.7)" /> {commentCount}</Text>
-      </View>
-
-      <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} />
+      <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} engages={{ reactionCount, commentCount }} />
       <OptionModal showModal={modal} setShowModal={setModal} postId={_id} deleted={deleted} author={author} />
 
     </View>
