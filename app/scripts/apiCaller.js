@@ -25,9 +25,8 @@ export const dataSender = async (apiEndpoint, data) => {
   try {
     let result = await api.post(apiEndpoint, data, { headers: { token: await getToken() } })
 
-    if (result?.status == 1) {
-      customAlert("Success !!", result.data)
-    }
+    if (result?.status == 0) return customAlert("ERROR !!", result.data)
+    customAlert("Success !!", result?.data)
     return result
   } catch (error) {
     if (error.message !== 'Session expired') {
