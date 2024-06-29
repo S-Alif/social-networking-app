@@ -10,7 +10,7 @@ import { dataFetcher } from '../scripts/apiCaller'
 
 const Index = () => {
 
-  const {setProfile} = authStore()
+  const { fetchProfile } = authStore()
 
   // route based on token
   useEffect(() => {
@@ -20,13 +20,11 @@ const Index = () => {
         router.replace('/login')
         return
       }
-      
-      let result = await dataFetcher(userUrl + '/profile')
-      if (result != null) {
-        setProfile(result?.data)
-        return router.replace('/home')
-      }
-      setProfile(null)
+
+      let result = await fetchProfile()
+      if (result) return router.replace('/home')
+      router.replace('/login')
+
     }, 2000)
   }, [])
 

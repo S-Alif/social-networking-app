@@ -8,8 +8,11 @@ import { Link, router } from 'expo-router';
 import { userUrl } from '../../scripts/endpoints';
 import * as SecureStore from 'expo-secure-store'
 import { dataSender } from '../../scripts/apiCaller';
+import authStore from './../../constants/authStore';
 
 const Login = () => {
+
+  const { fetchProfile } = authStore()
 
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
@@ -22,6 +25,7 @@ const Login = () => {
     let result = await dataSender(userUrl + "/login", { email, pass })
     if (result != null) {
       await SecureStore.setItemAsync('token', result.token)
+      await fetchProfile()
       setEmail("")
       setPass("")
       setClearField(true)
