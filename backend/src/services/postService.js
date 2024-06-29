@@ -1,4 +1,6 @@
 const postModel = require('../models/postModel');
+const reactionModel = require('../models/reactionModel');
+const commentModel = require('../models/commentModel');
 const attachmentModel = require('../models/postAttachmentModel');
 const friendshipModel = require('../models/friendshipModel');
 const { responseMsg } = require('../utils/helpers');
@@ -76,21 +78,23 @@ exports.updatePost = async (req) => {
 
 // delete post
 exports.deletePost = async (req) => {
-  let postAttachments = await attachmentModel.find({ postId: req.params?.id }).select('fileLocation -_id').lean()
 
+  if (req.params?.user != req.headers.id) return responseMsg(0, 200, "Go and delete your own posts")
+
+  let postAttachments = await attachmentModel.find({ postId: req.params?.id }).select('fileLocation -_id').lean()
   if (postAttachments) {
     let attachmentArray = postAttachments.map(attachment => attachment.fileLocation)
 
     // delete the attachments
     await deleteFiles(attachmentArray)
-
     // delete attachments data form database
     await attachmentModel.deleteMany({ postId: req.params?.id })
   }
 
   // finally delete the posts
   await postModel.deleteOne({ _id: new ObjectID(req.params?.id) })
-
+  await reactionModel.deleteMany({ reactedOn: new ObjectID(req.params?.id) })
+  await commentModel.deleteMany({ commentOn: new ObjectID(req.params?.id) })
   return responseMsg(1, 200, "post deleted")
 }
 
@@ -282,7 +286,7 @@ exports.getLotOfPosts = async (req) => {
 
   const { posts: paginatedPosts, totalCount } = posts[0]
 
-  return responseMsg(1, 200, { totalCount: totalCount[0].totalCount, posts: paginatedPosts })
+  return responseMsg(1, 200, { totalCount: totalCount[0].totalCount ? totalCount[0].totalCount : 0, posts: paginatedPosts })
 }
 
 // get post by user

@@ -18,7 +18,7 @@ router.get('/amounts/user/:user', postControl.userFriendAndPostAmount)
 
 router.post('/create', fileUpload({ createParentPath: true }), fileChecker, postControl.postCreate)
 router.post('/update', postControl.postUpdate)
-router.post('/delete/:id', postControl.postDelete)
+router.post('/delete/:id/:user', postControl.postDelete)
 router.post('/report/:id', postControl.postReport)
 
 module.exports = router
