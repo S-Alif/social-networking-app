@@ -18,9 +18,9 @@ const Create = () => {
 
   // submit post
   const submitPost = async () => {
-    setLoading(true)
     let caption = postCaption.replace(/&nbsp;/g, "").replace(/<[^>]+>/g, '')
     if ((!caption || postCaption == "") && file.length == 0) return customAlert("ERROR !!", "Cannot create empty posts")
+    setLoading(true)
 
     const formData = new FormData()
 

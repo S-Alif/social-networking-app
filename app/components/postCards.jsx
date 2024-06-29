@@ -1,15 +1,18 @@
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, Modal, TouchableWithoutFeedback, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import authStore from '../constants/authStore'
 import { formatDate } from '../scripts/dateFormatter'
 import { ResizeMode, Video } from 'expo-av'
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5, Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { generateThumbnail } from '../scripts/getThumbnail'
 import PostEngagements from './postEngagements'
 import RenderHTML from 'react-native-render-html'
 import ImagePopupModal from './imagePopupModal'
 import Carousel from "pinar";
 import { router } from 'expo-router'
+import { dataSender } from '../scripts/apiCaller'
+import { postUrl } from '../scripts/endpoints'
+import { customAlert } from '../scripts/alerts'
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -68,9 +71,10 @@ const AttachmentHandler = ({ attachment }) => {
 
 
 // cards
-const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments } }) => {
+const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments }, deleted }) => {
 
   const { profile } = authStore()
+  const [modal, setModal] = useState(false)
 
   return (
     <View className="border border-gray-300 rounded-lg mt-2 bg-lightGrayColor2">
@@ -98,6 +102,16 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
               <Text className="text-[12px] font-pbold text-gray-300">{formatDate(createdAt)}</Text>
             </View>
           </View>
+
+          {
+            profile?._id == author &&
+            <TouchableOpacity
+              className="pr-5 pt-3"
+              onPress={() => setModal(prev => !prev)}
+            >
+              <Entypo name="dots-three-vertical" size={20} color="black" />
+            </TouchableOpacity>
+          }
         </View>
 
         {/* <Text className="text-2xl pt-2">{caption}</Text> */}
@@ -141,12 +155,71 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
       </View>
 
       <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} />
+      <OptionModal showModal={modal} setShowModal={setModal} postId={_id} deleted={deleted} author={author} />
 
     </View>
   )
 }
 
 export default PostCards
+
+// option modal
+const OptionModal = ({ showModal, setShowModal, postId, deleted, author }) => {
+
+  // delete the post
+  const deletePost = async () => {
+    setShowModal(false)
+    Alert.alert("Warning", "Do you want to delete this post ?", [
+      {
+        text: "No"
+      },
+      {
+        text: 'Yes',
+        onPress: async () => {
+          customAlert("Please wait !!", "Your post is being deleted")
+          let result = await dataSender(postUrl + '/delete/' + postId + "/" + author)
+          if (result != null && result?.status == 1) deleted(postId)
+        },
+      }
+    ])
+  }
+
+
+  return (
+    <Modal
+      animationType='fade'
+      visible={showModal}
+      onRequestClose={() => setShowModal(false)}
+      transparent={true}
+    >
+      <TouchableWithoutFeedback onPress={() => setShowModal(false)}>
+        <View className="flex-1 justify-center items-center bg-[#1a1b1cc2] px-4">
+          <View className="bg-lightGrayColor2 w-full rounded-lg border border-gray-400" style={{ shadowColor: "#000", elevation: 5, shadowOpacity: 0.3 }}>
+
+            {/* update comment */}
+            <TouchableOpacity
+              className="flex-row justify-center items-center py-3 border-b border-b-gray-400"
+              onPress={() => {
+                setShowModal(false)
+                router.push({ pathname: 'pages/updateComment', params: { _id: _id, commentOn: postId, comment: comment } })
+              }}
+            >
+              <FontAwesome name="cog" size={26} color="black" />
+              <Text className="text-xl font-pmedium pl-2">Update post</Text>
+            </TouchableOpacity>
+
+            {/* delete comment */}
+            <TouchableOpacity className="flex-row justify-center items-center py-3" onPress={deletePost}>
+              <MaterialIcons name="delete-forever" size={26} color="black" />
+              <Text className="text-xl font-pmedium pl-2">Delete post</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  )
+}
 
 const styles = StyleSheet.create({
   dotsStyle: {
@@ -231,4 +304,4 @@ const htmlStyles = {
     borderLeftWidth: 4,
     borderLeftColor: '#ccc',
   },
-};
+}

@@ -56,6 +56,11 @@ const Home = () => {
     setRefresh(true)
   }
 
+  // remove the deleted post from the list
+  const deletePost = (postId) => {
+    setPosts(prev => prev.filter(e => e._id != postId))
+  }
+
 
   return (
     <TabScreenLayout>
@@ -63,7 +68,7 @@ const Home = () => {
         data={posts}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <PostCards post={item} />
+          <PostCards post={item} deleted={deletePost} />
         )}
         initialNumToRender={5}
         maxToRenderPerBatch={10}
@@ -79,7 +84,7 @@ const Home = () => {
 
         refreshing={refresh}
         onRefresh={onRefresh}
-        contentContainerStyle={{ paddingBottom: 80 }}
+        contentContainerStyle={{ paddingBottom: 10 }}
       />
 
     </TabScreenLayout>
