@@ -72,9 +72,11 @@ export const formDataSender = async (apiEndpoint, data) => {
       }
     })
 
-    if (result?.status == 1) {
-      customAlert("Success !!", result.data)
+    if (result?.status == 0) {
+      customAlert("ERROR !!", result.data)
+      return null
     }
+    customAlert("Success !!", result.data)
     return result
   } catch (error) {
     if (error.message !== 'Session expired') {
