@@ -1,9 +1,10 @@
 import { View, Text, FlatList, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import TabScreenLayout from '../../components/tabScreenLayout'
 import { dataFetcher } from './../../scripts/apiCaller';
 import { postUrl } from '../../scripts/endpoints';
 import PostCards from '../../components/postCards';
+import { useFocusEffect } from 'expo-router';
 
 const Home = () => {
 
@@ -12,6 +13,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false)
   const [postAmount, setPostAmount] = useState(0)
   const [refresh, setRefresh] = useState(false)
+  const [firstPrint, setFirstPrint] = useState(true)
 
   const fetchPost = async (pageNum) => {
     setLoading(true)
@@ -29,6 +31,7 @@ const Home = () => {
     if (refresh == false) {
       (async () => {
         fetchPost(page)
+        if (firstPrint) setFirstPrint(false)
       })()
     }
   }, [page])
@@ -56,11 +59,17 @@ const Home = () => {
     setRefresh(true)
   }
 
+  // auto load the page when coming back from other screen
+  useFocusEffect(useCallback(() => {
+    if (firstPrint == false) {
+      onRefresh()
+    }
+  }, []))
+
   // remove the deleted post from the list
   const deletePost = (postId) => {
     setPosts(prev => prev.filter(e => e._id != postId))
   }
-
 
   return (
     <TabScreenLayout>
