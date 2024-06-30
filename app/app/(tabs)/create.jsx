@@ -11,17 +11,17 @@ import { fileChecker } from '../../scripts/fileChecker';
 
 const Create = () => {
 
-  const richText = useRef();
+  const richText = useRef()
   const [postCaption, setPostCaption] = useState("")
   const [file, setFile] = useState([])
   const [loading, setLoading] = useState(false)
 
   // submit post
   const submitPost = async () => {
-    let caption = postCaption.replace(/&nbsp;/g, "").replace(/<[^>]+>/g, '')
-    if ((!caption || postCaption == "") && file.length == 0) return customAlert("ERROR !!", "Cannot create empty posts")
-    setLoading(true)
+    let caption = postCaption.replace(/&nbsp;/g, "").replace(/<[^>]+>/g, "")
+    if ((caption.trim() == "" || postCaption == "") && file.length == 0) return customAlert("ERROR !!", "Cannot create empty posts")
 
+    setLoading(true)
     const formData = new FormData()
 
     if (caption) formData.append('caption', postCaption)
@@ -30,11 +30,16 @@ const Create = () => {
         uri: file.uri,
         type: file.mimeType,
         name: file.name,
-      });
-    });
+      })
+    })
     formData.append('postType', "normal")
 
     let post = await formDataSender(postUrl + "/create", formData)
+    if (post != null && post?.status == 1) {
+      richText.current?.setContentHTML("")
+      setPostCaption("")
+      setFile([])
+    }
     setLoading(false)
   }
 
@@ -44,12 +49,9 @@ const Create = () => {
       type: ['image/jpg', 'video/mp4', 'image/png', 'image/jpeg'],
       multiple: true,
     })
-
     if (!files) return
     if (files['assets'].length > 3) return customAlert("ERROR !!", "File limit exceded")
-
     let checker = fileChecker(files['assets'])
-
     setFile(prev => [...prev, ...checker])
   }
 
@@ -101,6 +103,7 @@ const Create = () => {
                   <TouchableOpacity
                     className="absolute w-[30] h-[30] z-[10] right-[10] top-[15] rounded-md bg-lightGrayColor2 justify-center items-center"
                     onPress={() => removeFiles(e.uri)}
+                    disabled={loading}
                   >
                     <Entypo name="cross" size={24} color="black" />
                   </TouchableOpacity>

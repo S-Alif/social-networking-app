@@ -30,7 +30,7 @@ const Home = () => {
   useEffect(() => {
     if (refresh == false) {
       (async () => {
-        fetchPost(page)
+        await fetchPost(page)
         if (firstPrint) setFirstPrint(false)
       })()
     }
@@ -61,9 +61,7 @@ const Home = () => {
 
   // auto load the page when coming back from other screen
   useFocusEffect(useCallback(() => {
-    if (firstPrint == false) {
-      onRefresh()
-    }
+    if (firstPrint == false) onRefresh()
   }, []))
 
   // remove the deleted post from the list
