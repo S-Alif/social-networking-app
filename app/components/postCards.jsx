@@ -150,7 +150,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
       }
 
       <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} engages={{ reactionCount, commentCount }} />
-      <OptionModal showModal={modal} setShowModal={setModal} postId={_id} deleted={deleted} author={author} />
+      <OptionModal showModal={modal} setShowModal={setModal} postId={_id} deleted={deleted} author={author} caption={caption} />
 
     </View>
   )
@@ -159,7 +159,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
 export default PostCards
 
 // option modal
-const OptionModal = ({ showModal, setShowModal, postId, deleted, author }) => {
+const OptionModal = ({ showModal, setShowModal, postId, deleted, author, caption }) => {
 
   // delete the post
   const deletePost = async () => {
@@ -196,7 +196,7 @@ const OptionModal = ({ showModal, setShowModal, postId, deleted, author }) => {
               className="flex-row justify-center items-center py-3 border-b border-b-gray-400"
               onPress={() => {
                 setShowModal(false)
-                router.push({ pathname: 'pages/updateComment', params: { _id: _id, commentOn: postId, comment: comment } })
+                router.push({ pathname: 'pages/updatePost', params: { _id: postId, author: author, caption: caption } })
               }}
             >
               <FontAwesome name="cog" size={26} color="black" />
