@@ -46,6 +46,11 @@ const PageLayout = () => {
         headerTitleStyle: headerStyles
       }} />
 
+      <Stack.Screen name='updatePost' options={{
+        headerTitle: "Update post",
+        headerTitleStyle: headerStyles
+      }} />
+
     </Stack>
   )
 }
