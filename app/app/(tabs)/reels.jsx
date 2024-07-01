@@ -1,10 +1,9 @@
-import { View, Text, ActivityIndicator, FlatList, Dimensions } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, Dimensions, ScrollView, RefreshControl, Text } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReelsVideoCard from '../../components/reelsVideoCard'
 import { dataFetcher } from '../../scripts/apiCaller'
 import { postUrl } from '../../scripts/endpoints'
 import { useFocusEffect } from '@react-navigation/native'
-import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { height: windowHeight } = Dimensions.get('window')
@@ -23,7 +22,7 @@ const ReelsScreen = () => {
     setLoading(true)
     let result = await dataFetcher(`${postUrl}/posts/reels/${pageNum}/10`)
     if (result != null) {
-      setPosts(prevPosts => [...prevPosts, ...result.data?.posts])
+      setPosts(prev => [...prev, ...result?.data?.posts])
       setPostAmount(result?.data?.totalCount)
     }
     setLoading(false)
@@ -50,7 +49,7 @@ const ReelsScreen = () => {
 
   // on reach screen end
   const refectchPost = () => {
-    if ((page * 10) > postAmount) return
+    if ((page * 10) >= postAmount) return
     setPage(prev => prev + 1)
   }
 
@@ -62,11 +61,16 @@ const ReelsScreen = () => {
     setRefresh(true)
   }
 
-  const onViewableItemsChanged = useRef(({ viewableItems }) => {
-    if (viewableItems.length > 0) {
-      setCurrentPlaying(viewableItems[0].item._id)
+  const handleScroll = ({ nativeEvent }) => {
+    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
+    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 50) {
+      refectchPost()
     }
-  }).current
+    const visibleItemIndex = Math.ceil(contentOffset.y / windowHeight)
+    if (posts[visibleItemIndex] && posts[visibleItemIndex]._id !== currentPlaying) {
+      setCurrentPlaying(posts[visibleItemIndex]._id)
+    }
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -74,7 +78,7 @@ const ReelsScreen = () => {
       return () => {
         setIsFocused(false)
         setCurrentPlaying(null)
-      };
+      }
     }, [])
   )
 
@@ -82,36 +86,26 @@ const ReelsScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-black">
 
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <ReelsVideoCard reels={item} isPlaying={isFocused && currentPlaying === item._id} />
-        )}
-        initialNumToRender={5}
-        maxToRenderPerBatch={10}
-        extraData={posts}
-        onEndReachedThreshold={1}
-        onEndReached={refectchPost}
-        ListFooterComponent={() => (
-          <View className="flex-1">
-            {loading && <ActivityIndicator size={'large'} color={"#6835F0"} />}
-            {/* {!loading && <Text className="font-psemibold text-xl text-center">No more threels</Text>} */}
-          </View>
-        )}
-
-        refreshing={refresh}
-        onRefresh={onRefresh}
-
-        snapToAlignment="start"
+      <ScrollView
+        snapToAlignment='start'
         snapToInterval={windowHeight}
         decelerationRate="fast"
         pagingEnabled
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 50
-        }}
-        onViewableItemsChanged={onViewableItemsChanged}
-      />
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        refreshControl={<RefreshControl refreshing={refresh} onRefresh={onRefresh} />}
+      >
+        {
+          posts.length > 0 &&
+          posts.map((e, index) => (
+            <ReelsVideoCard reels={e} isPlaying={isFocused && currentPlaying === e._id} key={index} />
+          ))
+        }
+
+        {loading && <ActivityIndicator size={"small"} color={"#fff"} />}
+        {(!loading && ((page * 10) >= postAmount)) && <Text className="text-white text-center py-3 text-xl">No more threels</Text>}
+
+      </ScrollView>
 
     </SafeAreaView>
   )
