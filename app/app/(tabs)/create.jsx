@@ -49,7 +49,7 @@ const Create = () => {
       type: ['image/jpg', 'video/mp4', 'image/png', 'image/jpeg'],
       multiple: true,
     })
-    if (!files) return
+    if (files?.canceled) return
     if (files['assets'].length > 3) return customAlert("ERROR !!", "File limit exceded")
     let checker = fileChecker(files['assets'])
     setFile(prev => [...prev, ...checker])

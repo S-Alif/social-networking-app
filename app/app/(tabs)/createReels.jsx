@@ -24,8 +24,7 @@ const CreateReels = () => {
       allowsMultipleSelection: false,
       selectionLimit: 1
     })
-
-    if (!files) return
+    if (files?.canceled) return
     if (files['assets'].length > 1) return customAlert("ERROR !!", "File limit exceded")
     let checker = fileChecker(files['assets'])
     if (checker.length < 1) return
