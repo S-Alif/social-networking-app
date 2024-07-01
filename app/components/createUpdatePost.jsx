@@ -1,19 +1,41 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import * as DocumentPicker from 'expo-document-picker';
 import { FontAwesome6, Entypo } from '@expo/vector-icons';
 import { customAlert } from '../scripts/alerts';
-import { formDataSender } from '../scripts/apiCaller';
+import { dataSender, formDataSender } from '../scripts/apiCaller';
 import { postUrl } from '../scripts/endpoints';
 import CustomButton from './CustomButton';
+import { useLocalSearchParams, useNavigation, usePathname } from 'expo-router';
 
 const CreateUpdatePost = () => {
+
+  const params = useLocalSearchParams()
+  const pathname = usePathname()
+  const navigation = useNavigation()
+  const isUpdateScreen = pathname == "/pages/updatePost"
 
   const richText = useRef()
   const [postCaption, setPostCaption] = useState("")
   const [file, setFile] = useState([])
   const [loading, setLoading] = useState(false)
+
+  // if update screen set the post caption
+  useEffect(() => {
+    if (isUpdateScreen) richText.current?.setContentHTML(params?.caption)
+  }, [])
+
+  const submitUpdatedPost = async () => {
+    let caption = postCaption.replace(/&nbsp;/g, "").replace(/<[^>]+>/g, "")
+    if (caption.trim() == "" || postCaption == "") return customAlert("ERROR !!", "Cannot update")
+
+    let result = await dataSender(postUrl + "/update", { id: params?._id, caption: postCaption })
+    if (result != null && result?.status == 1) {
+      richText.current?.setContentHTML("")
+      setTimeout(() => { navigation.goBack() }, 2000)
+    }
+  }
 
   // submit post
   const submitPost = async () => {
@@ -23,7 +45,7 @@ const CreateUpdatePost = () => {
     setLoading(true)
     const formData = new FormData()
 
-    if (caption) formData.append('caption', postCaption)
+    if (caption) formData.append("caption", postCaption)
     if (file) file.forEach((file, index) => {
       formData.append(`files[${index}]`, {
         uri: file.uri,
@@ -31,7 +53,7 @@ const CreateUpdatePost = () => {
         name: file.name,
       })
     })
-    formData.append('postType', "normal")
+    formData.append("postType", "normal")
 
     let post = await formDataSender(postUrl + "/create", formData)
     if (post != null && post?.status == 1) {
@@ -65,7 +87,7 @@ const CreateUpdatePost = () => {
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 12 }}>
 
         <View className="flex-1">
-          <Text className="pt-4 text-xl font-psemibold">Write post caption</Text>
+          <Text className="pt-4 text-xl font-psemibold">{isUpdateScreen ? "Update post caption" : "Write post caption"}</Text>
         </View>
 
         <View className="flex-1 min-h-[400px] bg-lightGrayColor2 mt-3 rounded-t-lg">
@@ -73,7 +95,7 @@ const CreateUpdatePost = () => {
             <RichEditor
               ref={richText}
               className="flex-1"
-              placeholder="Write your post caption ...."
+              placeholder={isUpdateScreen ? "Update post caption..." : "Write post caption..."}
               editorStyle={{
                 contentCSSText: 'font-size: 24px;',
               }}
@@ -116,7 +138,7 @@ const CreateUpdatePost = () => {
 
         {/* file picker */}
         {
-          file.length < 3 &&
+          (!isUpdateScreen && file.length < 3) &&
           <>
             <View className="flex-1 mt-4">
               <Text className="pt-4 text-xl font-psemibold">Choose attachments <Text className="text-gray-400">(maximum of three)</Text> </Text>
@@ -140,10 +162,10 @@ const CreateUpdatePost = () => {
         {/* post submit button */}
         <View className="mt-4">
           <CustomButton
-            title={"Submit post"}
+            title={isUpdateScreen ? "Update post" : "Submit post"}
             containerStyles={"bg-purpleColor min-h-[50]"}
             textStyles={"text-white font-psemibold text-xl"}
-            handlePress={submitPost}
+            handlePress={isUpdateScreen ? submitUpdatedPost : submitPost}
             isloading={loading}
           />
         </View>
