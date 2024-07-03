@@ -14,15 +14,17 @@ const ShowUserPosts = ({ userId }) => {
 
   // fetch posts
   useEffect(() => {
-    (async () => {
-      setLoading(true)
-      let posts = await dataFetcher(`${postUrl}/posts/user/normal/${page}/10/${userId}`)
-      if (posts != null && posts?.status != 0) {
-        setData(prev => [...prev, ...posts?.data?.posts])
-        setPostAmount(posts?.data?.totalCount)
-      }
-      setLoading(false)
-    })()
+    if (userId) {
+      (async () => {
+        setLoading(true)
+        let posts = await dataFetcher(`${postUrl}/posts/user/normal/${page}/10/${userId}`)
+        if (posts != null && posts?.status != 0) {
+          setData(prev => [...prev, ...posts?.data?.posts])
+          setPostAmount(posts?.data?.totalCount)
+        }
+        setLoading(false)
+      })()
+    }
   }, [page])
 
   // on reach screen end
