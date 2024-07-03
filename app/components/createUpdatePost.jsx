@@ -8,13 +8,14 @@ import { dataSender, formDataSender } from '../scripts/apiCaller';
 import { postUrl } from '../scripts/endpoints';
 import CustomButton from './CustomButton';
 import { useLocalSearchParams, useNavigation, usePathname } from 'expo-router';
+import { fileChecker } from './../scripts/fileChecker';
 
 const CreateUpdatePost = () => {
 
   const params = useLocalSearchParams()
   const pathname = usePathname()
   const navigation = useNavigation()
-  const isUpdateScreen = pathname == "/pages/updatePost"
+  const isUpdateScreen = (pathname == "/pages/updatePost")
 
   const richText = useRef()
   const [postCaption, setPostCaption] = useState("")
