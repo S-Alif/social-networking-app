@@ -47,13 +47,20 @@ const ShowUserThreels = ({ userId }) => {
   }
 
   return (
-    <View className="flex-1 bg-transparent">
+    <View className="flex-1 bg-lightGrayColor">
       <FlatList
         data={data}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <ReelsCard reels={item} />
+        renderItem={({ item, index }) => (
+          <View className={`w-full h-[300] pl-2 ${index % 2 != 0 && "pr-2"} mb-2`}>
+            <ReelsCard reels={item} />
+          </View>
         )}
+        numColumns={2}
+        columnWrapperStyle={{
+          width: "50%",
+          justifyContent: "space-between",
+        }}
         initialNumToRender={5}
         maxToRenderPerBatch={10}
         extraData={data}
@@ -61,7 +68,7 @@ const ShowUserThreels = ({ userId }) => {
         ListFooterComponent={() => (
           <View className="flex-1 py-3">
             {loading && <ActivityIndicator size={'large'} color={"#6835F0"} />}
-            {!loading && <Entypo name="dots-three-horizontal" size={24} color="black" />}
+            {!loading && <Text className="text-center"><Entypo name="dots-three-horizontal" size={24} color="black" /></Text>}
           </View>
         )}
         contentContainerStyle={{ paddingBottom: 10 }}

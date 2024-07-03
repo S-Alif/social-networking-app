@@ -15,7 +15,6 @@ const ShowUserPosts = ({ userId }) => {
   // fetch posts
   useEffect(() => {
     (async () => {
-      console.log("hello")
       setLoading(true)
       let posts = await dataFetcher(`${postUrl}/posts/user/normal/${page}/10/${userId}`)
       if (posts != null && posts?.status != 0) {
