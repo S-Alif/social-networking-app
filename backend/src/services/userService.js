@@ -176,8 +176,8 @@ exports.userProfileById = async (req) => {
   else if (privacy === 'friends' && browser) {
     const friendship = await friendshipModel.findOne({
       $or: [
-        { user1: ObjectID(browser), user2: ObjectID(profile) },
-        { user1: ObjectID(profile), user2: ObjectID(browser) }
+        { user1: new ObjectID(browser), user2: new ObjectID(profile) },
+        { user1: new ObjectID(profile), user2: new ObjectID(browser) }
       ]
     })
 
