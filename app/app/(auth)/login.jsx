@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import AuthTabScreen from './../../components/authTabScreen';
 import FormTextInput from '../../components/textInput';
@@ -63,7 +63,9 @@ const Login = () => {
         />
 
         {/* forgot password */}
-        <Text className="mt-10 font-psemibold text-lg text-purpleColor">Forgot Password ?</Text>
+        <TouchableOpacity onPress={() => router.push('/findProfile')}>
+          <Text className="mt-10 font-psemibold text-lg text-purpleColor">Forgot Password ?</Text>
+        </TouchableOpacity>
 
         {/* buttons */}
         <CustomButton
