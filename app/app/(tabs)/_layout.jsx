@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'r
 import React, { useState } from 'react';
 import { Tabs, router, useNavigation, usePathname } from 'expo-router';
 import { Feather, Entypo, AntDesign, MaterialIcons, FontAwesome5, FontAwesome } from '@expo/vector-icons';
+import AuthCheck from '../../components/AuthCheck';
 
 
 // Modal content component
@@ -59,7 +60,7 @@ const TabsLayout = () => {
   const isReelsScreen = pathname == '/reels'
 
   return (
-    <>
+    <AuthCheck>
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
@@ -176,7 +177,7 @@ const TabsLayout = () => {
           <ModalContent onClose={() => setModalVisible(false)} />
         </Modal>
       )}
-    </>
+    </AuthCheck>
   );
 };
 

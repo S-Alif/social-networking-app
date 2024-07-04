@@ -17,7 +17,6 @@ const ProfileSettings = () => {
   const logout = async () => {
     await SecureStore.deleteItemAsync('token')
     setProfile(null)
-    router.replace('/login')
   }
 
   return (

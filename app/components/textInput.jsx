@@ -34,6 +34,7 @@ const FormTextInput = ({ regex, initialValue, title, placeholder, value, validat
           placeholderTextColor="#7b7b8b"
           onChangeText={setText}
           editable={isDisabled}
+          onBlur={() => validate(text.trim())}
           onEndEditing={() => validate(text.trim())}
           secureTextEntry={(title == "Password" || title == "Confirm Password") && !showPass}
         />
