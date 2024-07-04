@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Checkbox from 'expo-checkbox'
 import authStore from './../../constants/authStore';
@@ -7,6 +7,7 @@ import { userUrl } from './../../scripts/endpoints';
 import CustomButton from './../../components/CustomButton';
 import * as SecureStore from 'expo-secure-store'
 import { router } from 'expo-router';
+import UpdatePass from '../../components/updatePass';
 
 const ProfileSettings = () => {
 
@@ -20,19 +21,31 @@ const ProfileSettings = () => {
   }
 
   return (
-    <View className="flex-1 px-2 bg-lightGrayColor">
+    <View className="flex-1 bg-lightGrayColor">
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: 20,
+          paddingHorizontal: 8
+        }}
+      >
+        <View className="flex-1">
+          {/* privacy update */}
+          <PrivacyCheckBox />
 
-      {/* privacy update */}
-      <PrivacyCheckBox />
+          {/* password update */}
+          <View className="flex-1 pt-10">
+            <UpdatePass />
+          </View>
 
-      {/* logout */}
-      <CustomButton
-        title={"Logout"}
-        containerStyles={"flex-1 w-full max-h-[50] bg-purpleColor"}
-        textStyles={"text-white font-psemibold text-xl"}
-        handlePress={logout}
-      />
-
+          {/* logout */}
+          <CustomButton
+            title={"Logout"}
+            containerStyles={"flex-1 w-full h-[50] bg-redColor mt-5"}
+            textStyles={"text-white font-psemibold text-xl"}
+            handlePress={logout}
+          />
+        </View>
+      </ScrollView>
     </View>
   )
 }
@@ -59,7 +72,7 @@ const PrivacyCheckBox = () => {
 
 
   return (
-    <View className="flex-1 pt-4 max-h-[200]">
+    <View className="flex-1 pt-4">
       <Text className="font-psemibold text-2xl pb-2 border-b-2 border-b-gray-400 mb-3">Account privacy</Text>
 
       <View className="flex-1 flex-row mb-3">

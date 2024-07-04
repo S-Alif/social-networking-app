@@ -27,7 +27,6 @@ const SinglePost = () => {
     let result = await dataFetcher(`${commentUrl}/${params?.postId}/${pageNum}/10`)
     if (result == null || result?.status == 0) return
     if (refresh) {
-      console.log(refresh, "refresh")
       setRefresh(false)
       return setComments(result?.data)
     }
@@ -51,7 +50,6 @@ const SinglePost = () => {
       await fetchComments(page)
       if (firstLoad) {
         setFirstLoad(false)
-        console.log("hello")
       }
     })()
   }, [page])
