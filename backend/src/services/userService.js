@@ -2,7 +2,7 @@ const userModel = require('../models/userModel')
 const otpModel = require('../models/otpModel')
 const friendshipModel = require('../models/friendshipModel')
 
-const { hashPass, responseMsg, verifyPass } = require('../utils/helpers')
+const { hashPass, responseMsg, verifyPass, getCurrentDate } = require('../utils/helpers')
 const sendEmail = require('../utils/sendMail')
 const { otpMail } = require('../utils/mail-markup')
 
@@ -199,5 +199,29 @@ exports.forgetPassUserProfile = async (req) => {
 
 // renew password
 exports.renewPass = async (req) => {
+  let email = req.headers?.email
+  if (!email) email = req.body?.email
+  let currentPass = req.body?.currentPass
+
+  if (currentPass && req.headers?.email) {
+    let result = await userModel.findOne({ email: email }).select("firstName lastName email pass")
+    let passCompare = await verifyPass(result?.pass, currentPass)
+
+    if (passCompare) {
+      let newPass = await hashPass(req.body?.newPass)
+      if (!newPass) return responseMsg(0, 200, "could not update password")
+      await userModel.updateOne({ email: email }, { pass: newPass })
+      await sendEmail(email, `<h1><b>Your password changed at ${getCurrentDate()}. </b></h1> <br> <p>If it is not done by you, please contact us immediately</p>`, "Account password updated")
+      return responseMsg(1, 200, "password updated")
+    }
+
+    return responseMsg(0, 200, "current password don't match")
+  }
+
+  let newPass = await hashPass(req.body?.newPass)
+  if (!newPass) return responseMsg(0, 200, "could not update password")
+  await userModel.updateOne({ email: email }, { pass: newPass })
+  await sendEmail(email, `<h1><b>Your password changed at ${getCurrentDate()}. </b></h1> <br> <p>If it is not done by you, please contact us immediately</p>`, "Account password updated")
+  return responseMsg(1, 200, "password updated")
 
 }

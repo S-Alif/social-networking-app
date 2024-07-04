@@ -26,6 +26,7 @@ router.get('/profile', authVerification, userControl.profile)
 router.get('/profile/:id', authVerification, userControl.profileById)
 
 router.get('/forget-pass-profile/:email', userControl.profileForgetPass)
+router.post('/pass-renew/profile', authVerification, userControl.passRenew)
 router.post('/pass-renew', userControl.passRenew)
 
 module.exports = router
