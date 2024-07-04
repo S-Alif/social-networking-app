@@ -3,15 +3,15 @@ const jwt = require('jsonwebtoken');
 
 // issue a token
 exports.issueToken = (data, duration) => {
-  const token = jwt.sign(data, process.env.secretKey, {expiresIn: duration})
+  const token = jwt.sign(data, process.env.secretKey, { expiresIn: duration })
   return token
 }
 
 // verify a token
 exports.verifyToken = (token) => {
-  const verified = jwt.verify(token, process.env.secretKey, 
+  const verified = jwt.verify(token, process.env.secretKey,
     (error, decoded) => {
-      if(error) return null
+      if (error) return null
       return decoded
     }
   )
@@ -52,5 +52,11 @@ exports.cookieMaker = (data, duration) => {
 
 // response message
 exports.responseMsg = (status, code, data) => {
-  return {status: status, code: code, data: data}
+  return { status: status, code: code, data: data }
+}
+
+// date format
+exports.getCurrentDate = () => {
+  let date = new Date().toISOString().split('T')[0]
+  return date
 }
