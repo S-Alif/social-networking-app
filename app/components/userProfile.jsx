@@ -1,13 +1,11 @@
-import { View, Text, Image, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Stack, router, useLocalSearchParams, usePathname } from 'expo-router'
-import { Feather, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+import { Feather, Entypo } from '@expo/vector-icons';
 import { dataFetcher } from './../scripts/apiCaller';
-import PostCards from './postCards';
 import { postUrl, userUrl } from '../scripts/endpoints';
 import { formatDate } from '../scripts/dateFormatter';
 import authStore from '../constants/authStore';
-import ReelsCard from './reelsCard';
 import CustomButton from './CustomButton';
 import ShowUserPosts from './showUserPosts';
 import ShowUserThreels from './showUserThreels';

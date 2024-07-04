@@ -6,7 +6,6 @@ import { dataSender } from '../../scripts/apiCaller';
 import { userUrl } from './../../scripts/endpoints';
 import CustomButton from './../../components/CustomButton';
 import * as SecureStore from 'expo-secure-store'
-import { router } from 'expo-router';
 import UpdatePass from '../../components/updatePass';
 
 const ProfileSettings = () => {

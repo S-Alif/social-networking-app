@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react'
-import { View, Text, SafeAreaView, ImageBackground, Image } from 'react-native'
+import { Text, Image } from 'react-native'
 import * as SecureStore from 'expo-secure-store'
 import logo3 from '../assets/images/connect_vive_logo_3.png'
 import { router } from 'expo-router'
 import AuthTabScreen from '../components/authTabScreen'
-import { userUrl } from '../scripts/endpoints'
 import authStore from '../constants/authStore'
-import { dataFetcher } from '../scripts/apiCaller'
 
 const Index = () => {
 

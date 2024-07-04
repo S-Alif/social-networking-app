@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import authStore from '../constants/authStore'
 import { formatDate } from '../scripts/dateFormatter'
 import { ResizeMode, Video } from 'expo-av'
-import { AntDesign, FontAwesome5, Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { generateThumbnail } from '../scripts/getThumbnail'
 import PostEngagements from './postEngagements'
 import RenderHTML from 'react-native-render-html'

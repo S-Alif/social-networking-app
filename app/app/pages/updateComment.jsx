@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import React, { useState } from 'react'
 import { useLocalSearchParams, useNavigation } from 'expo-router'
 import FormTextInput from '../../components/textInput'
@@ -16,10 +16,10 @@ const UpdateComment = () => {
 
   // update comment
   const updateComment = async () => {
-    if(comment == "" || comment == params?.comment) return
+    if (comment == "" || comment == params?.comment) return
 
-    let update = await dataSender(commentUrl + "/update", {id: params?._id, commentOn: params?.commentOn, comment: comment})
-    if(update == null || update?.status == 0) return
+    let update = await dataSender(commentUrl + "/update", { id: params?._id, commentOn: params?.commentOn, comment: comment })
+    if (update == null || update?.status == 0) return
     navigation.goBack()
   }
 

@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import React, { useState } from 'react';
 import { Tabs, router, useNavigation, usePathname } from 'expo-router';
-import { Feather, Entypo, AntDesign, MaterialIcons, FontAwesome5, FontAwesome } from '@expo/vector-icons';
+import { Feather, Entypo, AntDesign, FontAwesome5, FontAwesome } from '@expo/vector-icons';
 import AuthCheck from '../../components/AuthCheck';
 
 
