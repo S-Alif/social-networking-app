@@ -2,11 +2,14 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import ReactionButton from './reactionButton'
 import { EvilIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { generateShareLink, shareItem } from '../scripts/deepLink';
 
 
 const PostEngagements = ({ postId, reaction, engages }) => {
+
+  const pathname = usePathname()
+  const isSinglePost = pathname == "/pages/SinglePost"
 
   const [newReactionCount, setNewReactionCount] = useState(0)
 
@@ -23,15 +26,18 @@ const PostEngagements = ({ postId, reaction, engages }) => {
           <ReactionButton postId={postId?._id} reaction={reaction} currentUserAction={(e) => setNewReactionCount(prev => prev + e)} />
         </View>
 
-        <View className="flex-1 border-r">
-          <TouchableOpacity
-            className="flex-1 justify-center items-center flex-row"
-            onPress={() => router.push({ pathname: "pages/showComments", params: { postId: postId?._id, author: postId?.author } })}
-          >
-            <EvilIcons name="comment" size={29} color="black" />
-            <Text className="text-lg"> comment</Text>
-          </TouchableOpacity>
-        </View>
+        {
+          !isSinglePost &&
+          <View className="flex-1 border-r">
+            <TouchableOpacity
+              className="flex-1 justify-center items-center flex-row"
+              onPress={() => router.push({ pathname: "pages/showComments", params: { postId: postId?._id, author: postId?.author } })}
+            >
+              <EvilIcons name="comment" size={29} color="black" />
+              <Text className="text-lg"> comment</Text>
+            </TouchableOpacity>
+          </View>
+        }
 
         <View className="flex-1">
           <TouchableOpacity
