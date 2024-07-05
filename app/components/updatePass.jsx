@@ -59,7 +59,7 @@ const UpdatePass = () => {
 
   return (
     <View className="flex-1">
-      <Text className="font-psemibold text-2xl pb-2 border-b-2 border-b-gray-400 mb-3">Change password</Text>
+      <Text className={isProfileSettings ? "font-psemibold text-2xl pb-2 border-b-2 border-b-gray-400 mb-3" : "text-4xl pt-10 font-pbold mb-5"}>Change password</Text>
 
       {
         isProfileSettings &&

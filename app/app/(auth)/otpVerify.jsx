@@ -13,17 +13,17 @@ const OtpVerify = () => {
   const params = useLocalSearchParams()
   const [code, setCode] = useState("")
   const [loading, setLoading] = useState(false)
-  const [counter, setCounter] = useState(300)
+  const [counter, setCounter] = useState(120)
   const [clearField, setClearField] = useState(false)
 
   // handle the verification
   const handleVerification = async () => {
-    if(code == "") return customAlert("ERROR !!", "Please enter code")
+    if (code == "") return customAlert("ERROR !!", "Please enter code")
     setLoading(true)
 
-    let verify = await dataSender(userUrl + "/verify-otp", {email: params?.email, otp: code})
-    if(verify != null){
-      router.replace('/login')
+    let verify = await dataSender(userUrl + "/verify-otp", { email: params?.email, otp: code })
+    if (verify != null && verify?.status == 1) {
+      params?.type == 1 ? router.replace({ pathname: '/renewPass', params: { email: params?.email, type: params?.type } }) : router.replace('/login')
     }
     setCode("")
     setClearField(true)
@@ -49,7 +49,7 @@ const OtpVerify = () => {
   }, [counter]);
 
 
- 
+
   return (
     <AuthTabScreen>
       <Text className="text-4xl pt-10 font-pbold">Verify OTP</Text>
@@ -83,7 +83,7 @@ const OtpVerify = () => {
         {/* show the send code button */}
         <View className="justify-center pb-10 flex-row gap-2">
           {
-            counter > 0 ? 
+            counter > 0 ?
               (<Text className="text-lg font-pmedium text-darkGrayColor">Code sent. Resend code in <Text className='text-lg font-psemibold text-purpleColor'>{counter}s</Text></Text>)
               : (<TouchableOpacity onPress={sendCode}><Text className='text-lg font-psemibold text-purpleColor'>Resend code</Text></TouchableOpacity>)
           }
