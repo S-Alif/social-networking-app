@@ -194,7 +194,7 @@ exports.userProfileById = async (req) => {
 
 // forget pass user profile
 exports.forgetPassUserProfile = async (req) => {
-  let result = await userModel.findOne({ email: req?.body?.email }).select("fistName, lastName profileImg")
+  let result = await userModel.findOne({ email: req?.params?.email }).select("firstName lastName profileImg -_id")
   if (!result) return responseMsg(0, 200, "No user found")
   return responseMsg(1, 200, result)
 }
