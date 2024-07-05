@@ -161,19 +161,15 @@ exports.userProfileById = async (req) => {
 
   if (isAdmin == true) { // if admin true
     var user = await userModel.findOne({ _id: new ObjectID(req.params.id) }).select("-pass")
-
     return responseMsg(1, 200, user)
   }
 
   user = await userModel.findOne({ _id: new ObjectID(profile) }).select("-pass")
   if (!user) return responseMsg(0, 200, "No user found")
 
-  const { privacy } = user;
+  const { privacy } = user
 
-  if (privacy === 'public') {
-    return responseMsg(1, 200, user)
-  }
-  else if (privacy === 'friends' && browser) {
+  if (privacy && browser) {
     const friendship = await friendshipModel.findOne({
       $or: [
         { user1: new ObjectID(browser), user2: new ObjectID(profile) },
@@ -181,14 +177,15 @@ exports.userProfileById = async (req) => {
       ]
     })
 
-    if (!friendship) return responseMsg(1, 200, { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status, createdAt: user?.createdAt, isFriends: false })
+    if (!friendship) {
+      if (privacy === 'public') return responseMsg(1, 200, { ...user?._doc, ["isFriends"]: false })
 
-    user.isFriends = true
-    return responseMsg(1, 200, user)
+      if (privacy === 'friends' || privacy === 'private') return responseMsg(1, 200, { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status, createdAt: user?.createdAt, isFriends: false })
+    }
 
-  }
-  else {
-    return responseMsg(1, 200, { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status, createdAt: user?.createdAt })
+    if (privacy === 'friends' || privacy === 'public') return responseMsg(1, 200, { ...user?._doc, ["isFriends"]: true })
+
+    return responseMsg(1, 200, { _id: user._id, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg, profileCover: user?.profileCover, privacy: user?.privacy, status: user?.status, createdAt: user?.createdAt, isFriends: true })
   }
 }
 
