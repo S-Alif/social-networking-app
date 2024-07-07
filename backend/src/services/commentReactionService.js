@@ -1,5 +1,7 @@
 const reactionModel = require("../models/reactionModel")
 const commentModel = require("../models/commentModel")
+const friendshipModel = require("../models/friendshipModel")
+const requestModel = require("../models/requestModel")
 const { responseMsg } = require("../utils/helpers")
 const postModel = require("../models/postModel")
 
@@ -146,4 +148,56 @@ exports.getCommentsForPost = async (req) => {
   ])
 
   return responseMsg(1, 200, comment)
+}
+
+
+/*--------------- requests ---------------- */
+// send friend request
+exports.sendRequest = async (req) => {
+  if (req.headers?.id !== req.body?.from) return responseMsg(0, 200, "Login to send a request")
+
+  let result = await requestModel.create(req.body)
+  return responseMsg(1, 200, "Friend request sent")
+}
+
+// cancel sent request
+exports.cancelRequest = async (req) => {
+  if (!req.headers?.id || !req?.params?.id) return responseMsg(0, 200, "Login to cancel request")
+  let result = await requestModel.findOneAndDelete({ from: req?.headers?.id, to: req?.params?.id, accepted: false })
+  return responseMsg(1, 200, "Request canceled")
+}
+
+// fetch friend requests
+exports.fetchRequests = async (req) => {
+  if (!req.headers?.id) return responseMsg(0, 200, "Could not retrieve requests")
+  let result = await requestModel.find({ to: req.headers?.id }).select("_id firstName lastName profileImg")
+
+  return responseMsg(1, 200, result)
+}
+
+// check to see if profile has a request
+exports.checkRequest = async (req) => {
+  if (!req.headers?.id) return responseMsg(0, 200, "Log in")
+
+  let browser = req.headers?.id
+  let user = req.params?.id
+
+  let result = await requestModel.findOne({ from: browser, accepted: false })
+  if (result) return responseMsg(1, 200, { from: browser })
+
+  let result2 = await requestModel.findOne({ from: user, accepted: false })
+  if (result2) return responseMsg(1, 200, { from: user })
+
+  return responseMsg(1, 200, { from: false })
+}
+
+// confirm request
+exports.confirmRequest = async (req) => {
+  if (req?.body?.accepted) {
+    await friendshipModel.create({ user1: req.headers?.id, user2: req.body?.user })
+    await requestModel.deleteOne({ from: req.headers?.id, to: req.body?.user })
+    return responseMsg(1, 200, "Request accepted")
+  }
+  await requestModel.deleteOne({ from: req.headers?.id, to: req.body?.user })
+  return responseMsg(1, 200, "Request rejected")
 }

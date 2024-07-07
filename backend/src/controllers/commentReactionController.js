@@ -52,3 +52,35 @@ exports.getCommentByPost = async (req, res) => {
   let result = await asyncHandler(() => commentReactionService.getCommentsForPost(req))
   res.status(200).json(result)
 }
+
+
+/*----------- request -------------*/
+// send a request
+exports.requestSend = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.sendRequest(req))
+  res.status(200).json(result)
+}
+
+// cancel a request
+exports.requestCancel = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.cancelRequest(req))
+  res.status(200).json(result)
+}
+
+// get the requests
+exports.getRequests = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.fetchRequests(req))
+  res.status(200).json(result)
+}
+
+// check requests
+exports.checkRequest = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.checkRequest(req))
+  res.status(200).json(result)
+}
+
+// confirm request
+exports.requestConfirm = async (req, res) => {
+  let result = await asyncHandler(() => commentReactionService.confirmRequest(req))
+  res.status(200).json(result)
+}

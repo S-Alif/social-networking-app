@@ -85,6 +85,12 @@ exports.profileById = async (req, res) => {
   res.status(200).json(result)
 }
 
+// fetch friends
+exports.getFriends = async (req, res) => {
+  let result = await asyncHandler(() => userService.fetchFriends(req))
+  res.status(200).json(result)
+}
+
 // forget pass user profile
 exports.profileForgetPass = async (req, res) => {
   let result = await asyncHandler(() => userService.forgetPassUserProfile(req))

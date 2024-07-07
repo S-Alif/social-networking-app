@@ -189,6 +189,18 @@ exports.userProfileById = async (req) => {
   }
 }
 
+// fetch friends
+exports.fetchFriends = async (req) => {
+  let userId = req.params?.id
+  let browser = req.headers?.id
+  if (!browser) return responseMsg(0, 200, "Log in to see friends")
+
+  if (userId === browser) {
+
+    return responseMsg(1, 200, friendships)
+  }
+}
+
 // forget pass user profile
 exports.forgetPassUserProfile = async (req) => {
   let result = await userModel.findOne({ email: req?.params?.email }).select("firstName lastName profileImg -_id")

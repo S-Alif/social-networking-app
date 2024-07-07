@@ -17,5 +17,9 @@ router.post('/comment/update', commentReactionController.commentUpdate)
 router.post('/comment/delete/:post/:id', commentReactionController.commentDelete)
 router.get('/comment/:post/:page/:limit', commentReactionController.getCommentByPost)
 
+router.post('/send-request', commentReactionController.requestSend)
+router.post('/cancel-request/:id', commentReactionController.requestCancel)
+router.get('/check-request/:id', commentReactionController.checkRequest)
+router.post('/confirm-request', commentReactionController.requestConfirm)
 
 module.exports = router
