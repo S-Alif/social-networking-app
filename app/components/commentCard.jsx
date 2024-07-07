@@ -87,8 +87,6 @@ const CommentCard = ({ postId, postAuthor, comment: { _id, authorFirstName, auth
         </TouchableWithoutFeedback>
       </Modal>
 
-
-
       <Text className="font-pmedium pt-3 text-lg">{comment}</Text>
     </View>
   )

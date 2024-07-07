@@ -1,9 +1,9 @@
-import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, Image, FlatList, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Stack, router, useLocalSearchParams, usePathname } from 'expo-router'
-import { Feather, Entypo } from '@expo/vector-icons';
-import { dataFetcher } from './../scripts/apiCaller';
-import { postUrl, userUrl } from '../scripts/endpoints';
+import { Feather, Entypo, FontAwesome5 } from '@expo/vector-icons';
+import { dataFetcher, dataSender } from './../scripts/apiCaller';
+import { engageMentUrl, postUrl, userUrl } from '../scripts/endpoints';
 import { formatDate } from '../scripts/dateFormatter';
 import authStore from '../constants/authStore';
 import CustomButton from './CustomButton';
@@ -22,14 +22,23 @@ const UserProfile = () => {
   const [amount, setAmount] = useState(null)
   const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState(1)
+  const [hasRequest, setHasRequest] = useState(false)
+  const [refresh, setRefresh] = useState(false)
 
 
   // fetch data
   useEffect(() => {
     (async () => {
+      setLoading(true)
       var user
       if (!isProfilePath) {
         user = await dataFetcher(userUrl + '/profile/' + userId)
+
+        if (user?.data?.isFriends == false) {
+          let check = await dataFetcher(engageMentUrl + "/check-request/" + userId)
+          if (check != null && check?.status == 1) setHasRequest(check?.data?.from)
+        }
+
         if (user != null && user?.status != 0) setUserData(user?.data)
       } else {
         user = profile
@@ -41,8 +50,10 @@ const UserProfile = () => {
         let userAmounts = await dataFetcher(`${postUrl}/amounts/user/${!isProfilePath ? user?.data?._id : profile?._id}`)
         if (userAmounts != null && userAmounts?.status != 0) setAmount(userAmounts?.data)
       }
+
+      setLoading(false)
     })()
-  }, [])
+  }, [refresh])
 
 
 
@@ -60,9 +71,10 @@ const UserProfile = () => {
       {/* main profile */}
       <FlatList
         ListHeaderComponent={() => (
-          <>
-            {!loading &&
-              <View className="flex-1 bg-lightGrayColor2">
+          <View className="flex-1 bg-lightGrayColor2">
+            {
+              !loading &&
+              <>
                 {/* profile images */}
                 <View className="flex-1 w-full h-[250px] relative overflow-visible">
                   <Image source={{ uri: userData?.profileCover }} className="w-full h-[250px]" />
@@ -115,7 +127,20 @@ const UserProfile = () => {
                 }
 
                 {/* show amounts */}
-                <View className="flex-1 flex-row justify-around items-center border-y-2 border-y-gray-300 py-4">
+                <View className={`flex-1 flex-row justify-around items-center border-y-2 border-y-gray-300 py-4 relative ${!isProfilePath && "mt-5"}`}>
+
+                  {/* send accept friend request */}
+                  {(!userData?.isFriends && !isProfilePath) && <SendAcceptRequest request={hasRequest} profileId={profile?._id} userId={userId} confirmation={setHasRequest} loading={() => setRefresh(prev => !prev)} />}
+
+                  {
+                    (userData?.isFriends && !isProfilePath) &&
+                    <Text
+                      className="absolute left-1/2 top-[-25] z-10 bg-purpleColor rounded-md w-[80] h-[50] text-xl font-pmedium text-lightGrayColor2 text-center pt-3 pl-2"
+                      style={{ transform: [{ translateX: -40 }] }}
+                    >
+                      <FontAwesome5 name="user-check" size={30} color="white" />
+                    </Text>
+                  }
 
                   <View className="items-center w-1/2 border-r border-r-gray-300">
                     <Text className="text-5xl font-psemibold pt-2">{amount?.friends}</Text>
@@ -142,8 +167,9 @@ const UserProfile = () => {
 
                 {tab == 1 && <ShowUserPosts userId={isProfilePath ? profile?._id : userId} />}
                 {tab == 2 && <ShowUserThreels userId={isProfilePath ? profile?._id : userId} />}
-              </View>}
-          </>
+              </>
+            }
+          </View>
         )}
       />
     </View>
@@ -151,3 +177,74 @@ const UserProfile = () => {
 }
 
 export default UserProfile
+
+
+// send request buttons
+const SendAcceptRequest = ({ request, profileId, userId, confirmation, loading }) => {
+
+  // send request
+  const sendRequest = async () => {
+    let result = await dataSender(engageMentUrl + "/send-request", { from: profileId, to: userId })
+    if (result != null && result?.status == 1) confirmation(profileId)
+  }
+
+  // cancel sent request
+  const cancelRequest = async () => {
+    let result = await dataSender(engageMentUrl + "/cancel-request/" + userId)
+    if (result != null && result?.status == 1) confirmation(false)
+  }
+
+  // confirm request
+  const confirmRequest = async (accepted) => {
+    let result = await dataSender(engageMentUrl + "/confirm-request", { user: userId, accepted: accepted })
+    if (result !== null && result?.status == 1) loading()
+  }
+
+  // confirm altert
+  const showAlert = async () => {
+    Alert.alert("Become buddies ☺", "Aceept request", [
+      {
+        text: "No",
+        onPress: async () => { await confirmRequest(false) }
+      },
+      {
+        text: "Yes",
+        onPress: async () => { await confirmRequest(true) }
+      }
+    ])
+  }
+
+  return (
+    <View className="flex-1 px-2 pb-3 absolute left-1/2 top-[-25] z-10" style={{ transform: [{ translateX: -50 }] }}>
+      {
+        !request &&
+        <CustomButton
+          title={<Feather name="user-plus" size={30} color="white" />}
+          containerStyles={"bg-greenColor rounded-md py-2 w-[80] mx-auto h-[50]"}
+          textStyles={"text-xl font-pmedium text-lightGrayColor2 text-center pt-2 pl-2"}
+          handlePress={sendRequest}
+        />
+      }
+
+      {
+        (request && request == profileId) &&
+        <CustomButton
+          title={<FontAwesome5 name="user-clock" size={30} color="white" />}
+          containerStyles={"bg-grayColor rounded-md py-2 w-[80] mx-auto h-[50]"}
+          textStyles={"text-xl font-pmedium text-lightGrayColor2 text-center pt-2 pl-2"}
+          handlePress={cancelRequest}
+        />
+      }
+
+      {
+        (request && request == userId) &&
+        <CustomButton
+          title={<FontAwesome5 name="user-cog" size={30} color="white" />}
+          containerStyles={"bg-greenColor rounded-md py-2 w-[80] mx-auto h-[50]"}
+          textStyles={"text-xl font-pmedium text-lightGrayColor2 text-center pt-2 pl-2"}
+          handlePress={showAlert}
+        />
+      }
+    </View>
+  )
+}

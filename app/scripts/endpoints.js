@@ -1,5 +1,5 @@
 const baseUrl = "http://192.168.0.103:10010/public"
-const engageMentUrl = baseUrl + "/engagement"
+export const engageMentUrl = baseUrl + "/engagement"
 
 export const userUrl = baseUrl + "/user"
 export const postUrl = baseUrl + "/post"
