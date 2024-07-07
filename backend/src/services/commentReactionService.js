@@ -170,7 +170,26 @@ exports.cancelRequest = async (req) => {
 // fetch friend requests
 exports.fetchRequests = async (req) => {
   if (!req.headers?.id) return responseMsg(0, 200, "Could not retrieve requests")
-  let result = await requestModel.find({ to: req.headers?.id }).select("_id firstName lastName profileImg")
+  let result = await requestModel.find([
+    { $match: { to: new ObjectID(req?.headers?.id) } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'from',
+        foreignField: '_id',
+        as: 'fromUser'
+      }
+    },
+    { $unwind: '$fromUser' },
+    {
+      $project: {
+        _id: 1,
+        firstName: '$fromUser.firstName',
+        lastName: '$fromUser.lastName',
+        profileImg: '$fromUser.profileImg'
+      }
+    }
+  ])
 
   return responseMsg(1, 200, result)
 }
@@ -194,10 +213,10 @@ exports.checkRequest = async (req) => {
 // confirm request
 exports.confirmRequest = async (req) => {
   if (req?.body?.accepted) {
-    await friendshipModel.create({ user1: req.headers?.id, user2: req.body?.user })
-    await requestModel.deleteOne({ from: req.headers?.id, to: req.body?.user })
+    await friendshipModel.create({ user1: req.body?.user, user2: req.headers?.id })
+    await requestModel.deleteOne({ from: req.body?.user, to: req.headers?.id })
     return responseMsg(1, 200, "Request accepted")
   }
-  await requestModel.deleteOne({ from: req.headers?.id, to: req.body?.user })
+  await requestModel.deleteOne({ from: req.body?.user, to: req.headers?.id })
   return responseMsg(1, 200, "Request rejected")
 }

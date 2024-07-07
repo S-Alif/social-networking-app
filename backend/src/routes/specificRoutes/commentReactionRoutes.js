@@ -18,6 +18,7 @@ router.post('/comment/delete/:post/:id', commentReactionController.commentDelete
 router.get('/comment/:post/:page/:limit', commentReactionController.getCommentByPost)
 
 router.post('/send-request', commentReactionController.requestSend)
+router.get('/fetch-request', commentReactionController.getRequests)
 router.post('/cancel-request/:id', commentReactionController.requestCancel)
 router.get('/check-request/:id', commentReactionController.checkRequest)
 router.post('/confirm-request', commentReactionController.requestConfirm)

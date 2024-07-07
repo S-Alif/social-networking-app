@@ -195,10 +195,38 @@ exports.fetchFriends = async (req) => {
   let browser = req.headers?.id
   if (!browser) return responseMsg(0, 200, "Log in to see friends")
 
-  if (userId === browser) {
+  let result = await friendshipModel.aggregate([
+    {
+      $match: {
+        $or: [
+          { user1: new ObjectID(userId) },
+          { user2: new ObjectID(userId) }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'users',
+        let: { friendId: { $cond: [{ $eq: ['$user1', new ObjectID(userId)] }, '$user2', '$user1'] } },
+        pipeline: [
+          { $match: { $expr: { $eq: ['$_id', '$$friendId'] } } },
+          { $project: { _id: 1, firstName: 1, lastName: 1, profileImg: 1 } }
+        ],
+        as: 'friendDetails'
+      }
+    },
+    { $unwind: '$friendDetails' },
+    {
+      $project: {
+        _id: '$friendDetails._id',
+        firstName: '$friendDetails.firstName',
+        lastName: '$friendDetails.lastName',
+        profileImg: '$friendDetails.profileImg'
+      }
+    }
+  ])
 
-    return responseMsg(1, 200, friendships)
-  }
+  return responseMsg(1, 200, result)
 }
 
 // forget pass user profile
