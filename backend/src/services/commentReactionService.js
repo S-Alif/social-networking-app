@@ -198,6 +198,14 @@ exports.sendRequest = async (req) => {
   if (req.headers?.id !== req.body?.from) return responseMsg(0, 200, "Login to send a request")
 
   let result = await requestModel.create(req.body)
+  await notificationModel.create({
+    notificationFrom: req.headers?.id,
+    notificationTo: req.body?.to,
+    type: "request",
+    postType: "request",
+    postId: result?._id
+  })
+
   return responseMsg(1, 200, "Friend request sent")
 }
 
@@ -242,10 +250,10 @@ exports.checkRequest = async (req) => {
   let browser = req.headers?.id
   let user = req.params?.id
 
-  let result = await requestModel.findOne({ from: browser, accepted: false })
+  let result = await requestModel.findOne({ from: browser, to: user, accepted: false })
   if (result) return responseMsg(1, 200, { from: browser })
 
-  let result2 = await requestModel.findOne({ from: user, accepted: false })
+  let result2 = await requestModel.findOne({ from: user, to: browser, accepted: false })
   if (result2) return responseMsg(1, 200, { from: user })
 
   return responseMsg(1, 200, { from: false })
@@ -256,8 +264,18 @@ exports.confirmRequest = async (req) => {
   if (req?.body?.accepted) {
     await friendshipModel.create({ user1: req.body?.user, user2: req.headers?.id })
     await requestModel.deleteOne({ from: req.body?.user, to: req.headers?.id })
+    await notificationModel.create({
+      notificationFrom: req.headers?.id,
+      notificationTo: req.body?.user,
+      type: "request_accept",
+      postType: "request",
+    })
     return responseMsg(1, 200, "Request accepted")
   }
   await requestModel.deleteOne({ from: req.body?.user, to: req.headers?.id })
+  await notificationModel.deleteOne({
+    notificationFrom: req.body?.user,
+    notificationTo: req.headers?.id
+  })
   return responseMsg(1, 200, "Request rejected")
 }
