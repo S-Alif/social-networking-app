@@ -26,22 +26,34 @@ const setMsg = (notification) => {
   if (notification?.type == "request_accept" && notification?.postType == "reels") return msgs.requestAccept
 }
 
+// main component
 const Notifications = () => {
 
-  const { notifications } = authStore()
+  const { notifications, getNotification } = authStore()
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true)
+      await getNotification()
+      setLoading(false)
+    })()
+  }, [])
 
   return (
     <View className="flex-1 bg-lightGrayColor">
-      <FlatList
-        data={notifications}
-        keyExtractor={(item) => item?._id}
-        extraData={notifications}
-        renderItem={({ item }) => (
-          <NotificationCard notification={item} />
-        )}
-        contentContainerStyle={{ paddingVertical: 20 }}
-      />
+      {
+        !loading &&
+        <FlatList
+          data={notifications}
+          keyExtractor={(item) => item?._id}
+          extraData={notifications}
+          renderItem={({ item }) => (
+            <NotificationCard notification={item} />
+          )}
+          contentContainerStyle={{ paddingVertical: 20 }}
+        />
+      }
     </View>
   )
 }
@@ -55,13 +67,17 @@ const NotificationCard = ({ notification }) => {
   const [seen, setSeen] = useState(notification?.seen || false)
 
   const goToPost = async () => {
-    let seeTheNotification = await reactionFetcher(notificationUrl + "/" + notification?._id)
-    if (seeTheNotification != null && seeTheNotification?.status == 1) {
-      setSeen(true)
-      setNotificationCount(notificationCount - 1)
-      if (notification?.postType == "post") return router.push({ pathname: "pages/SinglePost", params: { postId: notification?.postId } })
-      if (notification?.postType == "request") return router.push({ pathname: "pages/userProfileById", params: { userId: notification?.userId } })
+    if (seen == false) {
+      let seeTheNotification = await reactionFetcher(notificationUrl + "/" + notification?._id)
+      if (seeTheNotification != null && seeTheNotification?.status == 1) {
+        setSeen(true)
+        setNotificationCount(notificationCount - 1)
+      }
     }
+
+    if (notification?.postType == "post") return router.push({ pathname: "pages/SinglePost", params: { postId: notification?.postId } })
+    if (notification?.postType == "reels") return router.push({ pathname: "/reels", params: { reelsId: notification?.postId } })
+    if (notification?.postType == "request") return router.push({ pathname: "pages/userProfileById", params: { userId: notification?.userId } })
   }
 
   return (

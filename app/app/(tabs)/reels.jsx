@@ -5,10 +5,13 @@ import { dataFetcher } from '../../scripts/apiCaller'
 import { postUrl } from '../../scripts/endpoints'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useLocalSearchParams } from 'expo-router'
 
 const { height: windowHeight } = Dimensions.get('window')
 
 const ReelsScreen = () => {
+
+  const { reelsId } = useLocalSearchParams()
 
   const [posts, setPosts] = useState([])
   const [page, setPage] = useState(1)
@@ -20,9 +23,13 @@ const ReelsScreen = () => {
 
   const fetchPost = async (pageNum) => {
     setLoading(true)
+    if (reelsId) {
+      var reel = await dataFetcher(postUrl + '/posts/' + reelsId)
+    }
     let result = await dataFetcher(`${postUrl}/posts/reels/${pageNum}/10`)
     if (result != null) {
-      setPosts(prev => [...prev, ...result?.data?.posts])
+      if (reelsId && reel != null && reel?.status == 1) setPosts(prev => [...[reel?.data], ...prev, ...result?.data?.posts])
+      else { setPosts(prev => [...prev, ...result?.data?.posts]) }
       setPostAmount(result?.data?.totalCount)
     }
     setLoading(false)
