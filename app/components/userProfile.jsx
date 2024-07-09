@@ -142,10 +142,15 @@ const UserProfile = () => {
                     </Text>
                   }
 
-                  <View className="items-center w-1/2 border-r border-r-gray-300">
+                  <TouchableOpacity
+                    className="items-center w-1/2 border-r border-r-gray-300"
+                    activeOpacity={0.6}
+                    disabled={userData?.privacy == "private" || (userData?.privacy == "friends" && !userData?.isFriends)}
+                    onPress={() => router.push({ pathname: 'pages/friendList', params: { userId: userData?._id, type: isProfilePath ? 0 : 1 } })}
+                  >
                     <Text className="text-5xl font-psemibold pt-2">{amount?.friends}</Text>
                     <Text className="text-[15px] font-pmedium">Buddies</Text>
-                  </View>
+                  </TouchableOpacity>
                   <View className="items-center w-1/2">
                     <Text className="text-5xl font-psemibold pt-2">{amount?.posts}</Text>
                     <Text className="text-[15px] font-pmedium">Posts</Text>
@@ -195,14 +200,17 @@ const SendAcceptRequest = ({ request, profileId, userId, confirmation, loading }
   }
 
   // confirm request
-  const confirmRequest = async (accepted) => {
-    let result = await dataSender(engageMentUrl + "/confirm-request", { user: userId, accepted: accepted })
+  const confirmRequest = async (confirmation) => {
+    let result = await dataSender(engageMentUrl + "/confirm-request", { user: userId, accepted: confirmation })
     if (result !== null && result?.status == 1) loading()
   }
 
   // confirm altert
   const showAlert = async () => {
     Alert.alert("Become buddies ☺", "Aceept request", [
+      {
+        text: "Cancel"
+      },
       {
         text: "No",
         onPress: async () => { await confirmRequest(false) }

@@ -52,6 +52,11 @@ const PageLayout = () => {
           headerTitleStyle: headerStyles
         }} />
 
+        <Stack.Screen name='friendList' options={{
+          headerTitle: "",
+          headerTitleStyle: headerStyles
+        }} />
+
       </Stack>
     </AuthCheck>
   )
