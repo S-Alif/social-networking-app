@@ -23,7 +23,7 @@ const PostEngagements = ({ postId, reaction, engages }) => {
 
         {/* reactions */}
         <View className="flex-1 border-r">
-          <ReactionButton postId={postId?._id} reaction={reaction} currentUserAction={(e) => setNewReactionCount(prev => prev + e)} />
+          <ReactionButton postId={postId} reaction={reaction} currentUserAction={(e) => setNewReactionCount(prev => prev + e)} />
         </View>
 
         {

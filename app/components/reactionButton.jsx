@@ -30,7 +30,7 @@ const ReactionButton = ({ postId, reaction, currentUserAction }) => {
   const handleSelectReaction = async (reactionSelected) => {
 
     if (selectedReaction == null) {
-      let addReaction = await reactionSender(reactionUrl, { reactedOn: postId, reaction: reactionSelected })
+      let addReaction = await reactionSender(reactionUrl, { reactedOn: postId?._id, reaction: reactionSelected, postAuthor: postId?.author })
       if (addReaction?.status == 0) return
       setReactionData(addReaction.data)
       setSelectedReaction(reactionSelected)
@@ -39,7 +39,7 @@ const ReactionButton = ({ postId, reaction, currentUserAction }) => {
     }
 
     if (selectedReaction !== null && reactionSelected === selectedReaction) {
-      let removeReaction = await reactionSender(reactionUrl + `/delete/${postId}/${reactionData?._id}`, { reactedOn: postId, reaction: reactionSelected })
+      let removeReaction = await reactionSender(reactionUrl + `/delete/${postId?._id}/${reactionData?._id}`, { reactedOn: postId, reaction: reactionSelected })
       if (removeReaction?.status == 0) return
       setSelectedReaction(null)
       currentUserAction(-1)
@@ -47,7 +47,7 @@ const ReactionButton = ({ postId, reaction, currentUserAction }) => {
     }
 
     if (selectedReaction !== null && reactionSelected !== selectedReaction) {
-      let updateReaction = await reactionSender(reactionUrl + `/update`, { reactedOn: postId, reaction: reactionSelected })
+      let updateReaction = await reactionSender(reactionUrl + `/update`, { reactedOn: postId?._id, reaction: reactionSelected })
       if (updateReaction?.status == 0) return
       setReactionData(updateReaction.data)
       setSelectedReaction(reactionSelected)

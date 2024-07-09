@@ -10,7 +10,7 @@ const ReelsEngagement = ({ reelsId, reaction }) => {
     <View className="bg-transparent w-[50] h-[200] absolute bottom-[150] right-4 items-center flex-1 flex-col gap-y-3">
       {/* reactions */}
       <View className="flex-1 relative">
-        <ReactionButton postId={reelsId?._id} reaction={reaction} />
+        <ReactionButton postId={reelsId} reaction={reaction} />
       </View>
 
       <View className="flex-1 pt-2">
