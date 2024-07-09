@@ -145,7 +145,7 @@ const UserProfile = () => {
                   <TouchableOpacity
                     className="items-center w-1/2 border-r border-r-gray-300"
                     activeOpacity={0.6}
-                    disabled={userData?.privacy == "private" || (userData?.privacy == "friends" && !userData?.isFriends)}
+                    disabled={((userData?.privacy == "private" && !isProfilePath) || (userData?.privacy == "friends" && !userData?.isFriends && !isProfilePath))}
                     onPress={() => router.push({ pathname: 'pages/friendList', params: { userId: userData?._id, type: isProfilePath ? 0 : 1 } })}
                   >
                     <Text className="text-5xl font-psemibold pt-2">{amount?.friends}</Text>
@@ -158,20 +158,28 @@ const UserProfile = () => {
                 </View>
 
                 {/* tabs */}
-                <View className="flex-1 flex-row justify-between items-center w-full px-2 py-6 bg-lightGrayColor">
+                {
+                  (isProfilePath || userData?.privacy == "public" || (userData?.privacy != "private" && (userData?.privacy == "friends" && userData?.isFriends))) &&
+                  <View className="flex-1 flex-row justify-between items-center w-full px-2 py-6 bg-lightGrayColor">
 
-                  <TouchableOpacity onPress={() => setTab(1)} className={`w-1/2 items-center border border-purpleColor py-2 ${tab == 1 ? "bg-purpleColor" : "bg-lightGrayColor2"} rounded-l-md`}>
-                    <Feather name="grid" size={24} color={`${tab == 1 ? "#F3F6F6" : "#000000"}`} />
-                  </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setTab(1)} className={`w-1/2 items-center border border-purpleColor py-2 ${tab == 1 ? "bg-purpleColor" : "bg-lightGrayColor2"} rounded-l-md`}>
+                      <Feather name="grid" size={24} color={`${tab == 1 ? "#F3F6F6" : "#000000"}`} />
+                    </TouchableOpacity>
 
-                  <TouchableOpacity onPress={() => setTab(2)} className={`w-1/2 items-center border border-purpleColor py-2 ${tab == 2 ? "bg-purpleColor" : "bg-lightGrayColor2"} rounded-r-md`}>
-                    <Entypo name="folder-video" size={24} color={`${tab == 2 ? "#F3F6F6" : "#000000"}`} />
-                  </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setTab(2)} className={`w-1/2 items-center border border-purpleColor py-2 ${tab == 2 ? "bg-purpleColor" : "bg-lightGrayColor2"} rounded-r-md`}>
+                      <Entypo name="folder-video" size={24} color={`${tab == 2 ? "#F3F6F6" : "#000000"}`} />
+                    </TouchableOpacity>
 
-                </View>
+                  </View>
+                }
 
-                {tab == 1 && <ShowUserPosts userId={isProfilePath ? profile?._id : userId} />}
-                {tab == 2 && <ShowUserThreels userId={isProfilePath ? profile?._id : userId} />}
+                {
+                  (isProfilePath || userData?.privacy == "public" || (userData?.privacy != "private" && (userData?.privacy == "friends" && userData?.isFriends))) &&
+                  <>
+                    {tab == 1 && <ShowUserPosts userId={isProfilePath ? profile?._id : userId} />}
+                    {tab == 2 && <ShowUserThreels userId={isProfilePath ? profile?._id : userId} />}
+                  </>
+                }
               </>
             }
           </View>
