@@ -8,6 +8,10 @@ SplashScreen.preventAutoHideAsync()
 const RootLayout = () => {
 
   const pathname = usePathname()
+  const headerStyles = {
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 25,
+  }
 
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -39,6 +43,7 @@ const RootLayout = () => {
         <Stack.Screen name='(auth)' options={{ headerShown: false }} />
         <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
         <Stack.Screen name='pages' options={{ headerShown: false }} />
+        <Stack.Screen name='notifications' options={{ headerTitle: "Notifications", headerTitleStyle: headerStyles }} />
       </Stack>
       <StatusBar style={pathname == "/reels" ? "light" : "dark"} />
     </>

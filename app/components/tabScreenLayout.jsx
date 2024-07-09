@@ -6,9 +6,9 @@ import { StatusBar } from 'expo-status-bar';
 import { AntDesign } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
-const TabScreenLayout = ({children}) => {
+const TabScreenLayout = ({ children }) => {
 
-  const {profile} = authStore()
+  const { profile, notificationCount } = authStore()
 
   return (
     <SafeAreaView className="flex-1 bg-lightGrayColor2">
@@ -18,7 +18,7 @@ const TabScreenLayout = ({children}) => {
 
         {/* user image */}
         <TouchableOpacity onPress={() => router.push('pages/profile')}>
-          <Image source={{uri: profile?.profileImg}} className="w-[50px] h-[50px] rounded-full" />
+          <Image source={{ uri: profile?.profileImg }} className="w-[50px] h-[50px] rounded-full" />
         </TouchableOpacity>
 
         {/* logo */}
@@ -27,8 +27,15 @@ const TabScreenLayout = ({children}) => {
         </View>
 
         {/* bell icon for notification */}
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push('/notifications')}
+          className="relative"
+        >
           <AntDesign name="bells" size={24} color="black" />
+          {
+            notificationCount > 0 &&
+            <View className="absolute bg-redColor rounded p-[2] top-[-10] left-1/2"><Text className="text-sm font-psemibold text-white px-1">{notificationCount}</Text></View>
+          }
         </TouchableOpacity>
 
       </View>
