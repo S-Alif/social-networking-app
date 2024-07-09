@@ -30,7 +30,7 @@ const ReactionButton = ({ postId, reaction, currentUserAction }) => {
   const handleSelectReaction = async (reactionSelected) => {
 
     if (selectedReaction == null) {
-      let addReaction = await reactionSender(reactionUrl, { reactedOn: postId?._id, reaction: reactionSelected, postAuthor: postId?.author })
+      let addReaction = await reactionSender(reactionUrl, { reactedOn: postId?._id, reaction: reactionSelected, postAuthor: postId?.author, postType: postId?.type })
       if (addReaction?.status == 0) return
       setReactionData(addReaction.data)
       setSelectedReaction(reactionSelected)

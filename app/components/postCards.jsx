@@ -149,7 +149,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
         </View>
       }
 
-      <PostEngagements postId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} engages={{ reactionCount, commentCount }} />
+      <PostEngagements postId={{ _id, author, type: "post" }} reaction={currentUserReaction ? currentUserReaction : null} engages={{ reactionCount, commentCount }} />
       <OptionModal showModal={modal} setShowModal={setModal} postId={_id} deleted={deleted} author={author} caption={caption} />
 
     </View>

@@ -31,7 +31,7 @@ const PostEngagements = ({ postId, reaction, engages }) => {
           <View className="flex-1 border-r">
             <TouchableOpacity
               className="flex-1 justify-center items-center flex-row"
-              onPress={() => router.push({ pathname: "pages/showComments", params: { postId: postId?._id, author: postId?.author } })}
+              onPress={() => router.push({ pathname: "pages/showComments", params: { postId: postId?._id, author: postId?.author, type: "post" } })}
             >
               <EvilIcons name="comment" size={29} color="black" />
               <Text className="text-lg"> comment</Text>

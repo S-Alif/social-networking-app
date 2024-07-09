@@ -38,11 +38,16 @@ const ShowComments = () => {
   // post the comment
   const handlePostComment = async () => {
 
-    if(newComment.comment == '') return
+    if (newComment.comment == '') return
 
     setClearField(false)
     setLoading(true)
-    let comment = await reactionSender(commentUrl, newComment)
+    let commentData = {
+      ...newComment,
+      postType: params?.type,
+      postAuthor: params?.author
+    }
+    let comment = await reactionSender(commentUrl, commentData)
     setLoading(false)
     if (comment?.status == 0 || comment == null) return customAlert('ERROR !!', "Could not post your comment")
     setNewComment({
@@ -83,7 +88,7 @@ const ShowComments = () => {
         <ScrollView key={loading} contentContainerStyle={{ paddingBottom: 12 }}>
           {
             comments.map((e, index) => (
-              <CommentCard postId={params?.postId} postAuthor={params?.author}  comment={e} key={index} deleted={handleDeletedComment} />
+              <CommentCard postId={params?.postId} postAuthor={params?.author} comment={e} key={index} deleted={handleDeletedComment} />
             ))
           }
         </ScrollView>

@@ -16,7 +16,7 @@ const ReelsEngagement = ({ reelsId, reaction }) => {
       <View className="flex-1 pt-2">
         <TouchableOpacity
           style={{ elevation: 5, shadowRadius: 3, shadowColor: '#000', }}
-          onPress={() => router.push({ pathname: "pages/showComments", params: { postId: reelsId?._id, author: reelsId?.author } })}
+          onPress={() => router.push({ pathname: "pages/showComments", params: { postId: reelsId?._id, author: reelsId?.author, type: "reels" } })}
         >
           <MaterialCommunityIcons name="message-settings" size={28} color="white" />
         </TouchableOpacity>

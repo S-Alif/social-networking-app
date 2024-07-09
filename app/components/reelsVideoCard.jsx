@@ -71,7 +71,7 @@ const ReelsVideoCard = ({ reels: { _id, author, caption, createdAt, currentUserR
         </View>
 
         {/* reels engagement */}
-        <ReelsEngagement reelsId={{ _id, author }} reaction={currentUserReaction ? currentUserReaction : null} />
+        <ReelsEngagement reelsId={{ _id, author, type: "reels" }} reaction={currentUserReaction ? currentUserReaction : null} />
 
         {/* author info */}
         <View className="absolute bottom-0 w-full">
