@@ -30,5 +30,6 @@ router.post('/pass-renew/profile', authVerification, userControl.passRenew)
 router.post('/pass-renew', userControl.passRenew)
 
 router.get('/friends/:id', authVerification, userControl.getFriends)
+router.post('/friends/remove/:id', authVerification, userControl.removeFriend)
 
 module.exports = router

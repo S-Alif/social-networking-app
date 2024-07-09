@@ -91,6 +91,12 @@ exports.getFriends = async (req, res) => {
   res.status(200).json(result)
 }
 
+// remove friendship
+exports.removeFriend = async (req, res) => {
+  let result = await asyncHandler(() => userService.unfriend(req))
+  res.status(200).json(result)
+}
+
 // forget pass user profile
 exports.profileForgetPass = async (req, res) => {
   let result = await asyncHandler(() => userService.forgetPassUserProfile(req))

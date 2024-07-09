@@ -229,6 +229,20 @@ exports.fetchFriends = async (req) => {
   return responseMsg(1, 200, result)
 }
 
+// unfriend
+exports.unfriend = async (req) => {
+  if (!req?.headers?.id) return responseMsg(0, 200, "log in")
+
+  let result = await friendshipModel.deleteOne({
+    $or: [
+      { user1: new ObjectID(req?.headers?.id), user2: new ObjectID(req?.params?.id) },
+      { user1: new ObjectID(req?.params?.id), user2: new ObjectID(req?.headers?.id) }
+    ]
+  })
+
+  return responseMsg(1, 200, "Buddy removed")
+}
+
 // forget pass user profile
 exports.forgetPassUserProfile = async (req) => {
   let result = await userModel.findOne({ email: req?.params?.email }).select("firstName lastName profileImg -_id")

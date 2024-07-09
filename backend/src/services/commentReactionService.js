@@ -170,7 +170,7 @@ exports.cancelRequest = async (req) => {
 // fetch friend requests
 exports.fetchRequests = async (req) => {
   if (!req.headers?.id) return responseMsg(0, 200, "Could not retrieve requests")
-  let result = await requestModel.find([
+  let result = await requestModel.aggregate([
     { $match: { to: new ObjectID(req?.headers?.id) } },
     {
       $lookup: {
@@ -183,7 +183,7 @@ exports.fetchRequests = async (req) => {
     { $unwind: '$fromUser' },
     {
       $project: {
-        _id: 1,
+        _id: '$fromUser._id',
         firstName: '$fromUser.firstName',
         lastName: '$fromUser.lastName',
         profileImg: '$fromUser.profileImg'
