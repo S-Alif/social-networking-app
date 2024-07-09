@@ -56,6 +56,7 @@ exports.removeReaction = async (req) => {
   let react = await reactionModel.deleteOne({ _id: new ObjectID(req.params?.id), author: new ObjectID(req.headers?.id), reactedOn: new ObjectID(req.params?.post) })
 
   await postModel.updateOne({ _id: new ObjectID(req.params?.post) }, { $inc: { reactionCount: -1 } })
+  await notificationModel.deleteOne({ notificationFrom: req.headers?.id, postId: req.params?.post })
 
   return responseMsg(1, 200, "Reaction removed")
 }
@@ -103,7 +104,6 @@ exports.createComment = async (req) => {
   let postAuthor = req.body?.postAuthor
   let postType = req.body?.postType
   let loggedUser = req.headers?.id
-  console.log(req.body)
 
   req.body.author = loggedUser
   delete req.body?.postAuthor
@@ -137,6 +137,8 @@ exports.updateComment = async (req) => {
 exports.deleteComment = async (req) => {
   let comment = await commentModel.deleteOne({ _id: new ObjectID(req.params?.id), author: new ObjectID(req.headers?.id), commentOn: new ObjectID(req.params?.post) })
   await postModel.updateOne({ _id: new ObjectID(req.params?.post) }, { $inc: { commentCount: -1 } })
+
+  await notificationModel.deleteOne({ notificationFrom: req.headers?.id, postId: req.params?.post })
 
   return responseMsg(1, 200, "comment removed")
 }
