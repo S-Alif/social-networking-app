@@ -4,6 +4,7 @@ const friendshipModel = require("../models/friendshipModel")
 const requestModel = require("../models/requestModel")
 const { responseMsg } = require("../utils/helpers")
 const postModel = require("../models/postModel")
+const notificationModel = require("../models/notificationModel")
 
 const ObjectID = require('mongoose').Types.ObjectId
 
@@ -15,10 +16,27 @@ exports.createReaction = async (req) => {
   let count = await reactionModel.find({ author: new ObjectID(req.headers?.id), reactedOn: new ObjectID(req.body?.reactedOn) }).count('total')
   if (count > 0) return responseMsg(0, 200, "already reacted")
 
-  req.body.author = req.headers?.id
+  let postAuthor = req.body?.postAuthor
+  let postType = req.body?.postType
+  let loggedUser = req.headers?.id
+
+  req.body.author = loggedUser
+  delete req.body?.postAuthor
+  delete req.body?.postType
   let react = await reactionModel.create(req.body)
 
   await postModel.updateOne({ _id: new ObjectID(req.body?.reactedOn) }, { $inc: { reactionCount: +1 } })
+
+  // create a notification
+  if (postAuthor !== loggedUser) {
+    await notificationModel.create({
+      notificationFrom: req.headers?.id,
+      notificationTo: postAuthor,
+      type: "reaction",
+      postType: postType,
+      postId: req.body?.reactedOn
+    })
+  }
 
   return responseMsg(1, 200, react)
 }
@@ -81,9 +99,30 @@ exports.postReactions = async (req) => {
 
 // create comment
 exports.createComment = async (req) => {
-  req.body.author = req.headers?.id
+
+  let postAuthor = req.body?.postAuthor
+  let postType = req.body?.postType
+  let loggedUser = req.headers?.id
+  console.log(req.body)
+
+  req.body.author = loggedUser
+  delete req.body?.postAuthor
+  delete req.body?.postType
+
   let comment = await commentModel.create(req.body)
   await postModel.updateOne({ _id: new ObjectID(req.body?.commentOn) }, { $inc: { commentCount: +1 } })
+
+  // create a notification
+  if (postAuthor !== loggedUser) {
+    await notificationModel.create({
+      notificationFrom: req.headers?.id,
+      notificationTo: postAuthor,
+      type: "comment",
+      postType: postType,
+      postId: req.body?.commentOn
+    })
+  }
+
   return responseMsg(1, 200, comment)
 }
 
