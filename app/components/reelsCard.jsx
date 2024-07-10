@@ -39,7 +39,7 @@ const ReelsCard = ({ reels: { _id, author, caption, createdAt, currentUserReacti
             textStyles={"text-white font-pmedium"}
             handlePress={() => {
               setOpen(false)
-              router.push('/reels')
+              router.push({ pathname: '/reels', params: { reelsId: _id } })
             }}
           />
         </View>

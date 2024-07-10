@@ -1,17 +1,19 @@
-import { ActivityIndicator, Dimensions, ScrollView, RefreshControl, Text } from 'react-native'
+import { ActivityIndicator, Dimensions, ScrollView, RefreshControl, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import ReelsVideoCard from '../../components/reelsVideoCard'
 import { dataFetcher } from '../../scripts/apiCaller'
 import { postUrl } from '../../scripts/endpoints'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useNavigation } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 
 const { height: windowHeight } = Dimensions.get('window')
 
 const ReelsScreen = () => {
 
   const { reelsId } = useLocalSearchParams()
+  const navigation = useNavigation()
 
   const [posts, setPosts] = useState([])
   const [page, setPage] = useState(1)
@@ -28,8 +30,14 @@ const ReelsScreen = () => {
     }
     let result = await dataFetcher(`${postUrl}/posts/reels/${pageNum}/10`)
     if (result != null) {
-      if (reelsId && reel != null && reel?.status == 1) setPosts(prev => [...[reel?.data], ...prev, ...result?.data?.posts])
-      else { setPosts(prev => [...prev, ...result?.data?.posts]) }
+      let newPosts = result?.data?.posts
+      if (reelsId && reel != null && reel?.status == 1) {
+        newPosts = newPosts.filter(post => post._id !== reel?.data._id)
+        setPosts(prev => [...[reel?.data], ...prev, ...newPosts])
+      }
+      else {
+        setPosts(prev => [...prev, ...newPosts])
+      }
       setPostAmount(result?.data?.totalCount)
     }
     setLoading(false)
@@ -91,7 +99,15 @@ const ReelsScreen = () => {
 
 
   return (
-    <SafeAreaView className="flex-1 bg-black">
+    <SafeAreaView className="flex-1 bg-black relative">
+
+      <View className="absolute z-10 left-[12px] top-[20px] p-4">
+        <TouchableOpacity
+          onPress={() => navigation.goBack(null)}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
 
       <ScrollView
         snapToAlignment='start'
@@ -102,12 +118,14 @@ const ReelsScreen = () => {
         scrollEventThrottle={16}
         refreshControl={<RefreshControl refreshing={refresh} onRefresh={onRefresh} />}
       >
-        {
-          posts.length > 0 &&
-          posts.map((e, index) => (
-            <ReelsVideoCard reels={e} isPlaying={isFocused && currentPlaying === e._id} key={index} />
-          ))
-        }
+        <View className="flex-1">
+          {
+            posts.length > 0 &&
+            posts.map((e, index) => (
+              <ReelsVideoCard reels={e} isPlaying={isFocused && currentPlaying === e._id} key={index} />
+            ))
+          }
+        </View>
 
         {loading && <ActivityIndicator size={"small"} color={"#fff"} />}
         {(!loading && ((page * 10) >= postAmount)) && <Text className="text-white text-center py-3 text-xl">No more threels</Text>}
