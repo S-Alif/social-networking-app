@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }))
 
 // rate limiting
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10000 });
-app.use(limiter);
+app.use(limiter)
 
 
 // add the routes to the app
@@ -36,8 +36,9 @@ app.use('/public', mainRoutes)
 
 
 // connect to databse
-mongoose.connect(process.env.DB_URL+"/"+process.env.DATABASE_NAME)
+let option = { user: `${process.env.DB_USER}`, pass: `${process.env.DB_PASS}`, autoIndex: true }
+mongoose.connect(process.env.DB_URL + "/" + process.env.DATABASE_NAME, option)
   .then(() => console.log("database connected"))
-  .catch((error) => console.log("could not connect \n"+error))
+  .catch((error) => console.log("could not connect \n" + error))
 
 module.exports = app
