@@ -26,7 +26,12 @@ const CommentCard = ({ postId, postAuthor, comment: { _id, authorFirstName, auth
       {/* author details, post date and options */}
       <View className="h-[60px] w-full flex-1 flex-row items-center">
         <View className="flex-1 flex-row gap-3 items-center">
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => router.push({
+              pathname: profile?._id == authorId ? "pages/profile" : "pages/userProfileById",
+              params: { userId: authorId, userFirstName: authorFirstName, userLastName: authorProfileImg, userProfileImg: authorProfileImg }
+            })}
+          >
             <Image source={{ uri: authorProfileImg }} className="w-[50px] h-[50px] rounded-full" />
           </TouchableOpacity>
 
