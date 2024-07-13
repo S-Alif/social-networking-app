@@ -1,6 +1,5 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import * as DocumentPicker from 'expo-document-picker';
 import { FontAwesome6, Entypo } from '@expo/vector-icons';
 import { customAlert } from '../scripts/alerts';
@@ -9,6 +8,8 @@ import { postUrl } from '../scripts/endpoints';
 import CustomButton from './CustomButton';
 import { useLocalSearchParams, useNavigation, usePathname } from 'expo-router';
 import { fileChecker } from './../scripts/fileChecker';
+import { MarkdownEditor } from 'react-native-markdown-editor';
+
 
 const CreateUpdatePost = () => {
 
@@ -22,26 +23,24 @@ const CreateUpdatePost = () => {
   const [file, setFile] = useState([])
   const [loading, setLoading] = useState(false)
 
-  // if update screen set the post caption
   useEffect(() => {
-    if (isUpdateScreen) richText.current?.setContentHTML(params?.caption)
+    if (isUpdateScreen) richText.current.changeText(params?.caption)
   }, [])
 
   const submitUpdatedPost = async () => {
-    let caption = postCaption.replace(/&nbsp;/g, "").replace(/<[^>]+>/g, "")
-    if (caption.trim() == "" || postCaption == "") return customAlert("ERROR !!", "Cannot update")
+    if (postCaption.trim() == "" || postCaption.trim().length < 5) return customAlert("ERROR !!", "Cannot update")
 
     let result = await dataSender(postUrl + "/update", { id: params?._id, caption: postCaption })
     if (result != null && result?.status == 1) {
-      richText.current?.setContentHTML("")
+      richText.current.changeText("")
+      setPostCaption("")
       setTimeout(() => { navigation.goBack() }, 2000)
     }
   }
 
   // submit post
   const submitPost = async () => {
-    let caption = postCaption.replace(/&nbsp;/g, "").replace(/<[^>]+>/g, "")
-    if ((caption.trim() == "" || postCaption == "") && file.length == 0) return customAlert("ERROR !!", "Cannot create empty posts")
+    if ((postCaption.trim() == "" || postCaption.trim.length < 5) && file.length == 0) return customAlert("ERROR !!", "Cannot create empty posts")
 
     setLoading(true)
     const formData = new FormData()
@@ -92,25 +91,10 @@ const CreateUpdatePost = () => {
         </View>
 
         <View className="flex-1 min-h-[400px] bg-lightGrayColor2 mt-3 rounded-t-lg">
-          <View className="flex-1 overflow-hidden rounded-t-lg border border-gray-400">
-            <RichEditor
-              ref={richText}
-              className="flex-1"
-              placeholder={isUpdateScreen ? "Update post caption..." : "Write post caption..."}
-              editorStyle={{
-                contentCSSText: 'font-size: 24px;',
-              }}
-              onChange={setPostCaption}
-            />
-          </View>
-
-          <RichToolbar
-            editor={richText}
-            actions={[actions.undo, actions.redo, actions.setBold, actions.setItalic, actions.insertBulletsList, actions.insertOrderedList, actions.blockquote, actions.insertLink, actions.code, actions.indent, actions.fontSize, actions.heading1, actions.heading2, actions.heading3, actions.heading4, actions.heading5, actions.heading6]}
-            className="border border-gray-400 border-t-0 rounded-b-lg"
-            iconMap={icons}
+          <MarkdownEditor
+            onMarkdownChange={setPostCaption}
+            ref={richText}
           />
-
         </View>
 
         {/* show picked files */}
@@ -174,16 +158,6 @@ const CreateUpdatePost = () => {
       </ScrollView>
     </View>
   )
-}
-
-// text toolbar icons for headings
-const icons = {
-  [actions.heading1]: ({ tintColor }) => <Text className={`text-2xl text-gray-400 font-psemibold`}>h1</Text>,
-  [actions.heading2]: ({ tintColor }) => <Text className={`text-2xl text-gray-400 font-psemibold`}>h2</Text>,
-  [actions.heading3]: ({ tintColor }) => <Text className={`text-2xl text-gray-400 font-psemibold`}>h3</Text>,
-  [actions.heading4]: ({ tintColor }) => <Text className={`text-2xl text-gray-400 font-psemibold`}>h4</Text>,
-  [actions.heading5]: ({ tintColor }) => <Text className={`text-2xl text-gray-400 font-psemibold`}>h5</Text>,
-  [actions.heading6]: ({ tintColor }) => <Text className={`text-2xl text-gray-400 font-psemibold`}>h6</Text>,
 }
 
 export default CreateUpdatePost

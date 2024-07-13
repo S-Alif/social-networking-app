@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, Modal, TouchableWithoutFeedback, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, Modal, TouchableWithoutFeedback, Alert, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import authStore from '../constants/authStore'
 import { formatDate } from '../scripts/dateFormatter'
@@ -6,13 +6,14 @@ import { ResizeMode, Video } from 'expo-av'
 import { AntDesign, Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { generateThumbnail } from '../scripts/getThumbnail'
 import PostEngagements from './postEngagements'
-import RenderHTML from 'react-native-render-html'
 import ImagePopupModal from './imagePopupModal'
 import Carousel from "pinar";
 import { router } from 'expo-router'
 import { dataSender } from '../scripts/apiCaller'
 import { postUrl } from '../scripts/endpoints'
 import { customAlert } from '../scripts/alerts'
+import { MarkdownView } from 'react-native-markdown-view'
+
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -114,15 +115,18 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
           }
         </View>
 
-        {/* <Text className="text-2xl pt-2">{caption}</Text> */}
         {
           caption &&
           <View className="flex-1 mx-3 py-3">
-            <RenderHTML
-              contentWidth={Dimensions.get('window').width}
-              source={{ html: `<div>${caption}</div>` }}
-              tagsStyles={htmlStyles}
-            />
+            <MarkdownView
+              onLinkPress={(url) => {
+                Linking.openURL(url).catch(error =>
+                  console.warn('An error occurred: ', error),
+                )
+              }}
+            >
+              {caption}
+            </MarkdownView>
           </View>
         }
 
@@ -233,70 +237,3 @@ const styles = StyleSheet.create({
     backgroundColor: "#6835F0",
   }
 })
-
-const htmlStyles = {
-  div: {
-    fontSize: 24,
-    lineHeight: 32,
-  },
-  p: {
-    fontSize: 24,
-    lineHeight: 32,
-  },
-  b: {
-    fontSize: 24,
-    lineHeight: 32,
-    fontWeight: 'bold',
-  },
-  i: {
-    fontSize: 24,
-    lineHeight: 32,
-    fontStyle: 'italic',
-  },
-  ul: {
-    fontSize: 24,
-    lineHeight: 32,
-    paddingLeft: 20,
-  },
-  ol: {
-    fontSize: 24,
-    lineHeight: 32,
-    paddingLeft: 20,
-  },
-  li: {
-    fontSize: 24,
-    lineHeight: 32,
-    marginBottom: 10,
-  },
-  h1: {
-    fontSize: 32,
-    lineHeight: 40,
-  },
-  h2: {
-    fontSize: 28,
-    lineHeight: 36,
-  },
-  h3: {
-    fontSize: 24,
-    lineHeight: 32,
-  },
-  h4: {
-    fontSize: 20,
-    lineHeight: 28,
-  },
-  h5: {
-    fontSize: 18,
-    lineHeight: 26,
-  },
-  h6: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  blockquote: {
-    fontSize: 24,
-    lineHeight: 32,
-    paddingLeft: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: '#ccc',
-  },
-}

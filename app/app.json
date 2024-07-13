@@ -2,26 +2,31 @@
   "expo": {
     "name": "ConnectVibe",
     "slug": "ConnectVibe",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/connect_vive_logo_3.png",
     "scheme": "ConnectVibe",
-    "platforms": [ "android"],
+    "platforms": [
+      "android"
+    ],
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/connect_vive_logo_3.png",
-      "resizeMode": "contain",
+      "image": "./assets/images/splash.jpg",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "package": "com.vibe.connectVibe",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/connect_vive_logo_3.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.md_alif.ConnectVibe"
     },
     "web": {
       "bundler": "metro",

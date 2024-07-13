@@ -6,7 +6,6 @@ import { postUrl } from '../../scripts/endpoints'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useNavigation } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
 
 const { height: windowHeight } = Dimensions.get('window')
 
@@ -100,14 +99,6 @@ const ReelsScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-black relative">
-
-      <View className="absolute z-10 left-[12px] top-[20px] p-4">
-        <TouchableOpacity
-          onPress={() => navigation.goBack(null)}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
 
       <ScrollView
         snapToAlignment='start'
