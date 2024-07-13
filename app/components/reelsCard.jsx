@@ -1,11 +1,14 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { generateThumbnail } from '../scripts/getThumbnail'
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
+import { AntDesign, Entypo, FontAwesome5 } from '@expo/vector-icons'
 import CustomButton from './CustomButton'
 import { router } from 'expo-router'
+import { formDataSender } from './../scripts/apiCaller';
+import { postUrl } from '../scripts/endpoints'
+import { customAlert } from '../scripts/alerts'
 
-const ReelsCard = ({ reels: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments } }) => {
+const ReelsCard = ({ reels: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments }, deleted }) => {
 
   const [thumbnail, setThumbnail] = useState("https://fakeimg.pl/600x400?text=+")
   const [open, setOpen] = useState(false)
@@ -17,6 +20,36 @@ const ReelsCard = ({ reels: { _id, author, caption, createdAt, currentUserReacti
       setThumbnail(result)
     })()
   }, [])
+
+  // delete the post
+  const deletePost = async () => {
+    Alert.alert("Warning", "Do you want to delete this threel ?", [
+      {
+        text: "No"
+      },
+      {
+        text: 'Yes',
+        onPress: async () => {
+          customAlert("Please wait !!", "Your threel is being deleted")
+          let result = await formDataSender(postUrl + '/delete/' + _id + "/" + author)
+          if (result != null && result?.status == 1) deleted(_id)
+        },
+      }
+    ])
+  }
+
+  // option alert
+  const optionAlert = async () => {
+    Alert.alert("Delete threels", "", [
+      {
+        text: "No",
+      },
+      {
+        text: 'Yes',
+        onPress: async () => await deletePost(),
+      }
+    ], { cancelable: true })
+  }
 
   return (
     <View className="w-full h-[300] rounded-md overflow-hidden">
@@ -41,6 +74,12 @@ const ReelsCard = ({ reels: { _id, author, caption, createdAt, currentUserReacti
               setOpen(false)
               router.push({ pathname: '/reels', params: { reelsId: _id } })
             }}
+          />
+
+          <CustomButton
+            title={<Entypo name="dots-three-vertical" size={20} color="white" />}
+            containerStyles={"w-auto h-[30] mt-3 px-3 absolute top-2 right-2"}
+            handlePress={optionAlert}
           />
         </View>
       </TouchableOpacity>

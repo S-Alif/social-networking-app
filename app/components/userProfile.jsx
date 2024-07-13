@@ -16,7 +16,7 @@ const UserProfile = () => {
   const pathname = usePathname()
   const isProfilePath = pathname == '/pages/profile'
 
-  const { profile } = authStore()
+  const { profile, fetchProfile } = authStore()
 
   const [userData, setUserData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -141,11 +141,11 @@ const UserProfile = () => {
                     disabled={((userData?.privacy == "private" && !isProfilePath) || (userData?.privacy == "friends" && !userData?.isFriends && !isProfilePath))}
                     onPress={() => router.push({ pathname: 'pages/friendList', params: { userId: userData?._id, type: isProfilePath ? 0 : 1 } })}
                   >
-                    <Text className="text-5xl font-psemibold pt-2">{profile?.friendsCount}</Text>
+                    <Text className="text-5xl font-psemibold pt-2">{userData?.friendsCount}</Text>
                     <Text className="text-[15px] font-pmedium">Buddies</Text>
                   </TouchableOpacity>
                   <View className="items-center w-1/2">
-                    <Text className="text-5xl font-psemibold pt-2">{profile?.postCount}</Text>
+                    <Text className="text-5xl font-psemibold pt-2">{userData?.postCount}</Text>
                     <Text className="text-[15px] font-pmedium">Posts</Text>
                   </View>
                 </View>
@@ -177,6 +177,11 @@ const UserProfile = () => {
             }
           </View>
         )}
+        refreshing={loading}
+        onRefresh={async () => {
+          if (isProfilePath) await fetchProfile()
+          setRefresh(true)
+        }}
       />
     </View>
   )

@@ -53,7 +53,7 @@ const ShowUserThreels = ({ userId }) => {
         keyExtractor={(item) => item._id}
         renderItem={({ item, index }) => (
           <View className={`w-full h-[300] pl-2 ${index % 2 != 0 && "pr-2"} mb-2`}>
-            <ReelsCard reels={item} />
+            <ReelsCard reels={item} deleted={deletePost} />
           </View>
         )}
         numColumns={2}

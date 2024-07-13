@@ -102,7 +102,7 @@ const AuhtorInfo = ({ author: { firstName, lastName, profileImg }, authorId, cre
       {
         text: 'Yes',
         onPress: async () => {
-          customAlert("Please wait !!", "Your post is being deleted")
+          customAlert("Please wait !!", "Your threel is being deleted")
           let result = await dataSender(postUrl + '/delete/' + postId + "/" + authorId)
           if (result != null && result?.status == 1) deleted(postId)
         },
