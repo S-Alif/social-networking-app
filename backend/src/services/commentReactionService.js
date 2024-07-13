@@ -272,6 +272,7 @@ exports.confirmRequest = async (req) => {
       postType: "request",
     })
     await userModel.updateOne({ _id: req.headers?.id }, { $inc: { friendsCount: +1 } })
+    await userModel.updateOne({ _id: req.body?.user }, { $inc: { friendsCount: +1 } })
     return responseMsg(1, 200, "Request accepted")
   }
   await requestModel.deleteOne({ from: req.body?.user, to: req.headers?.id })
