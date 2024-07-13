@@ -98,7 +98,7 @@ exports.deletePost = async (req) => {
   await postModel.deleteOne({ _id: new ObjectID(req.params?.id) })
   await reactionModel.deleteMany({ reactedOn: new ObjectID(req.params?.id) })
   await commentModel.deleteMany({ commentOn: new ObjectID(req.params?.id) })
-  await userModel.updateOne({ _id: req.headers?.id }, { $inc: { postCount: -1 } })
+  await userModel.updateOne({ _id: req.headers?.id, postCount: { $gt: 0 } }, { $inc: { postCount: -1 } })
   return responseMsg(1, 200, "post deleted")
 }
 
