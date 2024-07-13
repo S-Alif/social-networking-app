@@ -1,15 +1,18 @@
-import { View, Text, Dimensions, TouchableOpacity, Image } from 'react-native'
+import { View, Text, Dimensions, TouchableOpacity, Image, Alert } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { ResizeMode, Video } from 'expo-av'
 import ReelsEngagement from './reelsEngagement'
-import { Fontisto, FontAwesome5 } from '@expo/vector-icons';
+import { Fontisto, FontAwesome5, Entypo } from '@expo/vector-icons';
 import authStore from '../constants/authStore';
 import { formatDate } from '../scripts/dateFormatter';
 import { router } from 'expo-router';
+import { dataSender } from '../scripts/apiCaller';
+import { customAlert } from '../scripts/alerts';
+import { postUrl } from '../scripts/endpoints';
 
 const height = Dimensions.get('window').height
 
-const ReelsVideoCard = ({ reels: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails, attachments }, isPlaying }) => {
+const ReelsVideoCard = ({ reels: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails, attachments }, isPlaying, deleted }) => {
 
   const videoRef = useRef(null)
   const [play, setPlay] = useState(true)
@@ -75,7 +78,7 @@ const ReelsVideoCard = ({ reels: { _id, author, caption, createdAt, currentUserR
 
         {/* author info */}
         <View className="absolute bottom-0 w-full">
-          <AuhtorInfo author={authorDetails} authorId={author} createdAt={createdAt} caption={caption ? caption : ""} />
+          <AuhtorInfo author={authorDetails} authorId={author} createdAt={createdAt} caption={caption ? caption : ""} postId={_id} deleted={deleted} />
         </View>
 
       </View>
@@ -86,26 +89,68 @@ const ReelsVideoCard = ({ reels: { _id, author, caption, createdAt, currentUserR
 export default ReelsVideoCard
 
 // author info
-const AuhtorInfo = ({ author: { firstName, lastName, profileImg }, authorId, createdAt, caption }) => {
+const AuhtorInfo = ({ author: { firstName, lastName, profileImg }, authorId, createdAt, caption, postId, deleted }) => {
 
   const { profile } = authStore()
 
+  // delete the post
+  const deletePost = async () => {
+    Alert.alert("Warning", "Do you want to delete this threel ?", [
+      {
+        text: "No"
+      },
+      {
+        text: 'Yes',
+        onPress: async () => {
+          customAlert("Please wait !!", "Your post is being deleted")
+          let result = await dataSender(postUrl + '/delete/' + postId + "/" + authorId)
+          if (result != null && result?.status == 1) deleted(postId)
+        },
+      }
+    ])
+  }
+
+  // option alert
+  const optionAlert = async () => {
+    Alert.alert("Delete threels", "", [
+      {
+        text: "No",
+      },
+      {
+        text: 'Yes',
+        onPress: async () => await deletePost(),
+      }
+    ], { cancelable: true })
+  }
+
   return (
     <View className="h-[100] w-full flex-1 mt-3 px-3 pb-2">
-      <View className="flex-1 h-full flex-row gap-3 items-center">
-        <TouchableOpacity
-          onPress={() => router.push({
-            pathname: profile?._id == authorId ? "pages/profile" : "pages/userProfileById",
-            params: { userId: authorId, userFirstName: firstName, userLastName: lastName, userProfileImg: profileImg }
-          })}
-        >
-          <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
-        </TouchableOpacity>
+      <View className="flex-1 h-full flex-row items-center">
+        <View className="flex-1 h-full flex-row gap-3 items-center">
+          <TouchableOpacity
+            onPress={() => router.push({
+              pathname: profile?._id == authorId ? "pages/profile" : "pages/userProfileById",
+              params: { userId: authorId, userFirstName: firstName, userLastName: lastName, userProfileImg: profileImg }
+            })}
+          >
+            <Image source={{ uri: profileImg }} className="w-[50px] h-[50px] rounded-full" />
+          </TouchableOpacity>
 
-        <View>
-          <Text className="text-xl font-pbold text-white" style={{ textShadowColor: "rgba(0,0,0,0.8)", elevation: 4, textShadowRadius: 10 }}>{firstName} {lastName}</Text>
-          <Text className="text-[12px] font-pbold text-gray-300" style={{ textShadowColor: "rgba(0,0,0,0.8)", elevation: 4, textShadowRadius: 10 }}>{formatDate(createdAt)}</Text>
+          <View>
+            <Text className="text-xl font-pbold text-white" style={{ textShadowColor: "rgba(0,0,0,0.8)", elevation: 4, textShadowRadius: 10 }}>{firstName} {lastName}</Text>
+            <Text className="text-[12px] font-pbold text-gray-300" style={{ textShadowColor: "rgba(0,0,0,0.8)", elevation: 4, textShadowRadius: 10 }}>{formatDate(createdAt)}</Text>
+          </View>
         </View>
+
+        {
+          profile?._id == authorId &&
+          <TouchableOpacity
+            className="pt-3 pb-4"
+            onPress={optionAlert}
+          >
+            <Entypo name="dots-three-vertical" size={20} color="white" />
+          </TouchableOpacity>
+        }
       </View>
 
       {

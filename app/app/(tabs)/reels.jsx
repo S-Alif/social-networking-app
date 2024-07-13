@@ -96,6 +96,11 @@ const ReelsScreen = () => {
     }, [])
   )
 
+  // remove a deleted threels
+  const deletePost = (postId) => {
+    setPosts(prev => prev.filter(e => e._id != postId))
+  }
+
 
   return (
     <SafeAreaView className="flex-1 bg-black relative">
@@ -113,7 +118,7 @@ const ReelsScreen = () => {
           {
             posts.length > 0 &&
             posts.map((e, index) => (
-              <ReelsVideoCard reels={e} isPlaying={isFocused && currentPlaying === e._id} key={index} />
+              <ReelsVideoCard reels={e} isPlaying={isFocused && currentPlaying === e._id} key={index} deleted={deletePost} />
             ))
           }
         </View>
