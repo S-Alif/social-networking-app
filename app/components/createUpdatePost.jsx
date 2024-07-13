@@ -40,12 +40,12 @@ const CreateUpdatePost = () => {
 
   // submit post
   const submitPost = async () => {
-    if ((postCaption.trim() == "" || postCaption.trim.length < 5) && file.length == 0) return customAlert("ERROR !!", "Cannot create empty posts")
+    if ((postCaption.trim() == "" || postCaption.trim().length < 5) && file.length == 0) return customAlert("ERROR !!", "Cannot create empty posts")
 
     setLoading(true)
     const formData = new FormData()
 
-    if (caption) formData.append("caption", postCaption)
+    if (postCaption) formData.append("caption", postCaption)
     if (file) file.forEach((file, index) => {
       formData.append(`files[${index}]`, {
         uri: file.uri,
@@ -57,7 +57,7 @@ const CreateUpdatePost = () => {
 
     let post = await formDataSender(postUrl + "/create", formData)
     if (post != null && post?.status == 1) {
-      richText.current?.setContentHTML("")
+      richText.current?.changeText("")
       setPostCaption("")
       setFile([])
     }
