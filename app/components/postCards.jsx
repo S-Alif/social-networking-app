@@ -75,7 +75,39 @@ const AttachmentHandler = ({ attachment }) => {
 const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments }, deleted }) => {
 
   const { profile } = authStore()
-  const [modal, setModal] = useState(false)
+
+  // delete the post
+  const deletePost = async () => {
+    Alert.alert("Warning", "Do you want to delete this post ?", [
+      {
+        text: "No"
+      },
+      {
+        text: 'Yes',
+        onPress: async () => {
+          customAlert("Please wait !!", "Your post is being deleted")
+          let result = await dataSender(postUrl + '/delete/' + _id + "/" + author)
+          if (result != null && result?.status == 1) deleted(_id)
+        },
+      }
+    ])
+  }
+
+  // option alert
+  const optionAlert = async () => {
+    Alert.alert("Post options", "", [
+      {
+        text: "Update",
+        onPress: async () => {
+          router.push({ pathname: 'pages/updatePost', params: { _id: _id, author: author, caption: caption } })
+        }
+      },
+      {
+        text: 'Delete',
+        onPress: async () => await deletePost(),
+      }
+    ], { cancelable: true })
+  }
 
   return (
     <View className="border border-gray-300 rounded-lg mt-2 bg-lightGrayColor2">
@@ -108,7 +140,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
             profile?._id == author &&
             <TouchableOpacity
               className="pr-5 pt-3"
-              onPress={() => setModal(prev => !prev)}
+              onPress={optionAlert}
             >
               <Entypo name="dots-three-vertical" size={20} color="black" />
             </TouchableOpacity>
@@ -154,7 +186,6 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
       }
 
       <PostEngagements postId={{ _id, author, type: "post" }} reaction={currentUserReaction ? currentUserReaction : null} engages={{ reactionCount, commentCount }} />
-      <OptionModal showModal={modal} setShowModal={setModal} postId={_id} deleted={deleted} author={author} caption={caption} />
 
     </View>
   )
@@ -162,63 +193,6 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
 
 export default PostCards
 
-// option modal
-const OptionModal = ({ showModal, setShowModal, postId, deleted, author, caption }) => {
-
-  // delete the post
-  const deletePost = async () => {
-    setShowModal(false)
-    Alert.alert("Warning", "Do you want to delete this post ?", [
-      {
-        text: "No"
-      },
-      {
-        text: 'Yes',
-        onPress: async () => {
-          customAlert("Please wait !!", "Your post is being deleted")
-          let result = await dataSender(postUrl + '/delete/' + postId + "/" + author)
-          if (result != null && result?.status == 1) deleted(postId)
-        },
-      }
-    ])
-  }
-
-
-  return (
-    <Modal
-      animationType='fade'
-      visible={showModal}
-      onRequestClose={() => setShowModal(false)}
-      transparent={true}
-    >
-      <TouchableWithoutFeedback onPress={() => setShowModal(false)}>
-        <View className="flex-1 justify-center items-center bg-[#1a1b1cc2] px-4">
-          <View className="bg-lightGrayColor2 w-full rounded-lg border border-gray-400" style={{ shadowColor: "#000", elevation: 5, shadowOpacity: 0.3 }}>
-
-            {/* update comment */}
-            <TouchableOpacity
-              className="flex-row justify-center items-center py-3 border-b border-b-gray-400"
-              onPress={() => {
-                setShowModal(false)
-                router.push({ pathname: 'pages/updatePost', params: { _id: postId, author: author, caption: caption } })
-              }}
-            >
-              <FontAwesome name="cog" size={26} color="black" />
-              <Text className="text-xl font-pmedium pl-2">Update post</Text>
-            </TouchableOpacity>
-
-            {/* delete comment */}
-            <TouchableOpacity className="flex-row justify-center items-center py-3" onPress={deletePost}>
-              <MaterialIcons name="delete-forever" size={26} color="black" />
-              <Text className="text-xl font-pmedium pl-2">Delete post</Text>
-            </TouchableOpacity>
-
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </Modal>
-  )
-}
 
 const styles = StyleSheet.create({
   dotsStyle: {
