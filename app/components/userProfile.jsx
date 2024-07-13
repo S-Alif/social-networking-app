@@ -19,7 +19,6 @@ const UserProfile = () => {
   const { profile } = authStore()
 
   const [userData, setUserData] = useState(null)
-  const [amount, setAmount] = useState(null)
   const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState(1)
   const [hasRequest, setHasRequest] = useState(false)
@@ -43,12 +42,6 @@ const UserProfile = () => {
       } else {
         user = profile
         setUserData(user)
-      }
-
-      // fetch post and profile amount datas based on privacy
-      if (isProfilePath || (user?.data?.privacy == "public" || user?.data.isFriends == true)) {
-        let userAmounts = await dataFetcher(`${postUrl}/amounts/user/${!isProfilePath ? user?.data?._id : profile?._id}`)
-        if (userAmounts != null && userAmounts?.status != 0) setAmount(userAmounts?.data)
       }
 
       setLoading(false)
@@ -148,11 +141,11 @@ const UserProfile = () => {
                     disabled={((userData?.privacy == "private" && !isProfilePath) || (userData?.privacy == "friends" && !userData?.isFriends && !isProfilePath))}
                     onPress={() => router.push({ pathname: 'pages/friendList', params: { userId: userData?._id, type: isProfilePath ? 0 : 1 } })}
                   >
-                    <Text className="text-5xl font-psemibold pt-2">{amount?.friends}</Text>
+                    <Text className="text-5xl font-psemibold pt-2">{profile?.friendsCount}</Text>
                     <Text className="text-[15px] font-pmedium">Buddies</Text>
                   </TouchableOpacity>
                   <View className="items-center w-1/2">
-                    <Text className="text-5xl font-psemibold pt-2">{amount?.posts}</Text>
+                    <Text className="text-5xl font-psemibold pt-2">{profile?.postCount}</Text>
                     <Text className="text-[15px] font-pmedium">Posts</Text>
                   </View>
                 </View>

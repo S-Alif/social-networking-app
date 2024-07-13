@@ -8,7 +8,7 @@ import authStore from '../constants/authStore'
 
 const Index = () => {
 
-  const { fetchProfile, getNotification } = authStore()
+  const { fetchProfile } = authStore()
 
   // route based on token
   useEffect(() => {
@@ -21,7 +21,6 @@ const Index = () => {
 
       let result = await fetchProfile()
       if (result) {
-        await getNotification()
         return router.replace('/home')
       }
       router.replace('/login')

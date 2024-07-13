@@ -23,7 +23,7 @@ const setMsg = (notification) => {
   if (notification?.type == "comment" && notification?.postType == "reels") return msgs.reelsComment
   if (notification?.type == "reaction" && notification?.postType == "reels") return msgs.reelsReaction
   if (notification?.type == "request") return msgs.reuqest
-  if (notification?.type == "request_accept" && notification?.postType == "reels") return msgs.requestAccept
+  if (notification?.type == "request_accept") return msgs.requestAccept
 }
 
 // main component
@@ -34,11 +34,11 @@ const Notifications = () => {
 
   useEffect(() => {
     (async () => {
-      setLoading(true)
       await getNotification()
       setLoading(false)
     })()
-  }, [])
+  }, [loading])
+
 
   return (
     <View className="flex-1 bg-lightGrayColor">
@@ -52,6 +52,8 @@ const Notifications = () => {
             <NotificationCard notification={item} />
           )}
           contentContainerStyle={{ paddingVertical: 20 }}
+          onRefresh={() => setLoading(true)}
+          refreshing={loading}
         />
       }
     </View>

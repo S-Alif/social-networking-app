@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import authStore from './../constants/authStore';
 import logo3 from "../assets/images/connect_vive_logo_3.png"
 import { StatusBar } from 'expo-status-bar';
@@ -8,7 +8,16 @@ import { router } from 'expo-router';
 
 const TabScreenLayout = ({ children }) => {
 
-  const { profile, notificationCount } = authStore()
+  const { profile, notificationCount, getNotification } = authStore()
+  const [notification, setNotification] = useState(0)
+
+  useEffect(() => {
+    (async () => await getNotification())()
+  }, [])
+
+  useEffect(() => {
+    setNotification(notificationCount)
+  }, [notificationCount])
 
   return (
     <SafeAreaView className="flex-1 bg-lightGrayColor2">
@@ -33,8 +42,8 @@ const TabScreenLayout = ({ children }) => {
         >
           <AntDesign name="bells" size={24} color="black" />
           {
-            notificationCount > 0 &&
-            <View className="absolute bg-redColor rounded p-[2] top-[-10] left-1/2"><Text className="text-sm font-psemibold text-white px-1">{notificationCount}</Text></View>
+            notification > 0 &&
+            <View className="absolute bg-redColor rounded p-[2] top-[-10] left-1/2"><Text className="text-sm font-psemibold text-white px-1">{notification}</Text></View>
           }
         </TouchableOpacity>
 
