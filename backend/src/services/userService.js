@@ -239,6 +239,7 @@ exports.unfriend = async (req) => {
       { user1: new ObjectID(req?.params?.id), user2: new ObjectID(req?.headers?.id) }
     ]
   })
+  await userModel.updateOne({ _id: req.headers?.id }, { $inc: { friendsCount: -1 } })
 
   return responseMsg(1, 200, "Buddy removed")
 }

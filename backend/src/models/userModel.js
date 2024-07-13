@@ -17,6 +17,8 @@ const userSchema = new mongoose.Schema({
   country: { type: String },
   city: { type: String },
   verified: { type: Boolean, default: false },
+  friendsCount: { type: Number, default: 0, min: 0 },
+  postCount: { type: Number, default: 0, min: 0 },
   privacy: {
     type: String,
     default: "public",

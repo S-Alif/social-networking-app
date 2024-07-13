@@ -5,6 +5,7 @@ const requestModel = require("../models/requestModel")
 const { responseMsg } = require("../utils/helpers")
 const postModel = require("../models/postModel")
 const notificationModel = require("../models/notificationModel")
+const userModel = require("../models/userModel")
 
 const ObjectID = require('mongoose').Types.ObjectId
 
@@ -270,6 +271,7 @@ exports.confirmRequest = async (req) => {
       type: "request_accept",
       postType: "request",
     })
+    await userModel.updateOne({ _id: req.headers?.id }, { $inc: { friendsCount: +1 } })
     return responseMsg(1, 200, "Request accepted")
   }
   await requestModel.deleteOne({ from: req.body?.user, to: req.headers?.id })

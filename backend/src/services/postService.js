@@ -5,6 +5,7 @@ const attachmentModel = require('../models/postAttachmentModel');
 const friendshipModel = require('../models/friendshipModel');
 const { responseMsg } = require('../utils/helpers');
 const { deleteFiles, attachmentUploader } = require('../utils/postAttachmentUploader');
+const userModel = require('../models/userModel');
 
 const ObjectID = require('mongoose').Types.ObjectId
 
@@ -67,6 +68,8 @@ exports.createPost = async (req) => {
     return responseMsg(0, 200, "An error occurred while saving attachments")
   }
 
+  await userModel.updateOne({ _id: req.headers?.id }, { $inc: { postCount: +1 } })
+
   return responseMsg(1, 200, "post uploaded successfully")
 }
 
@@ -95,6 +98,7 @@ exports.deletePost = async (req) => {
   await postModel.deleteOne({ _id: new ObjectID(req.params?.id) })
   await reactionModel.deleteMany({ reactedOn: new ObjectID(req.params?.id) })
   await commentModel.deleteMany({ commentOn: new ObjectID(req.params?.id) })
+  await userModel.updateOne({ _id: req.headers?.id }, { $inc: { postCount: -1 } })
   return responseMsg(1, 200, "post deleted")
 }
 
@@ -382,24 +386,6 @@ exports.getPostByUser = async (req) => {
   const { posts: paginatedPosts, totalCount } = posts[0]
 
   return responseMsg(1, 200, { totalCount: totalCount[0]?.totalCount, posts: paginatedPosts })
-}
-
-// get friend and post amounts
-exports.getFriendsAndPostAmount = async (req) => {
-  let user = req.params?.user
-  if (!user) user = req.headers?.id
-
-
-  let friends = await await friendshipModel.find({
-    $or: [
-      { user1: new ObjectID(user) },
-      { user2: new ObjectID(user) }
-    ]
-  }).count('total')
-
-  let posts = await postModel.find({ author: new ObjectID(user) }).count('total')
-
-  return responseMsg(1, 200, { friends, posts })
 }
 
 // report a post
