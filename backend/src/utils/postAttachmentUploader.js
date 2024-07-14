@@ -28,8 +28,7 @@ exports.attachmentUploader = async (file) => {
       stream.write(file.data);
       stream.end();
     })
-
-    return result.url
+    return result.secure_url
   } catch (error) {
     return null
   }
