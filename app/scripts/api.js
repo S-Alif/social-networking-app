@@ -5,7 +5,7 @@ import { Alert } from 'react-native';
 import * as SecureStore from 'expo-secure-store'
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.102:10010',
+  baseURL: 'https://social-networking-app-ln58.onrender.com',
   timeout: 120000,
 })
 

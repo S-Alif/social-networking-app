@@ -1,0 +1,74 @@
+diff --git a/node_modules/react-native-markdown-editor/lib/src/MarkdownEditor.js b/node_modules/react-native-markdown-editor/lib/src/MarkdownEditor.js
+index f227c32..496dee1 100644
+--- a/node_modules/react-native-markdown-editor/lib/src/MarkdownEditor.js
++++ b/node_modules/react-native-markdown-editor/lib/src/MarkdownEditor.js
+@@ -13,7 +13,7 @@ import { MarkdownView } from 'react-native-markdown-view';
+ 
+ import { renderFormatButtons } from './renderButtons';
+ 
+-const FOREGROUND_COLOR = 'rgba(82, 194, 175, 1)';
++const FOREGROUND_COLOR = '#6835F0';
+ const styles = StyleSheet.create({
+   composeText: {
+     borderColor: FOREGROUND_COLOR,
+@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
+     flex: 1,
+     padding: 4,
+     paddingLeft: 8,
+-    fontSize: 16,
++    fontSize: 24,
+   },
+   buttonContainer: {
+     flex: 0,
+@@ -51,13 +51,13 @@ const markdownStyles = {
+     color: 'purple',
+   },
+   link: {
+-    color: 'pink',
++    color: 'blue',
+   },
+   mailTo: {
+     color: 'orange',
+   },
+   text: {
+-    color: '#555555',
++    color: '#161622',
+   },
+ };
+ 
+@@ -106,7 +106,7 @@ export default class MarkdownEditor extends React.Component {
+       <View style={styles.preview}>
+         <ScrollView removeClippedSubviews>
+           <MarkdownView styles={markdownStyles}>
+-            {this.state.text === '' ? 'Markdown preview here' : this.state.text}
++            {this.state.text === '' ? 'Post preview' : this.state.text}
+           </MarkdownView>
+         </ScrollView>
+       </View>
+@@ -124,9 +124,10 @@ export default class MarkdownEditor extends React.Component {
+           multiline
+           underlineColorAndroid="transparent"
+           onChangeText={this.changeText}
++          cursorColor={FOREGROUND_COLOR}
+           onSelectionChange={this.onSelectionChange}
+           value={text}
+-          placeholder={'Write a long message'}
++          placeholder={'Write your post caption'}
+           ref={textInput => (this.textInput = textInput)}
+           selection={selection}
+         />
+diff --git a/node_modules/react-native-markdown-editor/lib/src/renderButtons.js b/node_modules/react-native-markdown-editor/lib/src/renderButtons.js
+index 686fe01..70c32a4 100644
+--- a/node_modules/react-native-markdown-editor/lib/src/renderButtons.js
++++ b/node_modules/react-native-markdown-editor/lib/src/renderButtons.js
+@@ -3,8 +3,8 @@ import { FlatList, TouchableOpacity, Text } from 'react-native';
+ 
+ import Formats from './Formats';
+ 
+-const FOREGROUND_COLOR = 'rgba(82, 194, 175, 1)';
+-const defaultStyles = { padding: 8, color: FOREGROUND_COLOR, fontSize: 16 };
++const FOREGROUND_COLOR = '#161622';
++const defaultStyles = { padding: 8, color: FOREGROUND_COLOR, fontSize: 18, fontWeight: "bold" };
+ 
+ const defaultMarkdownButton = ({ item, getState, setState }) => {
+   return (

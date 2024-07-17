@@ -1,4 +1,4 @@
-const baseUrl = "http://192.168.0.102:10010/public"
+const baseUrl = "https://social-networking-app-ln58.onrender.com/public"
 export const engageMentUrl = baseUrl + "/engagement"
 
 export const userUrl = baseUrl + "/user"

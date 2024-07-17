@@ -1,0 +1,66 @@
+diff --git a/node_modules/react-native-markdown-view/styles.js b/node_modules/react-native-markdown-view/styles.js
+index 7e9171b..c9ab11c 100644
+--- a/node_modules/react-native-markdown-view/styles.js
++++ b/node_modules/react-native-markdown-view/styles.js
+@@ -17,43 +17,37 @@ export default Object.freeze({
+     fontWeight: '700',
+   },
+   heading1: {
+-    fontSize: 32,
+-    marginTop: 22,
++    fontSize: 40,
+     marginBottom: 22,
+     marginLeft: 0,
+     marginRight: 0,
+   },
+   heading2: {
+-    fontSize: 24,
+-    marginTop: 20,
++    fontSize: 36,
+     marginBottom: 20,
+     marginLeft: 0,
+     marginRight: 0,
+   },
+   heading3: {
+-    fontSize: 20,
+-    marginTop: 20,
++    fontSize: 32,
+     marginBottom: 20,
+     marginLeft: 0,
+     marginRight: 0,
+   },
+   heading4: {
+-    fontSize: 16,
+-    marginTop: 22,
++    fontSize: 28,
+     marginBottom: 22,
+     marginLeft: 0,
+     marginRight: 0,
+   },
+   heading5: {
+-    fontSize: 14,
+-    marginTop: 22,
++    fontSize: 24,
+     marginBottom: 22,
+     marginLeft: 0,
+     marginRight: 0,
+   },
+   heading6: {
+-    fontSize: 11,
+-    marginTop: 24,
++    fontSize: 20,
+     marginBottom: 24,
+     marginLeft: 0,
+     marginRight: 0,
+@@ -99,8 +93,9 @@ export default Object.freeze({
+     flex: 1,
+   },
+   paragraph: {
+-    marginTop: 10,
+-    marginBottom: 10,
++    marginTop: 8,
++    marginBottom: 8,
++    fontSize: 24
+   },
+   strong: {
+     fontWeight: '700',
