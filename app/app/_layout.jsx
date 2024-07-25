@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { SplashScreen, Stack, usePathname } from 'expo-router'
 import { useFonts } from 'expo-font'
-import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import useSocket from '../hooks/useSocket';
 
 SplashScreen.preventAutoHideAsync()
 
@@ -34,7 +35,10 @@ const RootLayout = () => {
 
   }, [fontsLoaded, error])
 
+  useSocket()
+
   if (!fontsLoaded && !error) return null
+
 
 
   return (
