@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import io from 'socket.io-client';
-// import * as Notifications from 'expo-notifications';
+import * as Notifications from 'expo-notifications';
 import { url } from '../scripts/endpoints';
 import * as SecureStore from 'expo-secure-store'
 
