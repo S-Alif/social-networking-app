@@ -37,7 +37,7 @@ app.use('/public', mainRoutes)
 
 // connect to databse
 let option = { user: `${process.env.DB_USER}`, pass: `${process.env.DB_PASS}`, autoIndex: true }
-mongoose.connect("mongodb://localhost:27017/social-app")
+mongoose.connect(process.env.DB_URL + "/" + process.env.DATABASE_NAME, option)
   .then(() => console.log("database connected"))
   .catch((error) => console.log("could not connect \n" + error))
 
