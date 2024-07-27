@@ -5,6 +5,8 @@ import logo3 from '../assets/images/connect_vive_logo_3.png'
 import { router } from 'expo-router'
 import AuthTabScreen from '../components/authTabScreen'
 import authStore from '../constants/authStore'
+import * as Notifications from 'expo-notifications'
+import { customAlert } from '../scripts/alerts'
 
 const Index = () => {
 
@@ -27,6 +29,19 @@ const Index = () => {
 
     }, 2000)
   }, [])
+
+  
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Notifications.requestPermissionsAsync()
+      if (status !== 'granted') {
+        customAlert("ERROR !!", "Failed to get notification permission")
+        return
+      }
+    })()
+  }, [])
+
 
   return (
     <AuthTabScreen
