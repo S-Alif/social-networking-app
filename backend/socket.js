@@ -33,10 +33,10 @@ module.exports = (server) => {
         connectedUsers[socket.id] = decoded.id
         next()
       } else {
-        next(new Error('Unauthorized'))
+        return
       }
     } catch (error) {
-      next(new Error('Token not found'))
+      return
     }
   }
 
@@ -47,6 +47,7 @@ module.exports = (server) => {
   io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
+      console.log(socket.id, connectedUsers[socket.id])
       delete connectedUsers[socket.id]
     })
 
@@ -62,6 +63,8 @@ module.exports = (server) => {
 
     let notificaitons = await notificationModel.aggregate([
       { $match: { notificationTo: new ObjectID(newNotificationDocument?.notificationTo.toString()) } },
+      {$sort: {createdAt: -1}},
+      {$limit: 1},
       {
         $lookup: {
           from: "users",
@@ -86,6 +89,7 @@ module.exports = (server) => {
         }
       }
     ])
+    console.log(notificaitons)
 
     // send the notification to the designated user
     io.to(connectedUserSocketId).emit('notification', notificaitons)
