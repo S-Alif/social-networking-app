@@ -7,6 +7,7 @@ export default authStore = create((set) => ({
   profile: null,
   notifications: [],
   notificationCount: 0,
+  socketConnected: false,
 
   // fetch the user profile
   fetchProfile: async () => {
@@ -31,7 +32,18 @@ export default authStore = create((set) => ({
     }
     return false
   },
+  // set notification count
   setNotificationCount: (count) => {
     set({ notificationCount: count })
+  },
+
+  // set socket connection status
+  setSocketConnection: (status) => {
+    set({ socketConnected: status })
+  },
+
+  // set notification
+  setNewNotification: (newNotification) => {
+    set({ notifications: newNotification })
   }
 }))

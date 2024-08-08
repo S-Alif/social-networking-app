@@ -5,16 +5,15 @@ import logo3 from '../assets/images/connect_vive_logo_3.png'
 import { router } from 'expo-router'
 import AuthTabScreen from '../components/authTabScreen'
 import authStore from '../constants/authStore'
-import * as Notifications from 'expo-notifications'
-import { customAlert } from '../scripts/alerts'
+import { connectSocket } from '../constants/socketConnection'
 
 const Index = () => {
 
-  const { fetchProfile } = authStore()
+  const { fetchProfile, notificationCount, setNotificationCount, socketConnected, setSocketConnection, notifications, setNewNotification } = authStore()
 
   // route based on token
   useEffect(() => {
-    setTimeout(async () => {
+    (async () => {
       let token = await SecureStore.getItemAsync('token') || null
       if (!token) {
         router.replace('/login')
@@ -23,22 +22,18 @@ const Index = () => {
 
       let result = await fetchProfile()
       if (result) {
+        connectSocket(
+          token,
+          notificationCount,
+          setNotificationCount,
+          socketConnected,
+          setSocketConnection,
+          notifications,
+          setNewNotification
+        )
         return router.replace('/home')
       }
       router.replace('/login')
-
-    }, 2000)
-  }, [])
-
-  
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Notifications.requestPermissionsAsync()
-      if (status !== 'granted') {
-        customAlert("ERROR !!", "Failed to get notification permission")
-        return
-      }
     })()
   }, [])
 
