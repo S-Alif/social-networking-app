@@ -32,12 +32,11 @@ const Notifications = () => {
   const { notifications, getNotification } = authStore()
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    (async () => {
-      await getNotification()
-      setLoading(false)
-    })()
-  }, [loading])
+  const refreshing = async () =>{
+    setLoading(true)
+    await getNotification()
+    setLoading(false)
+  }
 
 
   return (
@@ -52,7 +51,7 @@ const Notifications = () => {
             <NotificationCard notification={item} />
           )}
           contentContainerStyle={{ paddingVertical: 20 }}
-          onRefresh={() => setLoading(true)}
+          onRefresh={async () => refreshing()}
           refreshing={loading}
         />
       }
