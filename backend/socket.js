@@ -47,7 +47,6 @@ module.exports = (server) => {
   io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
-      console.log(socket.id, connectedUsers[socket.id])
       delete connectedUsers[socket.id]
     })
 
@@ -89,7 +88,6 @@ module.exports = (server) => {
         }
       }
     ])
-    console.log(notificaitons)
 
     // send the notification to the designated user
     io.to(connectedUserSocketId).emit('notification', notificaitons)
