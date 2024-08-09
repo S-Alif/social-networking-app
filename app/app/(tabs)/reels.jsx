@@ -1,18 +1,17 @@
-import { ActivityIndicator, Dimensions, ScrollView, RefreshControl, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Dimensions, ScrollView, RefreshControl, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import ReelsVideoCard from '../../components/reelsVideoCard'
 import { dataFetcher } from '../../scripts/apiCaller'
 import { postUrl } from '../../scripts/endpoints'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useLocalSearchParams, useNavigation } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
 
 const { height: windowHeight } = Dimensions.get('window')
 
 const ReelsScreen = () => {
 
   const { reelsId } = useLocalSearchParams()
-  const navigation = useNavigation()
 
   const [posts, setPosts] = useState([])
   const [page, setPage] = useState(1)

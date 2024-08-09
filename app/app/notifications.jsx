@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, Image, ScrollView, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { notificationUrl } from '../scripts/endpoints'
 import authStore from '../constants/authStore'
@@ -42,19 +42,19 @@ const Notifications = () => {
   return (
     <View className="flex-1 bg-lightGrayColor">
       {
-        !loading &&
-        <FlatList
-          data={notifications}
-          keyExtractor={(item) => item?._id}
-          extraData={notifications}
-          renderItem={({ item }) => (
-            <NotificationCard notification={item} />
-          )}
-          contentContainerStyle={{ paddingVertical: 20 }}
-          onRefresh={async () => refreshing()}
-          refreshing={loading}
-        />
+        (!loading && notifications.length == 0) && <Text className="pt-20 text-center font-pmedium">No notificaiton</Text>
       }
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={refreshing} />}
+        contentContainerStyle={{paddingVertical: 20}}
+      >
+        {
+          (!loading && notifications.length > 0) &&
+            notifications.map((e, index) => (
+              <NotificationCard notification={e} key={index} />
+            ))
+        }
+      </ScrollView>
     </View>
   )
 }
@@ -65,7 +65,11 @@ export default Notifications
 const NotificationCard = ({ notification }) => {
 
   const { notificationCount, setNotificationCount } = authStore()
-  const [seen, setSeen] = useState(notification?.seen || false)
+  const [seen, setSeen] = useState(false)
+
+  useEffect(() => {
+    setSeen(notification?.seen)
+  }, [notification])
 
   const goToPost = async () => {
     if (seen == false) {
@@ -83,7 +87,7 @@ const NotificationCard = ({ notification }) => {
 
   return (
     <TouchableOpacity
-      className={`mx-2 mb-3 flex-1 rounded-md border-2 bg-lightGrayColor2 ${seen ? "border-lightGrayColor2" : "border-purpleColor"}`}
+      className={`mx-2 mb-3 flex-1 rounded-md border-2 bg-lightGrayColor2 ${!seen ? "border-purpleColor" : "border-lightGrayColor2"}`}
       onPress={goToPost}
     >
 
