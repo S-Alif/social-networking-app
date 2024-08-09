@@ -8,6 +8,11 @@ export default authStore = create((set) => ({
   notifications: [],
   notificationCount: 0,
   socketConnected: false,
+  token: null,
+
+  setToken: (token) => {
+    set({ token: token })
+  },
 
   // fetch the user profile
   fetchProfile: async () => {
@@ -44,6 +49,8 @@ export default authStore = create((set) => ({
 
   // set notification
   setNewNotification: (newNotification) => {
-    set({ notifications: newNotification })
+    set((state) => ({
+      notifications: [...newNotification, ...state.notifications],
+    }))
   }
 }))

@@ -5,8 +5,12 @@ import { dataFetcher } from './../../scripts/apiCaller';
 import { postUrl } from '../../scripts/endpoints';
 import PostCards from '../../components/postCards';
 import { useFocusEffect } from 'expo-router';
+import authStore from '../../constants/authStore';
+import { connectSocket } from '../../constants/socketConnection'
 
 const Home = () => {
+
+  const { token, notificationCount, setNotificationCount, socketConnected, setSocketConnection, setNewNotification } = authStore()
 
   const [posts, setPosts] = useState([])
   const [page, setPage] = useState(1)
@@ -15,6 +19,19 @@ const Home = () => {
   const [refresh, setRefresh] = useState(false)
   const [firstPrint, setFirstPrint] = useState(true)
 
+  // connect to socket
+  useEffect(() => {
+    connectSocket(
+      token,
+      notificationCount,
+      setNotificationCount,
+      socketConnected,
+      setSocketConnection,
+      setNewNotification
+    )
+  }, [])
+
+  // fetch posts
   const fetchPost = async (pageNum) => {
     setLoading(true)
     let result = await dataFetcher(`${postUrl}/posts/normal/${pageNum}/10`)

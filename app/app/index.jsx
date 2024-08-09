@@ -5,11 +5,10 @@ import logo3 from '../assets/images/connect_vive_logo_3.png'
 import { router } from 'expo-router'
 import AuthTabScreen from '../components/authTabScreen'
 import authStore from '../constants/authStore'
-import { connectSocket } from '../constants/socketConnection'
 
 const Index = () => {
 
-  const { fetchProfile, notificationCount, setNotificationCount, socketConnected, setSocketConnection, notifications, setNewNotification } = authStore()
+  const { fetchProfile, setToken } = authStore()
 
   // route based on token
   useEffect(() => {
@@ -22,15 +21,7 @@ const Index = () => {
 
       let result = await fetchProfile()
       if (result) {
-        connectSocket(
-          token,
-          notificationCount,
-          setNotificationCount,
-          socketConnected,
-          setSocketConnection,
-          notifications,
-          setNewNotification
-        )
+        setToken(token)
         return router.replace('/home')
       }
       router.replace('/login')

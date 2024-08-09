@@ -29,8 +29,8 @@ const setMsg = (notification) => {
 const setNotificationTitle = (notification) => {
   if (notification?.type == "comment" && notification?.postType == "post") return "Comment on your post"
   if (notification?.type == "reaction" && notification?.postType == "post") return "Reaction on your post"
-  if (notification?.type == "comment" && notification?.postType == "reels") return "Comment on your reels"
-  if (notification?.type == "reaction" && notification?.postType == "reels") return "Reaction on your reels"
+  if (notification?.type == "comment" && notification?.postType == "reels") return "Comment on your threels"
+  if (notification?.type == "reaction" && notification?.postType == "reels") return "Reaction on your threels"
   if (notification?.type == "request") return "Friend request"
   if (notification?.type == "request_accept") return "Friend request accepted"
 }
@@ -44,9 +44,7 @@ Notifications.setNotificationHandler({
   }),
 })
 
-export const connectSocket = (token, notificationCount, setNotificationCount, socketConnected, setSocketConnection, notifications, setNewNotification) => {
-
-  if (!socket) return
+export const connectSocket = (token, notificationCount, setNotificationCount, socketConnected, setSocketConnection, setNewNotification) => {
 
   socket = io(url, {
     auth: { token },
@@ -62,10 +60,9 @@ export const connectSocket = (token, notificationCount, setNotificationCount, so
   // live notification
   socket.on('notification', async (newNotification) => {
     setNotificationCount(notificationCount + 1)
-    setNewNotification([...newNotification, ...notifications])
+    setNewNotification(newNotification)
 
     let message = `${newNotification[0]?.firstName} ${newNotification[0]?.lastName} ${setMsg(newNotification[0])}`
-    console.log(newNotification[0]?.postType)
 
     await Notifications.scheduleNotificationAsync({
       content: {
