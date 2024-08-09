@@ -6,10 +6,13 @@ import { commentUrl, postUrl } from '../../scripts/endpoints'
 import PostCards from '../../components/postCards'
 import CustomButton from './../../components/CustomButton';
 import CommentCard from '../../components/commentCard'
+import authStore from '../../constants/authStore'
+import { customAlert } from '../../scripts/alerts'
 
 const SinglePost = () => {
 
   const params = useLocalSearchParams()
+  const {profile} = authStore()
 
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState(null)
@@ -92,7 +95,7 @@ const SinglePost = () => {
   return (
     <View className="flex-1 bg-lightGrayColor">
 
-      {data != null && <Stack.Screen options={{ headerTitle: data?.authorDetails?.firstName + data?.authorDetails?.lastName, headerTitleStyle: { fontSize: 20, fontFamily: "Poppins-Medium" } }} />}
+      {data != null && <Stack.Screen options={{ headerTitle: data?.authorDetails?.firstName + " " + data?.authorDetails?.lastName, headerTitleStyle: { fontSize: 22, fontFamily: "Poppins-SemiBold" } }} />}
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -108,7 +111,7 @@ const SinglePost = () => {
               <TextInput
                 onChangeText={(e) => setNewComment({ ...newComment, ["comment"]: e })}
                 value={newComment?.comment}
-                placeholder={`Comment as ${data?.authorDetails?.firstName + data?.authorDetails?.lastName}`}
+                placeholder={`Comment as ${profile?.firstName} ${profile.lastName}`}
                 className="w-full h-[60] border-2 border-grayColor rounded-lg p-2 font-pmedium text-[18px] focus:border-purpleColor mt-10"
                 multiline={true}
               />

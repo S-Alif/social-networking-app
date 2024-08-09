@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Image, ScrollView, RefreshControl } from 'react-native'
+import { View, Text, TouchableOpacity, Image, ScrollView, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { notificationUrl } from '../scripts/endpoints'
 import authStore from '../constants/authStore'
