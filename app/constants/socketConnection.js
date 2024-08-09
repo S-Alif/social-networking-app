@@ -35,6 +35,7 @@ const setNotificationTitle = (notification) => {
   if (notification?.type == "request_accept") return "Friend request accepted"
 }
 
+// notification handler
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -45,51 +46,52 @@ Notifications.setNotificationHandler({
 
 export const connectSocket = (token, notificationCount, setNotificationCount, socketConnected, setSocketConnection, notifications, setNewNotification) => {
 
-  if (!socket) {
-    socket = io(url, {
-      auth: { token },
-      transports: ['websocket'],
+  if (!socket) return
+
+  socket = io(url, {
+    auth: { token },
+    transports: ['websocket'],
+  })
+
+  // connect to socket
+  socket.on('connect', () => {
+    setSocketConnection(true)
+    console.log('Socket connected')
+  })
+
+  // live notification
+  socket.on('notification', async (newNotification) => {
+    setNotificationCount(notificationCount + 1)
+    setNewNotification([...newNotification, ...notifications])
+
+    let message = `${newNotification[0]?.firstName} ${newNotification[0]?.lastName} ${setMsg(newNotification[0])}`
+    console.log(newNotification[0]?.postType)
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: setNotificationTitle(newNotification[0]),
+        body: message,
+      },
+      trigger: {
+        seconds: 1,
+      },
     })
+  })
 
-    // connect to socket
-    socket.on('connect', () => {
-      setSocketConnection(true)
-      console.log('Socket connected')
-    })
-
-    // live notification
-    socket.on('notification', async (newNotification) => {
-      setNotificationCount(notificationCount + 1)
-      setNewNotification([...newNotification, ...notifications])
-
-      let message = `${newNotification[0]?.firstName} ${newNotification[0]?.lastName} ${setMsg(newNotification[0])}`
-      console.log(newNotification[0]?.postType)
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: setNotificationTitle(newNotification[0]),
-          body: message,
-        },
-        trigger: {
-          seconds: 1,
-        },
-      })
-    })
-
-    socket.on('disconnect', () => {
-      if(!socketConnected) return
-      customAlert('ERROR!!', 'Disconnected from server. Please re-open the app')
-      console.log('Socket disconnected')
-    })
-
-  }
+  socket.on('disconnect', (reason) => {
+    if (!socketConnected) return
+    if (reason === "io server disconnect") {
+      socket.connect()
+    }
+    customAlert('ERROR!!', 'Disconnected from server. Please re-open the app')
+    console.log('Socket disconnected')
+  })
 }
 
-export const disconnectSocket = () => {
-  if (socket) {
-    socket.disconnect()
-    socket = null
-  }
+// disconnect from server
+export const disconnectSocket = (setSocketConnection) => {
+  socket = null
+  setSocketConnection(false)
 }
 
 export const getSocket = () => socket

@@ -7,15 +7,17 @@ import { userUrl } from './../../scripts/endpoints';
 import CustomButton from './../../components/CustomButton';
 import * as SecureStore from 'expo-secure-store'
 import UpdatePass from '../../components/updatePass';
+import { disconnectSocket } from '../../constants/socketConnection';
 
 const ProfileSettings = () => {
 
-  const { setProfile } = authStore()
+  const { setProfile, setSocketConnection } = authStore()
 
   // logout user
   const logout = async () => {
     await SecureStore.deleteItemAsync('token')
     setProfile(null)
+    disconnectSocket(setSocketConnection)
   }
 
   return (
