@@ -57,6 +57,11 @@ const PageLayout = () => {
           headerTitleStyle: headerStyles
         }} />
 
+        <Stack.Screen name='buddySearchResult' options={{
+          headerTitle: "Search results",
+          headerTitleStyle: headerStyles
+        }} />
+
       </Stack>
     </AuthCheck>
   )
