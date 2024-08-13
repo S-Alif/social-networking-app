@@ -133,6 +133,7 @@ const EditProfile = () => {
               title={<FontAwesome6 name="pencil" size={24} color="#3D4754" />}
               containerStyles={"w-[40] h-[40] mb-2 rounded-md bg-lightGrayColor2"}
               handlePress={() => getImageFile("cover")}
+              isloading={loading}
             />
 
             {
@@ -142,6 +143,7 @@ const EditProfile = () => {
                   title={<Entypo name="cross" size={30} color="#3D4754" />}
                   containerStyles={"w-[40] h-[40] mb-2 rounded-md bg-lightGrayColor2"}
                   handlePress={() => removeSelectedImage("cover")}
+                  isloading={loading}
                 />
 
                 <CustomButton
@@ -169,6 +171,7 @@ const EditProfile = () => {
                 containerStyles={"w-[160] h-[40] rounded-md bg-purpleColor"}
                 textStyles={"font-pmedium text-white text-[17]"}
                 handlePress={() => getImageFile("profile")}
+                isloading={loading}
               />
 
               {
@@ -178,6 +181,7 @@ const EditProfile = () => {
                     title={<Entypo name="cross" size={30} color="white" />}
                     containerStyles={"w-[40] h-[40] rounded-md bg-purpleColor ml-2"}
                     handlePress={() => removeSelectedImage("profile")}
+                    isloading={loading}
                   />
 
                   <CustomButton
