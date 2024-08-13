@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React from 'react'
 
-const CustomButton = ({ title, handlePress, containerStyles, textStyles, isloading }) => {
+const CustomButton = ({ title, handlePress, containerStyles, textStyles, isloading = false }) => {
   return (
     <TouchableOpacity
       className={`rounded-xl justify-center items-center ${containerStyles ? containerStyles : ""} ${isloading ? "opacity-70" : ""}`}
@@ -10,7 +10,7 @@ const CustomButton = ({ title, handlePress, containerStyles, textStyles, isloadi
       disabled={isloading}
     >
       <View className="flex-1 justify-center items-center flex-row">
-        <Text className={textStyles ? textStyles : ""}>{title ? title : "CustomButton"} </Text>
+        {!isloading && <Text className={textStyles ? textStyles : ""}>{title ? title : "CustomButton"} </Text>}
         {isloading && <ActivityIndicator size="small" color="#ffff" />}
       </View>
     </TouchableOpacity>
