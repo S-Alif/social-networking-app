@@ -1,8 +1,8 @@
 diff --git a/node_modules/react-native-markdown-view/styles.js b/node_modules/react-native-markdown-view/styles.js
-index 7e9171b..c9ab11c 100644
+index 7e9171b..e3b3c14 100644
 --- a/node_modules/react-native-markdown-view/styles.js
 +++ b/node_modules/react-native-markdown-view/styles.js
-@@ -17,43 +17,37 @@ export default Object.freeze({
+@@ -17,44 +17,38 @@ export default Object.freeze({
      fontWeight: '700',
    },
    heading1: {
@@ -16,8 +16,9 @@ index 7e9171b..c9ab11c 100644
    heading2: {
 -    fontSize: 24,
 -    marginTop: 20,
+-    marginBottom: 20,
 +    fontSize: 36,
-     marginBottom: 20,
++    marginBottom: 21,
      marginLeft: 0,
      marginRight: 0,
    },
@@ -32,28 +33,48 @@ index 7e9171b..c9ab11c 100644
    heading4: {
 -    fontSize: 16,
 -    marginTop: 22,
+-    marginBottom: 22,
 +    fontSize: 28,
-     marginBottom: 22,
++    marginBottom: 19,
      marginLeft: 0,
      marginRight: 0,
    },
    heading5: {
 -    fontSize: 14,
 -    marginTop: 22,
+-    marginBottom: 22,
 +    fontSize: 24,
-     marginBottom: 22,
++    marginBottom: 17,
      marginLeft: 0,
      marginRight: 0,
    },
    heading6: {
 -    fontSize: 11,
 -    marginTop: 24,
+-    marginBottom: 24,
 +    fontSize: 20,
-     marginBottom: 24,
++    marginBottom: 15,
      marginLeft: 0,
      marginRight: 0,
-@@ -99,8 +93,9 @@ export default Object.freeze({
+   },
+@@ -79,7 +73,7 @@ export default Object.freeze({
+     color: '#0366d6',
+   },
+   list: {
+-    margin: 8,
++    marginBottom: 8,
+   },
+   listItem: {
+     flexDirection: 'row',
+@@ -94,13 +88,16 @@ export default Object.freeze({
+   },
+   listItemOrderedContent: {
      flex: 1,
++    fontSize:20
+   },
+   listItemUnorderedContent: {
+     flex: 1,
++    fontSize: 20
    },
    paragraph: {
 -    marginTop: 10,
