@@ -1,14 +1,14 @@
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, Modal, TouchableWithoutFeedback, Alert, Linking } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, Alert, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import authStore from '../constants/authStore'
 import { formatDate } from '../scripts/dateFormatter'
 import { ResizeMode, Video } from 'expo-av'
-import { AntDesign, Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { generateThumbnail } from '../scripts/getThumbnail'
 import PostEngagements from './postEngagements'
 import ImagePopupModal from './imagePopupModal'
 import Carousel from "pinar";
-import { router } from 'expo-router'
+import { router, usePathname } from 'expo-router'
 import { dataSender } from '../scripts/apiCaller'
 import { postUrl } from '../scripts/endpoints'
 import { customAlert } from '../scripts/alerts'
@@ -75,6 +75,8 @@ const AttachmentHandler = ({ attachment }) => {
 const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments }, deleted }) => {
 
   const { profile } = authStore()
+  const pathname = usePathname()
+  let isPostPage = pathname == "/pages/SinglePost"
 
   // delete the post
   const deletePost = async () => {
@@ -114,7 +116,9 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
 
       {/* author details, post date and options */}
       <TouchableOpacity
-        onPress={() => router.push({ pathname: "pages/SinglePost", params: { postId: _id } })}
+        onPress={() => {
+          if(!isPostPage) router.push({ pathname: "pages/SinglePost", params: { postId: _id } })
+        }}
         activeOpacity={0.8}
         className="flex-1"
       >
@@ -153,7 +157,7 @@ const PostCards = ({ post: { _id, author, caption, createdAt, currentUserReactio
             <MarkdownView
               onLinkPress={(url) => {
                 Linking.openURL(url).catch(error =>
-                  console.warn('An error occurred: ', error),
+                  customAlert("ERROR !!", "Error while opening link")
                 )
               }}
             >
