@@ -43,6 +43,12 @@ exports.update = async (req, res) => {
   res.status(200).json(result)
 }
 
+// find user by name
+exports.findUserByName = async (req, res) => {
+  let result = await asyncHandler(() => userService.searchUserByName(req))
+  res.status(200).json(result)
+}
+
 // update user profile image
 exports.profileImgUpdate = async (req, res) => {
   let result = await asyncHandler(() => userService.updateUserProfileImg(req))

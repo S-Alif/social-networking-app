@@ -45,6 +45,49 @@ exports.updateUser = async (req) => {
   return responseMsg(1, 200, "Account updated")
 }
 
+// search users by name
+exports.searchUserByName = async (req) => {
+  let name = req.params?.name
+  let page = parseInt(req.params?.page)
+  let limit = parseInt(req.params?.limit)
+  let skip = (page - 1) * limit
+
+  // query stages
+  let matchStage = {
+    $match: {
+      $or: [
+        { firstName: { $regex: name, $options: 'i' } },
+        { lastName: { $regex: name, $options: 'i' } }
+      ]
+    }
+  }
+
+  let profileAndCoundStage = {
+    $facet: {
+      // This pipeline gets the paginated data
+      profiles: [
+        { $skip: skip },
+        { $limit: limit },
+        { $project: { profileImg: 1, firstName: 1, lastName: 1 } }
+      ],
+      totalCount: [
+        { $count: 'count' }
+      ]
+    }
+  }
+
+  let unwindStage = {
+    $unwind: {
+      path: "$totalCount",
+      preserveNullAndEmptyArrays: true
+    }
+  }
+
+  let profiles = await userModel.aggregate([matchStage, profileAndCoundStage, unwindStage])
+
+  return responseMsg(1, 200, { profiles: profiles[0].profiles, totalCount: profiles[0].totalCount ? profiles[0].totalCount.count : 0 })
+}
+
 // update user profile image
 exports.updateUserProfileImg = async (req) => {
   let files = req.files

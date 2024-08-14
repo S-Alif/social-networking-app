@@ -15,6 +15,7 @@ router.post("/register", userControl.register)
 router.post("/login", userControl.login)
 router.post('/update', authVerification, userControl.update)
 router.post('/delete', authVerification, userControl.delete)
+router.get('/search-user/:name/:page/:limit', authVerification, userControl.findUserByName)
 
 router.post('/update/profile-image', authVerification, fileUpload({ createParentPath: true }), fileChecker, userControl.profileImgUpdate)
 router.post('/update/profile-cover', authVerification, fileUpload({ createParentPath: true }), fileChecker, userControl.profileCoverUpdate)
