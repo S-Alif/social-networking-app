@@ -11,6 +11,10 @@ const getToken = async () => {
 export const dataFetcher = async (apiEndpoint) => {
   try {
     let result = await api.get(apiEndpoint, { headers: { token: await getToken() } })
+    if (result?.status == 0) {
+      customAlert("ERROR !!", result.data)
+      return null
+    }
     return result
   } catch (error) {
     if (error.message !== 'Session expired') {
