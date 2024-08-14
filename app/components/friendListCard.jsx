@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
-import { router } from 'expo-router'
+import { router, usePathname } from 'expo-router'
 import { Entypo, FontAwesome5 } from '@expo/vector-icons'
 import { dataSender } from '../scripts/apiCaller'
 import { engageMentUrl, userUrl } from '../scripts/endpoints'
@@ -10,6 +10,8 @@ import authStore from './../constants/authStore';
 const FriendListCard = ({ data, type, aceepted, rejected, unfriend, listType }) => {
 
   const { profile } = authStore()
+  const pathname = usePathname()
+  const isSearchPage = (pathname == "/pages/buddySearchResult")
 
   // unfriend
   const removeFriend = () => {
@@ -73,7 +75,7 @@ const FriendListCard = ({ data, type, aceepted, rejected, unfriend, listType }) 
 
       {/* option for current user */}
       {
-        (type == 0 && listType == 0) &&
+        !isSearchPage && (type == 0 && listType == 0) &&
         <TouchableOpacity
           className=""
           onPress={removeFriend}
@@ -84,7 +86,7 @@ const FriendListCard = ({ data, type, aceepted, rejected, unfriend, listType }) 
 
       {/* accept or remove a friend */}
       {
-        (type == 0 && listType == 1) &&
+        !isSearchPage && (type == 0 && listType == 1) &&
         <CustomButton
           title={<FontAwesome5 name="user-cog" size={30} color="white" />}
           containerStyles={"bg-greenColor rounded-md py-2 w-[80] mx-auto h-[50]"}
