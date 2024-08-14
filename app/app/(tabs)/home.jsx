@@ -1,14 +1,13 @@
-import { View, Text, FlatList, ActivityIndicator, TextInput, ScrollView, RefreshControl } from 'react-native'
+import { View, Text, ActivityIndicator, ScrollView, RefreshControl } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import TabScreenLayout from '../../components/tabScreenLayout'
 import { dataFetcher } from './../../scripts/apiCaller';
 import { postUrl } from '../../scripts/endpoints';
 import PostCards from '../../components/postCards';
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import authStore from '../../constants/authStore';
 import { connectSocket } from '../../constants/socketConnection'
-import CustomButton from '../../components/CustomButton';
-import { FontAwesome } from '@expo/vector-icons';
+import SearchBox from '../../components/SearchBox';
 
 const Home = () => {
 
@@ -20,7 +19,6 @@ const Home = () => {
   const [postAmount, setPostAmount] = useState(0)
   const [refresh, setRefresh] = useState(false)
   const [firstPrint, setFirstPrint] = useState(true)
-  const [searchText, setSearchText] = useState("")
   const limit = 10
 
   // connect to socket
@@ -111,28 +109,7 @@ const Home = () => {
       >
 
         {/* search field */}
-        <View className="py-3 w-full h-[104px]">
-          <View className="bg-lightGrayColor2 p-3 rounded-md flex-1 flex-row justify-between border border-gray-300">
-            <TextInput
-              placeholder='Search a buddy'
-              className="border border-darkGrayColor px-2 py-3 rounded-md font-pmedium text-xl focus:border-purpleColor flex-grow"
-              cursorColor={"#6835F0"}
-              value={searchText}
-              onChangeText={setSearchText}
-            />
-
-            <CustomButton
-              title={<FontAwesome name="search" size={24} color="white" />}
-              handlePress={() => {
-                if (searchText?.length < 2) return
-                router.push({ pathname: "/pages/buddySearchResult", params: { searchText: searchText } })
-                setSearchText("")
-              }}
-              containerStyles={"bg-purpleColor w-[50px] h-[53px] rounded-md ml-2"}
-              textStyles={"text-lightGrayColor2 text-xl font-pmedium pl-1"}
-            />
-          </View>
-        </View>
+        <SearchBox />
 
         {/* show posts */}
         {
