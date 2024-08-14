@@ -4,6 +4,8 @@ import { useLocalSearchParams } from 'expo-router'
 import { dataFetcher } from './../../scripts/apiCaller';
 import { userUrl } from '../../scripts/endpoints';
 import FriendListCard from '../../components/friendListCard';
+import CustomButton from '../../components/CustomButton';
+import { Entypo } from '@expo/vector-icons';
 
 const BuddySearchResult = () => {
 
@@ -35,14 +37,29 @@ const BuddySearchResult = () => {
   
 
   return (
-    <View className="flex-1 bg-lightGrayColor px-2">
-      <ScrollView contentContainerStyle={{paddingBottom: 20}}>
-        {
-          users.length > 0 && 
+    <View className="flex-1 bg-lightGrayColor">
+      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+        <View className="pt-3 px-2">
+          {
+            users.length > 0 &&
             users.map((e, index) => (
               <FriendListCard data={e} key={index} />
             ))
-        }
+          }
+
+          {
+            (page * limit) < count &&
+            <CustomButton
+              title={"See more"}
+              handlePress={pagination}
+              containerStyles={"bg-purpleColor min-h-[50] mt-5"}
+              textStyles={"text-lightGrayColor2 text-xl font-pmedium"}
+            />
+          }
+          {
+            (page * limit) >= count && <Text className="text-center pt-5"><Entypo name="dots-three-horizontal" size={24} color="black" /></Text>
+          }
+        </View>
       </ScrollView>
     </View>
   )
