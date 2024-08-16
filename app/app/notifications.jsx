@@ -5,6 +5,8 @@ import authStore from '../constants/authStore'
 import { reactionFetcher } from './../scripts/apiCaller';
 import { formatDate } from './../scripts/dateFormatter';
 import { router } from 'expo-router';
+import CustomButton from '../components/CustomButton';
+import { Entypo } from '@expo/vector-icons';
 
 // notification msg
 const msgs = {
@@ -30,12 +32,30 @@ const setMsg = (notification) => {
 const Notifications = () => {
 
   const { notifications, getNotification } = authStore()
+  const [notificationData, setNotificationData] = useState([])
   const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(1)
+  const [count, setCount] = useState(0)
+  const limit = 5
+
+  useEffect(() => {
+    setNotificationData(notifications)
+  }, [notifications])
 
   const refreshing = async () =>{
     setLoading(true)
-    await getNotification()
+    setPage(1)
+    let result = await getNotification(1, limit, true)
+    setCount(result?.totalCount)
     setLoading(false)
+  }
+
+  // next page
+  const pagination = async () => {
+    if ((page * limit) >= count) return
+    let result = await getNotification(page+1, limit, false)
+    setCount(result?.totalCount)
+    setPage(prev => prev + 1)
   }
 
 
@@ -50,9 +70,22 @@ const Notifications = () => {
       >
         {
           (!loading && notifications.length > 0) &&
-            notifications.map((e, index) => (
+            notificationData.map((e, index) => (
               <NotificationCard notification={e} key={index} />
             ))
+        }
+
+        {
+          (page * limit) < count &&
+          <CustomButton
+            title={"See more"}
+            handlePress={pagination}
+            containerStyles={"bg-purpleColor min-h-[50] mt-5"}
+            textStyles={"text-lightGrayColor2 text-xl font-pmedium"}
+          />
+        }
+        {
+          (page * limit) >= count && <Text className="text-center pt-5"><Entypo name="dots-three-horizontal" size={24} color="black" /></Text>
         }
       </ScrollView>
     </View>

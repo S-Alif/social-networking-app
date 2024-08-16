@@ -35,7 +35,7 @@ const BuddySearchResult = () => {
     })()
   }, [page, searchText])
 
-  // call for search function for search text
+  // set the users state to empty array
   useEffect(() => {
     setUsers([])
   }, [searchText])

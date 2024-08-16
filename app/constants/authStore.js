@@ -28,12 +28,17 @@ export default authStore = create((set) => ({
   },
 
   // get notification
-  getNotification: async () => {
-    let result = await dataFetcher(notificationUrl + "/")
+  getNotification: async (page, limit, refreshing = false) => {
+    let result = await dataFetcher(notificationUrl + `/${page}/${limit}`)
     if (result != null && result?.status == 1) {
-      set({ notifications: result?.data })
-      set({ notificationCount: result?.data.filter(e => e.seen == false).length })
-      return true
+      let newUnseenNotificationCount = result?.data?.notifications.filter(e => e.seen == false).length
+
+      // set new notifications and set new unseen notification count
+      set((state) => ({
+        notifications: refreshing ? result?.data?.notifications : [...state.notifications, ...result?.data?.notifications],
+        notificationCount: state.notificationCount + newUnseenNotificationCount
+      }))
+      return result?.data
     }
     return false
   },
