@@ -6,6 +6,7 @@ import { userUrl } from '../../scripts/endpoints';
 import FriendListCard from '../../components/friendListCard';
 import CustomButton from '../../components/CustomButton';
 import { Entypo } from '@expo/vector-icons';
+import SearchBox from '../../components/searchBox';
 
 const BuddySearchResult = () => {
 
@@ -17,17 +18,28 @@ const BuddySearchResult = () => {
   const [count, setCount] = useState(0)
   const limit = 20
 
+  // search function
+  const searchFunction = async (searchText) => {
+    let url = userUrl + `/search-user/${searchText}/${page}/${limit}`
+    let result = await dataFetcher(url)
+    if (result == null || result?.status == 0) return
+    setUsers(prev => [...prev, ...result?.data?.profiles])
+    setCount(result?.data?.totalCount)
+  }
+
+  // search text from params
   useEffect(() => {
     (async () => {
-      let url = userUrl + `/search-user/${params?.searchText}/${page}/${limit}`
-      if (searchText != "") url = userUrl + `/search-user/${searchText}/${page}/${limit}`
-
-      let result = await dataFetcher(url)
-      if(result == null || result?.status == 0) return
-      setUsers(prev => [...prev, ...result?.data?.profiles])
-      setCount(result?.data?.totalCount)
+      if(searchText == "") return await searchFunction(params?.searchText)
+      searchFunction(searchText)
     })()
-  }, [page])
+  }, [page, searchText])
+
+  // call for search function for search text
+  useEffect(() => {
+    setUsers([])
+  }, [searchText])
+
 
   // next page
   const pagination = () => {
@@ -40,6 +52,11 @@ const BuddySearchResult = () => {
     <View className="flex-1 bg-lightGrayColor">
       <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
         <View className="pt-3 px-2">
+
+          {/* search box */}
+          <SearchBox setSearchValue={setSearchText} initialValue={params?.searchText ? params?.searchText : ""} />
+
+          {/* display users */}
           {
             users.length > 0 &&
             users.map((e, index) => (

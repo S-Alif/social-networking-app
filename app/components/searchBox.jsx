@@ -2,11 +2,12 @@ import { View, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import { FontAwesome } from '@expo/vector-icons'
 import CustomButton from './CustomButton';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 
-const SearchBox = () => {
+const SearchBox = ({setSearchValue, initialValue}) => {
 
-  const [searchText, setSearchText] = useState("")
+  const [searchText, setSearchText] = useState(initialValue ? initialValue : "")
+  const pathname = usePathname()
 
   return (
     <View className="py-3 w-full h-[104px]">
@@ -22,8 +23,13 @@ const SearchBox = () => {
         <CustomButton
           title={<FontAwesome name="search" size={24} color="white" />}
           handlePress={() => {
-            if (searchText?.length < 2) return
-            router.push({ pathname: "/pages/buddySearchResult", params: { searchText: searchText } })
+            if (searchText?.length <= 2) return
+            if (pathname == "/home") {
+              router.push({ pathname: "/pages/buddySearchResult", params: { searchText: searchText } })
+            }
+            else{
+              setSearchValue(searchText)
+            }
             setSearchText("")
           }}
           containerStyles={"bg-purpleColor w-[50px] h-[53px] rounded-md ml-2"}
