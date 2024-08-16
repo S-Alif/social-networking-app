@@ -4,34 +4,58 @@ const ObjectID = require('mongoose').Types.ObjectId
 
 // fetch notificaitons
 exports.fetchNotification = async (req) => {
-  let notificaitons = await notificationModel.aggregate([
+
+  let page = parseInt(req?.params?.page)
+  let limit = parseInt(req?.params?.limit)
+  let skip = (page - 1) * limit
+
+  let result = await notificationModel.aggregate([
     { $match: { notificationTo: new ObjectID(req.headers?.id) } },
     {
-      $lookup: {
-        from: "users",
-        localField: "notificationFrom",
-        foreignField: "_id",
-        as: "user"
+      $facet: {
+        notifications: [
+          { $sort: { createdAt: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+          {
+            $lookup: {
+              from: "users",
+              localField: "notificationFrom",
+              foreignField: "_id",
+              as: "user"
+            }
+          },
+          { $unwind: "$user" },
+          {
+            $project: {
+              _id: 1,
+              "userId": "$user._id",
+              "firstName": "$user.firstName",
+              "lastName": "$user.lastName",
+              "profileImg": "$user.profileImg",
+              type: 1,
+              seen: 1,
+              postType: 1,
+              postId: 1,
+              createdAt: 1
+            }
+          }
+        ],
+        totalCount: [{ $count: "count" }]
       }
     },
-    { $unwind: "$user" },
     {
-      $project: {
-        _id: 1,
-        "userId": "$user._id",
-        "firstName": "$user.firstName",
-        "lastName": "$user.lastName",
-        "profileImg": "$user.profileImg",
-        type: 1,
-        seen: 1,
-        postType: 1,
-        postId: 1,
-        createdAt: 1
+      $unwind: {
+        path: "$totalCount",
+        preserveNullAndEmptyArrays: true
       }
     }
   ])
 
-  return responseMsg(1, 200, notificaitons)
+  let { notifications, totalCount } = result[0]
+  let count = totalCount ? totalCount.count : 0
+
+  return responseMsg(1, 200, { notifications: notifications, totalCount: count})
 }
 
 // update a notification
