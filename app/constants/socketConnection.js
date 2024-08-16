@@ -44,7 +44,7 @@ Notifications.setNotificationHandler({
   }),
 })
 
-export const connectSocket = (token, notificationCount, setNotificationCount, socketConnected, setSocketConnection, setNewNotification) => {
+export const connectSocket = (token, increaseNotificationCount, socketConnected, setSocketConnection, setNewNotification) => {
 
   socket = io(url, {
     auth: { token },
@@ -59,7 +59,7 @@ export const connectSocket = (token, notificationCount, setNotificationCount, so
 
   // live notification
   socket.on('notification', async (newNotification) => {
-    setNotificationCount(notificationCount + 1)
+    increaseNotificationCount()
     setNewNotification(newNotification)
 
     let message = `${newNotification[0]?.firstName} ${newNotification[0]?.lastName} ${setMsg(newNotification[0])}`

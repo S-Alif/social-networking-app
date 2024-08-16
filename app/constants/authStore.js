@@ -38,8 +38,10 @@ export default authStore = create((set) => ({
     return false
   },
   // set notification count
-  setNotificationCount: (count) => {
-    set({ notificationCount: count })
+  increaseNotificationCount: () => {
+    set((state) => ({
+      notificationCount: state.notificationCount + 1
+    }))
   },
 
   // set socket connection status
