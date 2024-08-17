@@ -20,8 +20,20 @@ const screenWidth = Dimensions.get('window').width;
 // attachments
 const AttachmentHandler = ({ attachment }) => {
 
+  const [modal, setModal] = useState(false)
+  const [play, setPlay] = useState(false)
+  const [thumbnail, setThumbnail] = useState("https://fakeimg.pl/600x400?text=+")
+
+  useEffect(() => {
+    if(attachment?.fileType !== "image"){
+      (async () => {
+        let result = await generateThumbnail(attachment.fileLocation)
+        setThumbnail(result)
+      })()
+    }
+  }, [])
+
   if (attachment.fileType == "image") {
-    const [modal, setModal] = useState(false)
 
     return (
       <View className="flex-1 h-full" style={{ width: screenWidth - 40 }} >
@@ -33,16 +45,6 @@ const AttachmentHandler = ({ attachment }) => {
     )
   }
   else {
-
-    const [play, setPlay] = useState(false)
-    const [thumbnail, setThumbnail] = useState("https://fakeimg.pl/600x400?text=+")
-
-    useEffect(() => {
-      (async () => {
-        let result = await generateThumbnail(attachment.fileLocation)
-        setThumbnail(result)
-      })()
-    }, [])
 
     return (
       <View className="flex-1 h-full px-1" style={{ width: screenWidth - 40 }}>
