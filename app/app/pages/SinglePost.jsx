@@ -75,8 +75,13 @@ const SinglePost = () => {
   const handlePostComment = async () => {
 
     if (newComment.comment.trim() == '') return
+    let commentData = {
+      ...newComment,
+      postType: "post",
+      postAuthor: data?.author
+    }
     setLoading(true)
-    let comment = await reactionSender(commentUrl, newComment)
+    let comment = await reactionSender(commentUrl, commentData)
     setLoading(false)
     if (comment?.status == 0 || comment == null) return customAlert('ERROR !!', "Could not post your comment")
     setNewComment({
