@@ -21,7 +21,11 @@ const ReactionButton = ({ postId, reaction, currentUserAction }) => {
       setSelectedReaction(reaction?.reaction)
       setReactionData(reaction)
     }
-  }, [])
+    else {
+      setSelectedReaction(null)
+      setReactionData(null)
+    }
+  }, [reaction])
 
   const handleLongPress = () => {
     setShowReactions(true)
