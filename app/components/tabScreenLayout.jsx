@@ -1,7 +1,6 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import authStore from './../constants/authStore';
-import logo3 from "../assets/images/connect_vive_logo_3.png"
 import { StatusBar } from 'expo-status-bar';
 import { AntDesign } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -23,7 +22,7 @@ const TabScreenLayout = ({ children }) => {
     <SafeAreaView className="flex-1 bg-lightGrayColor2">
 
       {/* show profile icons */}
-      <View className="flex-1 max-h-[80px] justify-between items-center bg-lightGrayColor2 flex-row mt-6 px-4 border-b-2 border-b-gray-300">
+      <View className="flex-1 max-h-[70px] justify-between items-center bg-lightGrayColor2 flex-row mt-6 px-4 border-b-2 border-b-gray-300">
 
         {/* user image */}
         <TouchableOpacity onPress={() => router.push('pages/profile')}>
@@ -31,9 +30,7 @@ const TabScreenLayout = ({ children }) => {
         </TouchableOpacity>
 
         {/* logo */}
-        <View className="w-[50px] h-[50px] overflow-hidden">
-          <Image source={logo3} className="w-full h-full" resizeMode='contain' />
-        </View>
+        <Text className="font-pbold text-[24px] text-primary">connect<Text className="text-purpleColor">Vive</Text></Text>
 
         {/* bell icon for notification */}
         <TouchableOpacity
