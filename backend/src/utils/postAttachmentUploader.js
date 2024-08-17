@@ -6,13 +6,14 @@ cloudinary.config({
   cloud_name: process.env.imageCloudName,
   api_key: process.env.imageUploadApi,
   api_secret: process.env.imageCloudSecret
-});
+})
 
 // delete the files
 exports.deleteFiles = async (urlArray) => {
   const deleteFiles = urlArray.map(url => {
     const publicId = url.split('/').pop().split('.')[0]
-    return cloudinary.uploader.destroy(publicId)
+    const fileType = url.includes('.mp4') ? 'video' : 'image'
+    return cloudinary.uploader.destroy(publicId, {resource_type: fileType})
   })
   await Promise.all(deleteFiles)
 }
