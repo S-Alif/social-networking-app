@@ -78,12 +78,11 @@ exports.postReactions = async (req) => {
   let unwindStage = { $unwind: '$author' }
   let projectStage = {
     $project: {
-      _id: 0,
       reaction: 1,
-      authorId: '$author._id',
-      authorProfileImg: '$author.profileImg',
-      authorFirstName: '$author.firstName',
-      authorLastName: '$author.lastName',
+      _id: '$author._id',
+      profileImg: '$author.profileImg',
+      firstName: '$author.firstName',
+      lastName: '$author.lastName',
     }
   }
 
