@@ -73,11 +73,15 @@ const FriendListCard = ({ data, type, aceepted, rejected, unfriend, listType }) 
         </View>
       </TouchableOpacity>
 
+      {
+        data?.reaction && 
+          <Text className="text-4xl pr-2">{data?.reaction}</Text>
+      }
+
       {/* option for current user */}
       {
         !isSearchPage && (type == 0 && listType == 0) &&
         <TouchableOpacity
-          className=""
           onPress={removeFriend}
         >
           <Entypo name="dots-three-vertical" size={20} color="black" />
