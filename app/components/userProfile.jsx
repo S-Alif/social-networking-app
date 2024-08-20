@@ -1,7 +1,7 @@
 import { View, Text, Image, FlatList, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Stack, router, useLocalSearchParams, usePathname } from 'expo-router'
-import { Feather, Entypo, FontAwesome5 } from '@expo/vector-icons';
+import { Feather, Entypo, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import { dataFetcher, dataSender } from './../scripts/apiCaller';
 import { engageMentUrl, postUrl, userUrl } from '../scripts/endpoints';
 import { formatDate } from '../scripts/dateFormatter';
@@ -57,7 +57,15 @@ const UserProfile = () => {
       {
         pathname == "/pages/profile" ?
           <Stack.Screen options={{ headerTitle: "Profile" }} />
-          : <Stack.Screen options={{ headerTitle: (userData?.firstName && userData?.lastName) ? `${userData?.firstName} ${userData?.lastName}` : "" }} />
+          : <Stack.Screen options={{ 
+              headerTitle: (userData?.firstName && userData?.lastName) ? `${userData?.firstName} ${userData?.lastName}` : "",
+              headerRight: () => (
+                <CustomButton 
+                  title={<AntDesign name="message1" size={28} color="black" />}
+                  handlePress={() => router.push({ pathname: "pages/singleMessage", params: { _id: userId, firstName: userData?.firstName, lastName: userData?.lastName, profileImg: userData?.profileImg }})}
+                />
+              )
+            }} />
       }
 
 
