@@ -96,9 +96,12 @@ const ReactionsModal = ({ visible, onClose, reactions }) => {
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View className="flex-1 w-full h-screen justify-end">
-          <View className="flex-1 w-full max-h-[75%] bg-lightGrayColor px-2">
-            <TouchableOpacity onPress={onClose} className="h-2 bg-gray-300 w-[50px] self-center rounded-full mb-4 mt-2" />
+          <View className="flex-1 w-full max-h-[75%] bg-lightGrayColor px-2 border-t-2 border-purpleColor rounded-t-lg">
+            <TouchableOpacity onPress={onClose} className="h-2 bg-purpleColor w-[50px] self-center rounded-full mb-4 mt-2" />
             <ScrollView>
+              {
+                reactions.length == 0 && <Text className="text-center pt-5 font-psemibold text-2xl text-gray-400">Be the first one to react</Text>
+              }
               {
                 reactions.length > 0 &&
                 reactions.map((e, index) => (
