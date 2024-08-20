@@ -26,6 +26,7 @@ const setMsg = (notification) => {
   if (notification?.type == "request_accept") return msgs.requestAccept
 }
 
+// set notification title
 const setNotificationTitle = (notification) => {
   if (notification?.type == "comment" && notification?.postType == "post") return "Comment on your post"
   if (notification?.type == "reaction" && notification?.postType == "post") return "Reaction on your post"
@@ -33,6 +34,13 @@ const setNotificationTitle = (notification) => {
   if (notification?.type == "reaction" && notification?.postType == "reels") return "Reaction on your threels"
   if (notification?.type == "request") return "Friend request"
   if (notification?.type == "request_accept") return "Friend request accepted"
+}
+
+// set notification data
+const setNotificationData = (notification) => {
+  if (notification?.postType == "post") return { pathname: "pages/SinglePost", params: { postId: notification?.postId } }
+  if (notification?.postType == "reels") return { pathname: "/reels", params: { reelsId: notification?.postId } }
+  if (notification?.postType == "request") return { pathname: "pages/userProfileById", params: { userId: notification?.userId } }
 }
 
 // notification handler
@@ -63,11 +71,13 @@ export const connectSocket = (token, increaseNotificationCount, socketConnected,
     setNewNotification(newNotification)
 
     let message = `${newNotification[0]?.firstName} ${newNotification[0]?.lastName} ${setMsg(newNotification[0])}`
+    let data = setNotificationData(newNotification[0])
 
     await Notifications.scheduleNotificationAsync({
       content: {
         title: setNotificationTitle(newNotification[0]),
         body: message,
+        data: data
       },
       trigger: {
         seconds: 1,
@@ -77,6 +87,7 @@ export const connectSocket = (token, increaseNotificationCount, socketConnected,
 
   socket.on('disconnect', (reason) => {
     if (!socketConnected) return
+    console.log(reason)
     if (reason === "io server disconnect") {
       socket.connect()
     }

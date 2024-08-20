@@ -5,10 +5,23 @@ import logo3 from '../assets/images/connect_vive_logo_3.png'
 import { router } from 'expo-router'
 import AuthTabScreen from '../components/authTabScreen'
 import authStore from '../constants/authStore'
+import { customAlert } from '../scripts/alerts'
+import * as Notifications from 'expo-notifications';
 
 const Index = () => {
 
   const { fetchProfile, setToken } = authStore()
+
+  // ask notification permission if no have it
+  useEffect(() => {
+    (async () => {
+      const { status } = await Notifications.requestPermissionsAsync()
+      if (status !== 'granted') {
+        customAlert("Warning !!", "Notification permission needed for live notifications")
+        return
+      }
+    })()
+  }, [])
 
   // route based on token
   useEffect(() => {
