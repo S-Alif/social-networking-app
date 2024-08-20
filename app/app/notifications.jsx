@@ -142,7 +142,7 @@ const NotificationCard = ({ notification }) => {
   }, [notification])
 
   const goToPost = async () => {
-    if (seen == false) {
+    if (!seen) {
       let seeTheNotification = await reactionFetcher(notificationUrl + "/" + notification?._id)
       if (seeTheNotification != null && seeTheNotification?.status == 1) {
         setSeen(true)

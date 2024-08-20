@@ -36,7 +36,7 @@ export default authStore = create((set) => ({
       // set new notifications and set new unseen notification count
       set((state) => ({
         notifications: refreshing ? result?.data?.notifications : [...state.notifications, ...result?.data?.notifications],
-        notificationCount: state.notificationCount + newUnseenNotificationCount
+        notificationCount: refreshing ? newUnseenNotificationCount : (state.notificationCount + newUnseenNotificationCount)
       }))
       return result?.data
     }
