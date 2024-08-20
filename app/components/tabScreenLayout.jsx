@@ -32,17 +32,30 @@ const TabScreenLayout = ({ children }) => {
         {/* logo */}
         <Text className="font-pbold text-[24px] text-primary">connect<Text className="text-purpleColor">Vive</Text></Text>
 
-        {/* bell icon for notification */}
-        <TouchableOpacity
-          onPress={() => router.push('/notifications')}
-          className="relative"
-        >
-          <AntDesign name="bells" size={24} color="black" />
-          {
-            notification > 0 &&
-            <View className="absolute bg-redColor rounded p-[2] top-[-10] left-1/2"><Text className="text-sm font-psemibold text-white px-1">{notification}</Text></View>
-          }
-        </TouchableOpacity>
+        {/* bell and messages */}
+        <View className="flex-row gap-x-2">
+          <TouchableOpacity
+            onPress={() => router.push('/notifications')}
+            className="relative"
+          >
+            <AntDesign name="bells" size={24} color="black" />
+            {
+              notification > 0 &&
+              <View className="absolute bg-redColor rounded p-[2] top-[-10] left-1/2"><Text className="text-sm font-psemibold text-white px-1">{notification}</Text></View>
+            }
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => router.push('/messageList')}
+            className="relative"
+          >
+            <AntDesign name="message1" size={24} color="black" />
+            {/* {
+              notification > 0 &&
+              <View className="absolute bg-redColor rounded p-[2] top-[-10] left-1/2"><Text className="text-sm font-psemibold text-white px-1">{notification}</Text></View>
+            } */}
+          </TouchableOpacity>
+        </View>
 
       </View>
 

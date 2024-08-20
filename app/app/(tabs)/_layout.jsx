@@ -103,6 +103,14 @@ const TabsLayout = () => {
           }}
         />
 
+        <Tabs.Screen
+          name="messageList"
+          options={{
+            headerShown: false,
+            href: null
+          }}
+        />
+
 
       </Tabs>
 
