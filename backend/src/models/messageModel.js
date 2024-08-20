@@ -5,6 +5,7 @@ const messageSchema = mongoose.Schema({
   to: { type: mongoose.Types.ObjectId, required: true, ref: "users" },
   message: { type: String, required: true },
   edited: { type: Boolean, default: false },
+  seen: { type: Boolean, default: false },
 }, { timestamps: true, versionKey: false })
 
 module.exports = mongoose.model('messages', messageSchema)
