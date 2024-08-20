@@ -11,7 +11,7 @@ const TabScreenLayout = ({ children }) => {
   const [notification, setNotification] = useState(0)
 
   useEffect(() => {
-    (async () => await getNotification(1, 20, true))()
+    (async () => await getNotification(1, 10, true))()
   }, [])
 
   useEffect(() => {

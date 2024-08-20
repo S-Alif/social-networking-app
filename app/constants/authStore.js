@@ -42,10 +42,18 @@ export default authStore = create((set) => ({
     }
     return false
   },
-  // set notification count
+
+  // increase notification count
   increaseNotificationCount: () => {
     set((state) => ({
       notificationCount: state.notificationCount + 1
+    }))
+  },
+
+  // decrease notification count
+  decreaseNotificationCount: () => {
+    set((state) => ({
+      notificationCount: state.notificationCount - 1
     }))
   },
 

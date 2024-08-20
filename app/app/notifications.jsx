@@ -36,7 +36,7 @@ const Notifications = () => {
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
   const [count, setCount] = useState(0)
-  const limit = 5
+  const limit = 10
 
   useEffect(() => {
     setNotificationData(notifications)
@@ -80,7 +80,7 @@ const Notifications = () => {
           <CustomButton
             title={"See more"}
             handlePress={pagination}
-            containerStyles={"bg-purpleColor min-h-[50] mt-5"}
+            containerStyles={"bg-purpleColor min-h-[50] mt-5 mx-2"}
             textStyles={"text-lightGrayColor2 text-xl font-pmedium"}
           />
         }
@@ -97,7 +97,7 @@ export default Notifications
 // notification card
 const NotificationCard = ({ notification }) => {
 
-  const { notificationCount, setNotificationCount } = authStore()
+  const { notificationCount, decreaseNotificationCount } = authStore()
   const [seen, setSeen] = useState(false)
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const NotificationCard = ({ notification }) => {
       let seeTheNotification = await reactionFetcher(notificationUrl + "/" + notification?._id)
       if (seeTheNotification != null && seeTheNotification?.status == 1) {
         setSeen(true)
-        setNotificationCount(notificationCount - 1)
+        decreaseNotificationCount()
       }
     }
 
