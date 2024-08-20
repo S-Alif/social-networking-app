@@ -11,8 +11,6 @@ const messageRoute = require('./specificRoutes/messageRoute')
 // middleware
 const authVerification = require('../middlewares/authVerification')
 
-
-
 // route paths
 router.use('/user', userRoutes)
 router.use('/post', authVerification, postRoutes)
