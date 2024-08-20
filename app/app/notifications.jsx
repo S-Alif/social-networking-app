@@ -2,11 +2,12 @@ import { View, Text, TouchableOpacity, Image, ScrollView, RefreshControl } from 
 import React, { useEffect, useState } from 'react'
 import { notificationUrl } from '../scripts/endpoints'
 import authStore from '../constants/authStore'
-import { reactionFetcher } from './../scripts/apiCaller';
+import { dataFetcher, reactionFetcher } from './../scripts/apiCaller';
 import { formatDate } from './../scripts/dateFormatter';
 import { router } from 'expo-router';
 import CustomButton from '../components/CustomButton';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, Feather, FontAwesome } from '@expo/vector-icons';
+import { customAlert } from '../scripts/alerts';
 
 // notification msg
 const msgs = {
@@ -31,7 +32,7 @@ const setMsg = (notification) => {
 // main component
 const Notifications = () => {
 
-  const { notifications, getNotification } = authStore()
+  const { notifications, getNotification, notificationCount } = authStore()
   const [notificationData, setNotificationData] = useState([])
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
@@ -58,6 +59,21 @@ const Notifications = () => {
     setPage(prev => prev + 1)
   }
 
+  // mark all notification as read
+  const markAsRead = async () => {
+    let result = await dataFetcher(notificationUrl + "/many")
+    if(result == null || result?.status == 0) return
+    refreshing()
+  }
+
+  // delete all seen notifications
+  const deleteSeenNotifications = async () => {
+    customAlert("Please wait !!", "Notifications are being deleted")
+    let result = await dataFetcher(notificationUrl + "/delete")
+    if (result == null || result?.status == 0) return
+    refreshing()
+  }
+
 
   return (
     <View className="flex-1 bg-lightGrayColor">
@@ -68,6 +84,27 @@ const Notifications = () => {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refreshing} />}
         contentContainerStyle={{paddingVertical: 20}}
       >
+        {/* notification options */}
+        <View className="mb-4 px-2 flex-1 flex-row gap-x-2">
+          <TouchableOpacity
+            onPress={markAsRead}
+            className="w-10 h-10 bg-purpleColor justify-center items-center rounded-md"
+            activeOpacity={0.7}
+            disabled={notificationCount < 1}
+          >
+            <FontAwesome name="envelope-open" size={20} color="white" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={deleteSeenNotifications}
+            className="w-10 h-10 bg-redColor justify-center items-center rounded-md"
+            activeOpacity={0.7}
+            disabled={notifications.length == 0}
+          >
+            <Feather name="trash-2" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+
         {
           (!loading && notifications.length > 0) &&
             notificationData.map((e, index) => (
@@ -76,7 +113,7 @@ const Notifications = () => {
         }
 
         {
-          (page * limit) < count &&
+          notifications.length > 0 && (page * limit) < count &&
           <CustomButton
             title={"See more"}
             handlePress={pagination}
@@ -97,7 +134,7 @@ export default Notifications
 // notification card
 const NotificationCard = ({ notification }) => {
 
-  const { notificationCount, decreaseNotificationCount } = authStore()
+  const { decreaseNotificationCount } = authStore()
   const [seen, setSeen] = useState(false)
 
   useEffect(() => {
