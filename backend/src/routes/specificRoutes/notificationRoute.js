@@ -5,9 +5,9 @@ const router = express.Router()
 const notficaitonController = require("../../controllers/notificationController")
 
 // routes
-router.get('/:page/:limit', notficaitonController.getNotification)
-router.get('/:id', notficaitonController.oneNotification)
 router.get('/many', notficaitonController.manyNotification)
 router.get('/delete', notficaitonController.notificationsDelete)
+router.get('/:id', notficaitonController.oneNotification)
+router.get('/:page/:limit', notficaitonController.getNotification)
 
 module.exports = router
