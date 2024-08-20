@@ -24,7 +24,7 @@ const SearchBox = ({setSearchValue, initialValue}) => {
           title={<FontAwesome name="search" size={24} color="white" />}
           handlePress={() => {
             if (searchText?.length <= 2) return
-            if (pathname == "/home") {
+            if (pathname == "/home" || pathname == "/messageList") {
               router.push({ pathname: "/pages/buddySearchResult", params: { searchText: searchText } })
             }
             else{
