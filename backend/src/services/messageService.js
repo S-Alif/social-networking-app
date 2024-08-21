@@ -66,6 +66,7 @@ exports.fetchChatList = async (req) => {
       lastName: "$userDetails.lastName",
       profileImg: "$userDetails.profileImg",
       latestMessage: {
+        msgUser: "$latestMessage.from",
         message: "$latestMessage.message",
         createdAt: "$latestMessage.createdAt",
         seen: "$latestMessage.seen"
@@ -119,6 +120,6 @@ exports.chatDelete = async (req) => {
 
 // msg seen
 exports.msgSeen = async (req) => {
-  await messageModel.updateMany({ to: new ObjectID(req.headers?.id) }, {seen: true})
+  await messageModel.updateMany({ to: new ObjectID(req.headers?.id), seen: false }, {seen: true})
   return responseMsg(1, 200, "seen")
 }
