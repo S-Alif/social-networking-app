@@ -11,7 +11,7 @@ import SearchBox from '../../components/searchBox';
 
 const Home = () => {
 
-  const { token, increaseNotificationCount, socketConnected, setSocketConnection, setNewNotification } = authStore()
+  const { token, increaseNotificationCount, socketConnected, setSocketConnection, setNewNotification, setNewMsgStatus } = authStore()
 
   const [posts, setPosts] = useState([])
   const [page, setPage] = useState(1)
@@ -28,7 +28,8 @@ const Home = () => {
       increaseNotificationCount,
       socketConnected,
       setSocketConnection,
-      setNewNotification
+      setNewNotification,
+      setNewMsgStatus
     )
   }, [])
 
