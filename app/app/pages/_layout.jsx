@@ -62,6 +62,8 @@ const PageLayout = () => {
           headerTitleStyle: headerStyles
         }} />
 
+        <Stack.Screen name='singleMessage' options={{headerTitle: ""}}/>
+
       </Stack>
     </AuthCheck>
   )
