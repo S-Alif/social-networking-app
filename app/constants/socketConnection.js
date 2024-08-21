@@ -52,7 +52,7 @@ Notifications.setNotificationHandler({
   }),
 })
 
-export const connectSocket = (token, increaseNotificationCount, socketConnected, setSocketConnection, setNewNotification) => {
+export const connectSocket = (token, increaseNotificationCount, socketConnected, setSocketConnection, setNewNotification, setNewMsgStatus) => {
 
   socket = io(url, {
     auth: { token },
@@ -85,9 +85,13 @@ export const connectSocket = (token, increaseNotificationCount, socketConnected,
     })
   })
 
+  // check for new message arrival
+  socket.on('new-message', (data) => {
+    setNewMsgStatus(true)
+  })
+
   socket.on('disconnect', (reason) => {
     if (!socketConnected) return
-    console.log(reason)
     if (reason === "io server disconnect") {
       socket.connect()
     }

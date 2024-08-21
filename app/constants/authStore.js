@@ -9,6 +9,7 @@ export default authStore = create((set) => ({
   notificationCount: 0,
   socketConnected: false,
   token: null,
+  newMessage: false,
 
   setToken: (token) => {
     set({ token: token })
@@ -67,5 +68,10 @@ export default authStore = create((set) => ({
     set((state) => ({
       notifications: [...newNotification, ...state.notifications],
     }))
+  },
+
+  // set new message status
+  setNewMsgStatus: (status) => {
+    set({ newMessage: status})
   }
 }))

@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 
 const TabScreenLayout = ({ children }) => {
 
-  const { profile, notificationCount, getNotification } = authStore()
+  const { profile, notificationCount, getNotification, newMessage } = authStore()
   const [notification, setNotification] = useState(0)
 
   useEffect(() => {
@@ -50,10 +50,10 @@ const TabScreenLayout = ({ children }) => {
             className="relative"
           >
             <AntDesign name="message1" size={24} color="black" />
-            {/* {
-              notification > 0 &&
-              <View className="absolute bg-redColor rounded p-[2] top-[-10] left-1/2"><Text className="text-sm font-psemibold text-white px-1">{notification}</Text></View>
-            } */}
+            {
+              newMessage &&
+              <View className="absolute bg-redColor rounded-full p-[2] top-[-1] left-1/2 w-3 h-3"></View>
+            }
           </TouchableOpacity>
         </View>
 
