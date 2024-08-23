@@ -128,7 +128,7 @@ exports.messageDelete = async (req) => {
   return responseMsg(1, 200, "Message deleted")
 }
 
-// chat delete
+// chat delete --need fix
 exports.chatDelete = async (req) => {
   await messageModel.deleteMany({ from: new ObjectID(req.headers?.id) })
   return responseMsg(1, 200, "Chat deleted from your end")
