@@ -1,6 +1,6 @@
 # Social networking app
 
-This is a third year undergraduate android application project for software engineering course. The app is optimized for android phones only. It may run on . **Version 2** is ending here
+This is a third year undergraduate android application project for software engineering course. The app is optimized for android phones only. **Version 2** is ending here
 
 ### Table of contents
 <hr>
