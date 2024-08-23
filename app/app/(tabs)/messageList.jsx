@@ -15,14 +15,21 @@ const MessageList = () => {
   const [list, setList] = useState([])
   const [refresh, setRefresh] = useState(false)
   const [page, setPage] = useState(1)
+  const [count, setCount] = useState(0)
   const limit = 10
 
-  const messageList = async () => {
+  const messageList = async (page = 1, refresh = false) => {
     let result = await dataFetcher(messageUrl + `/list/${page}/${limit}`)
-    setRefresh(false)
     if(result == null || result?.status == 0) return
-    setList(result?.data)
+    if(refresh){
+      setList(result?.data?.chatList)
+    }
+    else{
+      setList(prev => [...prev, ...result?.data?.chatList])
+    }
+    setCount(result?.data?.totalCount)
     setNewMsgStatus(false)
+    setRefresh(false)
   }
 
   // get the list
@@ -44,17 +51,19 @@ const MessageList = () => {
   }, [newMessage])
 
   // on refresh
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefresh(true)
     setPage(1)
-    messageList()
+    await messageList(1, true)
   }
 
   // handle scroll
   const handleScroll = ({ nativeEvent }) => {
     const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
-    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 50) {
-      refectchPost()
+    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 80) {
+      if((page * limit) >= count) return
+      messageList(page + 1)
+      setPage(prev => prev + 1)
     }
   }
 
@@ -89,7 +98,7 @@ const MessageListCard = ({user}) => {
   const {profile} = authStore()
 
   return(
-    <View className="flex-1 flex-row justify-between items-center w-full px-2 py-3 bg-lightGrayColor2 rounded-md">
+    <View className="flex-1 flex-row justify-between items-center w-full px-2 py-3 bg-lightGrayColor2 rounded-md mb-2">
 
       <TouchableOpacity
         className="flex-1 h-full flex-row gap-3 items-center"
