@@ -74,7 +74,7 @@ exports.fetchChatList = async (req) => {
     }
   }
 
-  let list = await messageModel.aggregate([match, sort, skipStage, limiting, messages, users, unwind, projection])
+  let list = await messageModel.aggregate([match, messages, users, unwind, projection, sort, skipStage, limiting])
 
   return responseMsg(1, 200, list)
 }
