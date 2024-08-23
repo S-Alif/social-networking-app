@@ -103,6 +103,7 @@ const MessageListCard = ({user}) => {
       <TouchableOpacity
         className="flex-1 h-full flex-row gap-3 items-center"
         onPress={() => router.push({ pathname: "pages/singleMessage", params: { _id: user?.userId, firstName: user?.firstName, lastName: user?.lastName, profileImg: user?.profileImg } })}
+        activeOpacity={0.7}
       >
         <TouchableOpacity
           onPress={() => router.push({

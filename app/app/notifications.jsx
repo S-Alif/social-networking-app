@@ -77,9 +77,6 @@ const Notifications = () => {
 
   return (
     <View className="flex-1 bg-lightGrayColor">
-      {
-        (!loading && notifications.length == 0) && <Text className="pt-20 text-center font-pmedium">No notificaiton</Text>
-      }
       <ScrollView
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refreshing} />}
         contentContainerStyle={{paddingVertical: 20}}
@@ -122,7 +119,10 @@ const Notifications = () => {
           />
         }
         {
-          (page * limit) >= count && <Text className="text-center pt-5"><Entypo name="dots-three-horizontal" size={24} color="black" /></Text>
+          ((page * limit) >= count) && (notifications.length !== 0) && <Text className="text-center pt-5"><Entypo name="dots-three-horizontal" size={24} color="black" /></Text>
+        }
+        {
+          (!loading && notifications.length == 0) && <Text className="pt-20 text-center font-pbold text-gray-400 text-2xl">No notificaiton</Text>
         }
       </ScrollView>
     </View>
