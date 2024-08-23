@@ -7,9 +7,11 @@ import { router } from 'expo-router'
 import { formDataSender } from './../scripts/apiCaller';
 import { postUrl } from '../scripts/endpoints'
 import { customAlert } from '../scripts/alerts'
+import authStore from './../constants/authStore';
 
 const ReelsCard = ({ reels: { _id, author, caption, createdAt, currentUserReaction, reactionCount, commentCount, authorDetails: { firstName, lastName, profileImg }, attachments }, deleted }) => {
 
+  const {profile} = authStore()
   const [thumbnail, setThumbnail] = useState("https://fakeimg.pl/600x400?text=+")
   const [open, setOpen] = useState(false)
 
@@ -76,11 +78,14 @@ const ReelsCard = ({ reels: { _id, author, caption, createdAt, currentUserReacti
             }}
           />
 
-          <CustomButton
-            title={<Entypo name="dots-three-vertical" size={20} color="white" />}
-            containerStyles={"w-auto h-[30] mt-3 px-3 absolute top-2 right-2"}
-            handlePress={optionAlert}
-          />
+          {
+            profile?._id == author &&
+            <CustomButton
+              title={<Entypo name="dots-three-vertical" size={20} color="white" />}
+              containerStyles={"w-auto h-[30] mt-3 px-3 absolute top-2 right-2"}
+              handlePress={optionAlert}
+            />
+          }
         </View>
       </TouchableOpacity>
     </View>
