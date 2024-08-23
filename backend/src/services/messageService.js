@@ -22,16 +22,6 @@ exports.fetchChatList = async (req) => {
     }
   }
 
-  let sort = {
-    $sort: { createdAt: -1 }
-  }
-  let skipStage = {
-    $skip: skip 
-  }
-  let limiting = {
-    $limit: limit
-  }
-
   let messages = {
     $group: {
       _id: {
@@ -43,6 +33,16 @@ exports.fetchChatList = async (req) => {
       },
       latestMessage: { $first: "$$ROOT" }
     }
+  }
+
+  let sort = {
+    $sort: { "latestMessage.createdAt": -1 }
+  }
+  let skipStage = {
+    $skip: skip
+  }
+  let limiting = {
+    $limit: limit
   }
 
   let users = {
@@ -74,9 +74,25 @@ exports.fetchChatList = async (req) => {
     }
   }
 
-  let list = await messageModel.aggregate([match, messages, users, unwind, projection, sort, skipStage, limiting])
+  let facet = {
+    $facet: {
+      chatList: [
+        sort,
+        skipStage,
+        limiting,
+        projection
+      ],
+      totalCount: [
+        { $count: "count" }
+      ]
+    }
+  }
 
-  return responseMsg(1, 200, list)
+  let list = await messageModel.aggregate([match, messages, users, unwind, facet])
+
+  let { chatList, totalCount } = list[0]
+
+  return responseMsg(1, 200, {chatList, totalCount: totalCount[0]?.count ? totalCount[0].count : 0})
 }
 
 // fetch message
