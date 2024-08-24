@@ -2,6 +2,7 @@ const { Server } = require('socket.io')
 const { verifyToken } = require('./src/utils/helpers')
 const notificationModel = require('./src/models/notificationModel')
 const msgModel = require('./src/models/messageModel')
+const { setSocketInstance } = require('./src/socketManager/socketManager')
 const ObjectID = require('mongoose').Types.ObjectId
 
 module.exports = (server) => {
@@ -107,4 +108,6 @@ module.exports = (server) => {
     // send the notification to the designated user
     io.to(connectedUserSocketId).emit('notification', notificaitons)
   })
+
+  setSocketInstance(io, findSocketId)
 }

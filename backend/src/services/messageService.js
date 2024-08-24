@@ -1,4 +1,5 @@
 const messageModel = require("../models/messageModel")
+const { getFindSocketIdInstance, getIoInstance } = require("../socketManager/socketManager")
 const ObjectID = require('mongoose').Types.ObjectId
 const { responseMsg } = require("../utils/helpers")
 
@@ -7,8 +8,16 @@ const { responseMsg } = require("../utils/helpers")
 exports.msgSend = async (req) => {
   let from = req.headers?.id
   if(!from) return responseMsg(0,200, "Need to log in to send a message")
-  req.body.from = from
+    req.body.from = from
   let result = await messageModel.create(req.body)
+  
+  let recipientSocket = getFindSocketIdInstance()
+  let receieverScoketId = recipientSocket(req.body?.to)
+  if (receieverScoketId){
+    let io = getIoInstance()
+    io.to(receieverScoketId).emit('new-message', result)
+    io.to(receieverScoketId).emit('receive-message', result)
+  }
 
   return responseMsg(1, 200, "Message sent")
 }
