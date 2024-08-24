@@ -3,6 +3,16 @@ const ObjectID = require('mongoose').Types.ObjectId
 const { responseMsg } = require("../utils/helpers")
 
 
+// send a message
+exports.msgSend = async (req) => {
+  let from = req.headers?.id
+  if(!from) return responseMsg(0,200, "Need to log in to send a message")
+  req.body.from = from
+  let result = await messageModel.create(req.body)
+
+  return responseMsg(1, 200, "Message sent")
+}
+
 // fetch chat list
 exports.fetchChatList = async (req) => {
   let user = req.headers?.id

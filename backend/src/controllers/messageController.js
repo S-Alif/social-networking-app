@@ -2,6 +2,12 @@ const messageService = require("../services/messageService")
 const asyncHandler = require("../utils/asyncHandler")
 
 
+// send a message
+exports.sendMsg = async (req, res) => {
+  let result = await asyncHandler(() => messageService.msgSend(req))
+  res.status(200).json(result)
+}
+
 // fetch chat list
 exports.chatList = async (req, res) => {
   let result = await asyncHandler(() => messageService.fetchChatList(req))

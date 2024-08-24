@@ -5,6 +5,7 @@ const router = express.Router()
 const messageController = require('../../controllers/messageController')
 
 // routes
+router.post('/send-message', messageController.sendMsg)
 router.get('/list/:page/:limit', messageController.chatList)
 router.post('/update/:id', messageController.updateMessage)
 router.post('/delete/:id', messageController.deleteMessage)
