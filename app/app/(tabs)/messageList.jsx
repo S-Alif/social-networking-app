@@ -41,21 +41,22 @@ const MessageList = () => {
     }
   }, [])
 
-  // refresh the list
-  useEffect(() => {
-    if (newMessage) {
-      (async () => {
-        await messageList()
-      })()
-    }
-  }, [newMessage])
-
   // on refresh
   const onRefresh = async () => {
     setRefresh(true)
     setPage(1)
     await messageList(1, true)
   }
+
+  // refresh the list
+  useEffect(() => {
+    if (newMessage) {
+      (async () => {
+        await onRefresh()
+      })()
+    }
+  }, [newMessage])
+
 
   // handle scroll
   const handleScroll = ({ nativeEvent }) => {

@@ -5,8 +5,9 @@ import { FontAwesome5, Ionicons } from '@expo/vector-icons'
 import CustomButton from '../../components/CustomButton'
 import authStore from '../../constants/authStore'
 import { getSocket } from '../../constants/socketConnection'
-import { dataFetcher } from '../../scripts/apiCaller'
+import { dataFetcher, reactionSender } from '../../scripts/apiCaller'
 import { messageUrl } from '../../scripts/endpoints'
+import { customAlert } from '../../scripts/alerts'
 
 const SingleMessage = () => {
 
@@ -35,8 +36,9 @@ const SingleMessage = () => {
   }, [])
 
   // sending a message
-  const sendMessage = () => {
-    socket.emit("send-message", msg)
+  const sendMessage = async () => {
+    let result = await reactionSender(messageUrl + "/send-message", msg)
+    if(result == null || result?.status == 0) return customAlert("ERROR !!", result?.data)
     setData(prev => [...prev, {from: profile?._id, ...msg}])
     setMsg({
       to: _id,
