@@ -49,6 +49,7 @@ const SingleMessage = () => {
         if(e._id == result?.data?._id) return {...result?.data}
         return e
       }))
+      setUpdating(false)
     }else{
       setData(prev => [...prev, result?.data])
     }
@@ -70,6 +71,10 @@ const SingleMessage = () => {
         return e
       }))
     })
+
+    socket.on("delete-message", (msdId) => {
+      setData(prev => prev.filter(e => e._id !== msdId))
+    })
   }, [])
 
   useEffect(() => {
@@ -82,6 +87,11 @@ const SingleMessage = () => {
   const updateMessageSetup = (message) => {
     setMsg(message)
     setUpdating(true)
+  }
+
+  // delete a message
+  const deleteMsg = (msgId) => {
+    setData(prev => prev.filter(e => e._id !== msgId))
   }
 
 
@@ -124,7 +134,7 @@ const SingleMessage = () => {
             {
               data.length > 0 && 
                 data.map((e, index) => (
-                  <MessageTextCard message={e} key={index} profileId={profile?._id} updated={updateMessageSetup} />
+                  <MessageTextCard message={e} key={index} profileId={profile?._id} updated={updateMessageSetup} deleted={deleteMsg} />
                 ))
             }
           </View>
@@ -144,7 +154,10 @@ const SingleMessage = () => {
         <CustomButton 
           title={<FontAwesome5 name="telegram-plane" size={30} color="white" />}
           containerStyles={"w-[55px] h-[55px] bg-purpleColor justify-center items-center rounded-md ml-2"}
-          handlePress={sendMessage}
+          handlePress={() => {
+            if(msg?.message.trim().length < 2) return
+            sendMessage()
+          }}
         />
       </View>
 
@@ -169,7 +182,12 @@ const MessageTextCard = ({updated, deleted, message, profileId}) => {
         }
       },
       {
-        text: "Delete"
+        text: "Delete",
+        onPress: async () => {
+          let result = await reactionSender(messageUrl + "/delete/" + message?._id, {to: message?.to})
+          if (result == null || result?.status == 0) return customAlert("ERROR !!", result?.data)
+          deleted(message?._id)
+        }
       }
     ], {cancelable: true})
   }
