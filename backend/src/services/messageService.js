@@ -19,7 +19,7 @@ exports.msgSend = async (req) => {
     io.to(receieverScoketId).emit('receive-message', result)
   }
 
-  return responseMsg(1, 200, "Message sent")
+  return responseMsg(1, 200, result)
 }
 
 // fetch chat list
@@ -141,8 +141,13 @@ exports.fetchMessages = async (req) => {
 
 // message update
 exports.messageUpdate = async (req) => {
-  await messageModel.updateOne({_id: req?.params?.id, from: new ObjectID(req.headers?.id)}, {message: req.body?.message, edited: true})
-  return responseMsg(1, 200, "Message updated")
+  let result = await messageModel.findOneAndUpdate({_id: req?.params?.id, from: new ObjectID(req.headers?.id)}, {message: req.body?.message, edited: true}, {returnOriginal: false})
+
+  let recipientSocket = getFindSocketIdInstance()
+  let io = getIoInstance()
+  io.to(recipientSocket(req.body?.to)).emit('update-message', result)
+
+  return responseMsg(1, 200, result)
 }
 
 // message delete
