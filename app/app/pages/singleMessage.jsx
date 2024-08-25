@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { FontAwesome5, Ionicons } from '@expo/vector-icons'
@@ -15,6 +15,7 @@ const SingleMessage = () => {
   const navigation = useNavigation()
   const [data, setData] = useState([])
   const [page, setPage] = useState(1)
+  const [updating, setUpdating] = useState(false)
   const scrollViewRef = useRef(null)
   const limit = 30
   const {profile} = authStore()
@@ -37,19 +38,37 @@ const SingleMessage = () => {
 
   // sending a message
   const sendMessage = async () => {
-    let result = await reactionSender(messageUrl + "/send-message", msg)
+    let url = messageUrl + "/send-message"
+    if(updating) url = messageUrl + "/update/"+msg?._id
+
+    let result = await reactionSender(url, msg)
     if(result == null || result?.status == 0) return customAlert("ERROR !!", result?.data)
-    setData(prev => [...prev, {from: profile?._id, ...msg}])
+    
+    if(updating){
+      setData(prev => prev.map(e => {
+        if(e._id == result?.data?._id) return {...result?.data}
+        return e
+      }))
+    }else{
+      setData(prev => [...prev, result?.data])
+    }
     setMsg({
       to: _id,
       message: "",
     })
   }
 
-  // receieve a message
+  // receieve, update or delete a message
   useEffect(() => {
     socket.on("receive-message", (receivedMsg) => {
       setData(prev => [...prev, receivedMsg])
+    })
+    
+    socket.on("update-message", (receivedMsg) => {
+      setData(prev => prev.map(e => {
+        if (e._id == receivedMsg?._id) return { ...receivedMsg }
+        return e
+      }))
     })
   }, [])
 
@@ -58,6 +77,12 @@ const SingleMessage = () => {
       scrollViewRef.current.scrollToEnd({ animated: true })
     }
   }, [data])
+
+  // update message setup
+  const updateMessageSetup = (message) => {
+    setMsg(message)
+    setUpdating(true)
+  }
 
 
   return (
@@ -99,12 +124,7 @@ const SingleMessage = () => {
             {
               data.length > 0 && 
                 data.map((e, index) => (
-                  <View 
-                    key={index}
-                    className={`w-fit max-w-[70%] my-1 p-2 rounded-md ${profile?._id == e.from ? "bg-purpleColor self-end" : "bg-darkGrayColor self-start"}`}
-                  >
-                    <Text key={index} className={`text-white text-xl`}>{e.message}</Text>
-                  </View>
+                  <MessageTextCard message={e} key={index} profileId={profile?._id} updated={updateMessageSetup} />
                 ))
             }
           </View>
@@ -115,9 +135,10 @@ const SingleMessage = () => {
       <View className="flex-1 max-h-[80px] bg-lightGrayColor2 justify-center px-2 border-t border-gray-500 flex-row items-center">
         <TextInput 
           placeholder='Enter message'
-          className="border border-gray-500 rounded-md p-2 font-pmedium text-[17px] h-[55px] flex-grow"
+          className="border border-gray-500 rounded-md p-2 font-pmedium text-[17px] h-[55px] flex-grow flex-shrink"
           onChangeText={(e) => setMsg({...msg, ['message']: e})}
           value={msg.message}
+          multiline={true}
         />
 
         <CustomButton 
@@ -132,4 +153,37 @@ const SingleMessage = () => {
   )
 }
 
-export default SingleMessage 
+export default SingleMessage
+
+
+// message card
+const MessageTextCard = ({updated, deleted, message, profileId}) => {
+
+  // message options
+  const messageOptionAlert = () => {
+    Alert.alert("Message options", "", [
+      {
+        text: "Update",
+        onPress: () => {
+          updated(message)
+        }
+      },
+      {
+        text: "Delete"
+      }
+    ], {cancelable: true})
+  }
+
+  return(
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onLongPress={() => {
+        if(profileId !== message?.from) return
+        messageOptionAlert()
+      }}
+      className={`w-fit max-w-[70%] my-1 p-2 rounded-md ${profileId == message.from ? "bg-purpleColor self-end" : "bg-darkGrayColor self-start"}`}
+    >
+      <Text className={`text-white text-xl`}>{message.message}</Text>
+    </TouchableOpacity>
+  )
+}
