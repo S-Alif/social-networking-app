@@ -41,6 +41,10 @@ exports.fetchChatList = async (req) => {
     }
   }
 
+  let sortMessages = {
+    $sort: { createdAt: -1 } 
+  }
+
   let messages = {
     $group: {
       _id: {
@@ -107,7 +111,7 @@ exports.fetchChatList = async (req) => {
     }
   }
 
-  let list = await messageModel.aggregate([match, messages, users, unwind, facet])
+  let list = await messageModel.aggregate([match, sortMessages, messages, users, unwind, facet])
 
   let { chatList, totalCount } = list[0]
 
