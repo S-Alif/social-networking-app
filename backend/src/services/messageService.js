@@ -152,7 +152,15 @@ exports.messageUpdate = async (req) => {
 
 // message delete
 exports.messageDelete = async (req) => {
-  await messageModel.deleteOne({ _id: req?.params?.id, from: new ObjectID(req.headers?.id) })
+  let result = await messageModel.deleteOne({ _id: req?.params?.id, from: new ObjectID(req.headers?.id) })
+
+  let recipientSocket = getFindSocketIdInstance()
+  let receieverScoketId = recipientSocket(req.body?.to)
+  if (receieverScoketId){
+    let io = getIoInstance()
+    io.to(receieverScoketId).emit('delete-message', req.params.id)
+  }
+
   return responseMsg(1, 200, "Message deleted")
 }
 
