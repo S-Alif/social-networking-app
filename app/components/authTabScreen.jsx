@@ -9,7 +9,7 @@ const AuthTabScreen = ({children, imageUrl, containerStyles}) => {
 
   return (
     <ImageBackground
-      source={{ uri: imageUrl ? imageUrl : defaultUrl }}
+      source={{ uri: imageUrl != null ? imageUrl : defaultUrl }}
       className="flex-1 w-[100%] h-[100%]"
       blurRadius={10}
     >

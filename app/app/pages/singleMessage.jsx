@@ -8,6 +8,7 @@ import { getSocket } from '../../constants/socketConnection'
 import { dataFetcher, reactionSender } from '../../scripts/apiCaller'
 import { messageUrl } from '../../scripts/endpoints'
 import { customAlert } from '../../scripts/alerts'
+import CallModal from '../../components/callModal'
 
 const SingleMessage = () => {
 
@@ -16,6 +17,7 @@ const SingleMessage = () => {
   const [data, setData] = useState([])
   const [page, setPage] = useState(1)
   const [updating, setUpdating] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
   const scrollViewRef = useRef(null)
   const limit = 30
   const {profile} = authStore()
@@ -120,6 +122,16 @@ const SingleMessage = () => {
 
           </View>
         ),
+
+        headerRight: () => (
+          <TouchableOpacity
+            className="w-[40] h-[40] bg-purpleColor justify-center items-center rounded-md"
+            activeOpacity={0.8}
+            onPress={() => setModalOpen(true)}
+          >
+            <Ionicons name="call" size={24} color="white" />
+          </TouchableOpacity>
+        )
       }} />
 
 
@@ -161,6 +173,8 @@ const SingleMessage = () => {
         />
       </View>
 
+      {/* call modal component */}
+      <CallModal visible={modalOpen} closeModal={() => setModalOpen(false)} />
 
     </View>
   )
