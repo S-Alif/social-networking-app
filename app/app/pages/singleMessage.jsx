@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
-import { FontAwesome5, Ionicons } from '@expo/vector-icons'
+import { Feather, FontAwesome5, Ionicons } from '@expo/vector-icons'
 import CustomButton from '../../components/CustomButton'
 import authStore from '../../constants/authStore'
 import { getSocket } from '../../constants/socketConnection'
@@ -18,6 +18,7 @@ const SingleMessage = () => {
   const [page, setPage] = useState(1)
   const [updating, setUpdating] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
+  const [lastSeenMsg, setLastSeenMsg] = useState(null)
   const scrollViewRef = useRef(null)
   const limit = 30
   const {profile} = authStore()
@@ -27,6 +28,13 @@ const SingleMessage = () => {
     to: _id,
     message: "",
   })
+
+  // see all the messages
+  useEffect(() => {
+    (async () => {
+      await reactionSender(messageUrl + "/seen-msg/" + _id)
+    })()
+  }, [])
 
   // get the last messages
   useEffect(() =>{
@@ -61,10 +69,11 @@ const SingleMessage = () => {
     })
   }
 
-  // receieve, update or delete a message
+  // receieve, update, mark as seen or delete a message
   useEffect(() => {
-    socket.on("receive-message", (receivedMsg) => {
+    socket.on("receive-message", async (receivedMsg) => {
       setData(prev => [...prev, receivedMsg])
+      await dataFetcher(messageUrl + '/mark-as-seen/' + receivedMsg?._id)
     })
     
     socket.on("update-message", (receivedMsg) => {
@@ -77,6 +86,21 @@ const SingleMessage = () => {
     socket.on("delete-message", (msdId) => {
       setData(prev => prev.filter(e => e._id !== msdId))
     })
+
+    socket.on("message-seen", (receivedMsg) => {
+      setData(prev => prev.map(e => {
+        if (e._id == receivedMsg?._id) return { ...receivedMsg }
+        return e
+      }))
+      setLastSeenMsg(receivedMsg?._id)
+    })
+
+    return () => {
+      socket.off("receive-message")
+      socket.off("update-message")
+      socket.off("delete-message")
+      socket.off("message-seen")
+    }
   }, [])
 
   useEffect(() => {
@@ -136,7 +160,7 @@ const SingleMessage = () => {
 
 
       {/* view box*/}
-      <View className="flex-1 justify-center">
+      <View className="flex-1 justify-center bg-lightGrayColor">
         <ScrollView 
           className="flex-1"
           ref={scrollViewRef}
@@ -146,7 +170,12 @@ const SingleMessage = () => {
             {
               data.length > 0 && 
                 data.map((e, index) => (
-                  <MessageTextCard message={e} key={index} profileId={profile?._id} updated={updateMessageSetup} deleted={deleteMsg} />
+                  <MessageTextCard 
+                    message={e} key={index} 
+                    profileId={profile?._id}
+                    updated={updateMessageSetup}
+                    deleted={deleteMsg}
+                  />
                 ))
             }
           </View>
@@ -154,7 +183,7 @@ const SingleMessage = () => {
       </View>
 
       {/* chat box*/}
-      <View className="flex-1 max-h-[80px] bg-lightGrayColor2 justify-center px-2 border-t border-gray-500 flex-row items-center">
+      <View className="flex-1 max-h-[80px] bg-white justify-center px-2 border-t border-gray-500 flex-row items-center">
         <TextInput 
           placeholder='Enter message'
           className="border border-gray-500 rounded-md p-2 font-pmedium text-[17px] h-[55px] flex-grow flex-shrink"
@@ -184,7 +213,7 @@ export default SingleMessage
 
 
 // message card
-const MessageTextCard = ({updated, deleted, message, profileId}) => {
+const MessageTextCard = ({ updated, deleted, message, profileId }) => {
 
   // message options
   const messageOptionAlert = () => {
@@ -207,15 +236,27 @@ const MessageTextCard = ({updated, deleted, message, profileId}) => {
   }
 
   return(
-    <TouchableOpacity
-      activeOpacity={0.9}
-      onLongPress={() => {
-        if(profileId !== message?.from) return
-        messageOptionAlert()
-      }}
-      className={`w-fit max-w-[70%] my-1 p-2 rounded-md ${profileId == message.from ? "bg-purpleColor self-end" : "bg-darkGrayColor self-start"}`}
-    >
-      <Text className={`text-white text-xl`}>{message.message}</Text>
-    </TouchableOpacity>
+    <View className="my-1">
+      {message?.edited && <Text className={`text-black text-[10px] font-psemibold ${profileId == message.from ? "self-end" : "self-start"}`}>edited</Text>}
+
+      <View 
+        className={`w-fit max-w-[70%] p-2  rounded-md ${profileId == message.from ? "bg-purpleColor self-end" : "bg-darkGrayColor self-start"} flex-row`}
+      >
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onLongPress={() => {
+            if (profileId !== message?.from) return
+            messageOptionAlert()
+          }}
+        >
+          <Text className={`text-white text-xl font-pmedium`}>{message.message}</Text>
+        </TouchableOpacity>
+
+        {
+          profileId == message?.from && <Text className="self-end ml-1"><Feather name="check" size={10} color={message?.seen ? "white" : "grey"} /></Text>
+        }
+      </View>
+
+    </View>
   )
 }

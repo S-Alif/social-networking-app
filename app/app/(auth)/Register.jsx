@@ -96,7 +96,7 @@ const Register = () => {
             title={"Email"}
             placeholder={"Enter your email"}
             validationMsg={"Enter a valid email"}
-            value={(e) => setData({ ...data, email: e })}
+            value={(e) => setData({ ...data, email: e.toLowerCase() })}
             regex={/^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/}
             clear={clearField}
           />

@@ -8,6 +8,12 @@ exports.sendMsg = async (req, res) => {
   res.status(200).json(result)
 }
 
+// mark messag seen
+exports.messageMarkSeen = async (req, res) => {
+  let result = await asyncHandler(() => messageService.markMessageAsSeen(req))
+  res.status(200).json(result)
+}
+
 // fetch chat list
 exports.chatList = async (req, res) => {
   let result = await asyncHandler(() => messageService.fetchChatList(req))
@@ -39,7 +45,7 @@ exports.deleteChat = async (req, res) => {
 }
 
 // see msg
-exports.seeMsg = async (req) => {
+exports.seeMsg = async (req, res) => {
   let result = await asyncHandler(() => messageService.msgSeen(req))
   res.status(200).json(result)
 }

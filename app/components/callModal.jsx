@@ -11,7 +11,7 @@ const CallModal = ({ visible = false, closeModal }) => {
       <TouchableWithoutFeedback onPress={closeModal}>
         <View className="flex-1 w-full h-screen justify-end">
           <View className="flex-1 w-full max-h-[75%] bg-lightGrayColor px-2 border-t-2 border-purpleColor rounded-t-lg">
-            
+            <Text className="text-gray-400 font-psemibold text-2xl text-center pt-10">In progress</Text>
           </View>
         </View>
       </TouchableWithoutFeedback>

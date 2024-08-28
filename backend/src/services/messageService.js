@@ -22,6 +22,20 @@ exports.msgSend = async (req) => {
   return responseMsg(1, 200, result)
 }
 
+// Mark message as seen
+exports.markMessageAsSeen = async (req) => {
+  let result = await messageModel.findOneAndUpdate({_id: req.params?.id}, { seen: true }, {returnOriginal: false})
+
+  let fromUserSocket = getFindSocketIdInstance()
+  let fromScoketId = fromUserSocket(result?.from.toString())
+  if (fromScoketId) {
+    let io = getIoInstance()
+    io.to(fromScoketId).emit('message-seen', result)
+  }
+
+  return responseMsg(1, 200, "Message seen")
+}
+
 // fetch chat list
 exports.fetchChatList = async (req) => {
   let user = req.headers?.id
@@ -144,8 +158,12 @@ exports.messageUpdate = async (req) => {
   let result = await messageModel.findOneAndUpdate({_id: req?.params?.id, from: new ObjectID(req.headers?.id)}, {message: req.body?.message, edited: true}, {returnOriginal: false})
 
   let recipientSocket = getFindSocketIdInstance()
-  let io = getIoInstance()
-  io.to(recipientSocket(req.body?.to)).emit('update-message', result)
+  let receieverScoketId = recipientSocket(req.body?.to)
+
+  if (receieverScoketId){
+    let io = getIoInstance()
+    io.to(receieverScoketId).emit('update-message', result)
+  }
 
   return responseMsg(1, 200, result)
 }
@@ -172,6 +190,6 @@ exports.chatDelete = async (req) => {
 
 // msg seen
 exports.msgSeen = async (req) => {
-  await messageModel.updateMany({ to: new ObjectID(req.headers?.id), seen: false }, {seen: true})
+  await messageModel.updateMany({ to: new ObjectID(req.headers?.id), from: new ObjectID(req.params?.id), seen: false }, {seen: true})
   return responseMsg(1, 200, "seen")
 }
