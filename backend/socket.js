@@ -52,17 +52,41 @@ module.exports = (server) => {
       delete connectedUsers[socket.id]
     })
 
-    // message
-    socket.on('send-message', async (data) => {
-      let connectedUserSocketId = findSocketId(data?.to)
-      try {
-        data.from = socket?.user
-        let result = await msgModel.create(data)
-        if (!connectedUserSocketId) return
-        io.to(connectedUserSocketId).emit('new-message', result)
-        io.to(connectedUserSocketId).emit('receive-message', result)
-      } catch (error) {
-        io.to(socket.id).emit('send-message-error', {message: "could not send message"})
+    socket.on('start-call', (data) => {
+      let connectedUserSocketId = findSocketId(data.to)
+      if (connectedUserSocketId) {
+        io.to(connectedUserSocketId).emit('offer', {
+          offer: data.offer,
+          from: socket.user,
+        })
+      }
+    })
+
+    socket.on('answer', (data) => {
+      let connectedUserSocketId = findSocketId(data.to)
+      if (connectedUserSocketId) {
+        io.to(connectedUserSocketId).emit('answer', {
+          answer: data.answer,
+          from: socket.user,
+        })
+      }
+    })
+
+    socket.on('end-call-confirm', (data) => {
+      let connectedUserSocketId = findSocketId(data.to)
+      console.log("from : "+socket.user, "to: "+data?.to)
+      if (connectedUserSocketId) {
+        io.to(connectedUserSocketId).emit('end-call', {to: data.to})
+      }
+    })
+
+    socket.on('candidate', (data) => {
+      let connectedUserSocketId = findSocketId(data.to)
+      if (connectedUserSocketId) {
+        io.to(connectedUserSocketId).emit('candidate', {
+          candidate: data.candidate,
+          from: socket.user,
+        })
       }
     })
 
