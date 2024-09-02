@@ -203,7 +203,7 @@ const SingleMessage = () => {
       </View>
 
       {/* call modal component */}
-      <CallModal visible={modalOpen} closeModal={() => setModalOpen(false)} />
+      <CallModal visible={modalOpen} closeModal={() => setModalOpen(false)} socket={socket} userId={_id} profileId={profile?._id} />
 
     </View>
   )
