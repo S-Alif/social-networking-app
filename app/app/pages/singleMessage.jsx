@@ -19,6 +19,7 @@ const SingleMessage = () => {
   const [updating, setUpdating] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [lastSeenMsg, setLastSeenMsg] = useState(null)
+  const [callType, setCallType] = useState("audio")
   const scrollViewRef = useRef(null)
   const limit = 30
   const {profile} = authStore()
@@ -69,7 +70,7 @@ const SingleMessage = () => {
     })
   }
 
-  // receieve, update, mark as seen or delete a message
+  // receieve, update, mark as seen or delete a message or incoming calls
   useEffect(() => {
     socket.on("receive-message", async (receivedMsg) => {
       setData(prev => [...prev, receivedMsg])
@@ -93,6 +94,12 @@ const SingleMessage = () => {
         return e
       }))
       setLastSeenMsg(receivedMsg?._id)
+    })
+
+    socket.on("offer", (data) => {
+      setCallType(data?.callType)
+      setModalOpen(true)
+      console.log("opeing modal")
     })
 
     return () => {
@@ -148,13 +155,29 @@ const SingleMessage = () => {
         ),
 
         headerRight: () => (
-          <TouchableOpacity
-            className="w-[40] h-[40] bg-purpleColor justify-center items-center rounded-md"
-            activeOpacity={0.8}
-            onPress={() => setModalOpen(true)}
-          >
-            <Ionicons name="call" size={24} color="white" />
-          </TouchableOpacity>
+          <View className="flex-row gap-x-1">
+            <TouchableOpacity
+              className="w-[40] h-[40] bg-purpleColor justify-center items-center rounded-md"
+              activeOpacity={0.8}
+              onPress={() => {
+                setCallType("audio")
+                setModalOpen(true)
+              }}
+            >
+              <Ionicons name="call" size={24} color="white" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="w-[40] h-[40] bg-purpleColor justify-center items-center rounded-md"
+              activeOpacity={0.8}
+              onPress={() => {
+                setCallType("video")
+                setModalOpen(true)
+              }}
+            >
+              <Feather name="video" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         )
       }} />
 
@@ -203,7 +226,13 @@ const SingleMessage = () => {
       </View>
 
       {/* call modal component */}
-      <CallModal visible={modalOpen} closeModal={() => setModalOpen(false)} socket={socket} userId={_id} profileId={profile?._id} />
+      <CallModal 
+        visible={modalOpen}
+        closeModal={() => setModalOpen(false)}
+        socket={socket}
+        user={{ _id, firstName, lastName, profileImg }}
+        callType={callType}
+        />
 
     </View>
   )
