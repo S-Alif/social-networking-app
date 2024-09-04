@@ -58,6 +58,7 @@ module.exports = (server) => {
         io.to(connectedUserSocketId).emit('offer', {
           offer: data.offer,
           from: socket.user,
+          callType: data.callType
         })
       }
     })
@@ -74,7 +75,6 @@ module.exports = (server) => {
 
     socket.on('end-call-confirm', (data) => {
       let connectedUserSocketId = findSocketId(data.to)
-      console.log("from : "+socket.user, "to: "+data?.to)
       if (connectedUserSocketId) {
         io.to(connectedUserSocketId).emit('end-call', {to: data.to})
       }
@@ -100,7 +100,7 @@ module.exports = (server) => {
     let connectedUserSocketId = findSocketId(newNotificationDocument?.notificationTo.toString())
     if (!connectedUserSocketId) return
 
-    let notificaitons = await notificationModel.aggregate([
+    let notificaitons = await notificationModel.aggregate([ 
       { $match: { notificationTo: new ObjectID(newNotificationDocument?.notificationTo.toString()) } },
       {$sort: {createdAt: -1}},
       {$limit: 1},
