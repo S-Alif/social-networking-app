@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const hpp = require('hpp')
-const rateLimit = require('express-rate-limit')
+//const rateLimit = require('express-rate-limit')
 const helmet = require('helmet')
 const cookieParser = require('cookie-parser')
 const { default: mongoose } = require('mongoose')
@@ -16,7 +16,7 @@ const app = express()
 // add security
 app.use(cors({
   // change origin to the app port
-  origin: ["http://localhost:5173"],
+  origin: ["*"],
   credentials: true
 }))
 app.use(cookieParser())
@@ -27,8 +27,8 @@ app.use(express.json({ limit: "6mb" }))
 app.use(express.urlencoded({ extended: true }))
 
 // rate limiting
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10000 });
-app.use(limiter)
+// const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10000 });
+// app.use(limiter)
 
 
 // add the routes to the app
