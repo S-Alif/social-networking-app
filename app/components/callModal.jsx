@@ -13,6 +13,7 @@ const CallModal = ({ visible = false, closeModal, socket, user, callType = "audi
   const [remoteStream, setRemoteStream] = useState(null)
   const [onCall, setOnCall] = useState(false)
   const [type, setType] = useState(callType)
+  const [calling, setCalling] = useState(false)
 
   useEffect(() => {
     if (visible) setType(callType)
@@ -71,6 +72,7 @@ const CallModal = ({ visible = false, closeModal, socket, user, callType = "audi
       callType: callType,
     })
 
+    setCalling(true)
     setOnCall(true)
 
     pc.oniceconnectionstatechange = () => {
@@ -163,22 +165,22 @@ const CallModal = ({ visible = false, closeModal, socket, user, callType = "audi
     }
     setLocalStream(null)
     setIsReceivingCall(null)
-    if (onCall) {
-      setOnCall(false)
-      socket.emit("end-call-confirm", { to: user?._id })
-    }
     setOnCall(false)
+    setCalling(false)
   }
 
+  // socket connections
   useEffect(() => {
     socket.on('offer', async ({ offer, from, callType }) => {
       setType(callType)
       setIsReceivingCall(true)
+      setCalling(false)
       setIncomingCallData({ offer, from })
     })
 
     socket.on('answer', async ({ answer }) => {
       if (peerConnection) {
+        setCalling(false)
         await peerConnection.setRemoteDescription(new RTCSessionDescription(answer))
       }
     })
@@ -230,11 +232,10 @@ const CallModal = ({ visible = false, closeModal, socket, user, callType = "audi
               </View>
             )}
 
-            {isReceivingCall != null && !onCall && (
-              <Text className="text-xl text-center mt-10">
-                {isReceivingCall ? "Incoming call..." : "Calling..."}
-              </Text>
-            )}
+            {isReceivingCall && <Text className="text-xl text-center mt-10">Incoming Call...</Text>}
+            {calling && <Text className="text-xl text-center mt-10">Calling ..</Text>}
+            {onCall && type == "audio" && <Text className="text-xl text-center mt-10">In Call</Text>}
+            
 
             {isReceivingCall != null && isReceivingCall ? (
               <View className="w-full px-2">
@@ -246,7 +247,10 @@ const CallModal = ({ visible = false, closeModal, socket, user, callType = "audi
                 />
                 <CustomButton
                   title={"Reject"}
-                  handlePress={endCall}
+                  handlePress={() => {
+                    endCall()
+                    socket.emit("end-call-confirm", { to: user?._id })
+                  }}
                   containerStyles={"w-full h-[50] bg-red-500 mt-4"}
                   textStyles={"font-pmedium text-white text-xl"}
                 />
@@ -291,7 +295,10 @@ const CallModal = ({ visible = false, closeModal, socket, user, callType = "audi
                   <View className="absolute bottom-4 w-full px-2" style={{ zIndex: 20 }}>
                     <CustomButton
                       title={"End Call"}
-                      handlePress={endCall}
+                      handlePress={() => {
+                        endCall()
+                        socket.emit("end-call-confirm", { to: user?._id })
+                      }}
                       containerStyles={"w-full h-[50] bg-red-500 mt-4"}
                       textStyles={"font-pmedium text-white text-xl"}
                     />

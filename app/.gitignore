@@ -10,6 +10,7 @@ npm-debug.*
 *.orig.*
 web-build/
 app.json
+scripts/endpoints.js
 
 # macOS
 .DS_Store

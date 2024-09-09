@@ -2,7 +2,7 @@
   "expo": {
     "name": "ConnectVibe",
     "slug": "ConnectVibe",
-    "version": "3.1.0",
+    "version": "3.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/connect_vive_logo_3.png",
     "scheme": "ConnectVibe",
@@ -40,8 +40,7 @@
       "expo-document-picker",
       "expo-image-picker",
       "expo-notifications",
-      "expo-font",
-      "expo-camera"
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

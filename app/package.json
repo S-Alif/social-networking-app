@@ -1,7 +1,7 @@
 {
   "name": "app",
   "main": "expo-router/entry",
-  "version": "3.3.0",
+  "version": "3.5.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -54,8 +54,7 @@
     "react-native-web": "~0.19.10",
     "react-native-webrtc": "^124.0.4",
     "socket.io-client": "^4.7.5",
-    "zustand": "^4.5.4",
-    "expo-camera": "~15.0.15"
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
